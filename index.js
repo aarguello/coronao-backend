@@ -11,6 +11,8 @@ http.listen(3000, function(){
 
 const users = {};
 
+
+
 io.on('connection', handleNewConnection);
 
 function handleNewConnection(socket) {
@@ -18,7 +20,7 @@ function handleNewConnection(socket) {
   const user = {
     _id: socket.id,
     HP: 100,
-    color: 'blue',
+    color: getRndColor(),
     position: {x: 0, y: 0},
   }
 
@@ -27,4 +29,19 @@ function handleNewConnection(socket) {
   socket.on('disconnect', function(){
     delete users[socket.id]
   });
+
+
 }
+
+function getRndColor() {
+
+  const colors = ['blue','red','green','violet','yellow']
+
+  indx =  Math.floor(Math.random() * (colors.length));
+
+  return colors[indx]
+
+
+}
+
+
