@@ -6,9 +6,21 @@ module.exports.getRandomColor = () => {
 }
 
 module.exports.getRandomPosition = () => {
-  const x = getRandomInt(0, global.mapSize)
-  const y = getRandomInt(0, global.mapSize)
-  return {x, y}
+
+  let position = {
+   x: getRandomInt(0, global.mapSize),
+   y: getRandomInt(0, global.mapSize),
+  }
+
+  let exists = Object.values(global.users).find(user =>
+    user.position.x === position.x && user.position.y === position.y
+  )
+
+  if (exists) {
+    position = getRndPosition(true)
+  }
+
+  return position
 }
 
 function getRandomInt(min, max) {

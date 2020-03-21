@@ -14,5 +14,4 @@ module.exports.newConnection = (socket) => {
   socket.on('disconnect', () => {
     delete global.users[socket.id]
   })
-
 }
