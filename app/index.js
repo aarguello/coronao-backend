@@ -6,6 +6,7 @@ const handlers = require('./handlers')
 
 global.users = {}
 global.mapSize = 1000
+global.io = io
 
 app.use(express.static('app/public'))
 
