@@ -21,7 +21,7 @@ function handleNewConnection(socket) {
     _id: socket.id,
     HP: 100,
     color: getRndColor(),
-    position: {x: 0, y: 0},
+    position: getRndPosition(),
   }
 
   users[socket.id] = user
@@ -31,17 +31,40 @@ function handleNewConnection(socket) {
   });
 
 
+  console.log(users)
+
 }
+
+
+
+
+function getRndInt(min,max) {
+
+  return Math.floor(Math.random() * (max - min) ) + min;
+
+}
+
 
 function getRndColor() {
 
   const colors = ['blue','red','green','violet','yellow']
 
-  indx =  Math.floor(Math.random() * (colors.length));
+  const indx = getRndInt(0, colors.length)
 
   return colors[indx]
 
-
 }
 
+
+
+function  getRndPosition(){
+
+  const x = getRndInt(0,1000)
+
+
+  const y = getRndInt(0,1000)
+
+  return {x,y}
+
+}
 
