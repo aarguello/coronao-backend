@@ -12,6 +12,7 @@ module.exports.newConnection = (socket) => {
   }
 
   global.users[socket.id] = user
+  global.positions[[user.position.x, user.position.y]] = user._id
 
   // Set up handlers
   socket.on('USER_MOVE_LEFT',  module.exports.userMoveLeft.bind(this, user))
@@ -21,70 +22,71 @@ module.exports.newConnection = (socket) => {
   socket.on('USER_ATTACK',     module.exports.userAttack.bind(this, user))
 
   socket.on('disconnect', () => {
+    delete global.positions[[user.position.x, user.position.y]]
     delete global.users[socket.id]
   })
 }
 
 module.exports.userMoveLeft = (user) => {
 
-  if (user.position.x > 0) {
-    user.position.x--
-  }
-
   user.direction = 'LEFT'
+
+  if (user.position.x > 0 && !utils.getNeighbourUserId(user)) {
+    delete global.positions[[user.position.x, user.position.y]]
+    user.position.x--
+    global.positions[[user.position.x, user.position.y]] = user._id
+  }
 
   emitters.userPositionChange(user)
 }
 
 module.exports.userMoveRight = (user) => {
 
-  if (user.position.x < global.mapSize - 1) {
-    user.position.x++
-  }
-
   user.direction = 'RIGHT'
+
+  if (user.position.x < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
+    delete global.positions[[user.position.x, user.position.y]]
+    user.position.x++
+    global.positions[[user.position.x, user.position.y]] = user._id
+  }
 
   emitters.userPositionChange(user)
 }
 
 module.exports.userMoveUp = (user) => {
 
-  if (user.position.y > 0) {
-    user.position.y--
-  }
-
   user.direction = 'UP'
+
+  if (user.position.y > 0 && !utils.getNeighbourUserId(user)) {
+    delete global.positions[[user.position.x, user.position.y]]
+    user.position.y--
+    global.positions[[user.position.x, user.position.y]] = user._id
+  }
 
   emitters.userPositionChange(user)
 }
 
 module.exports.userMoveDown = (user) => {
 
-  if (user.position.y < global.mapSize - 1) {
-    user.position.y++
-  }
-
   user.direction = 'DOWN'
+
+  if (user.position.y < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
+    delete global.positions[[user.position.x, user.position.y]]
+    user.position.y++
+    global.positions[[user.position.x, user.position.y]] = user._id
+  }
 
   emitters.userPositionChange(user)
 }
 
 module.exports.userAttack = (user) => {
 
-  let dst = {}
+  const victimId = utils.getNeighbourUserId(user)
 
-  if (user.direction === 'LEFT')  dst = { x: user.position.x - 1, y: user.position.y }
-  if (user.direction === 'RIGHT') dst = { x: user.position.x + 1, y: user.position.y }
-  if (user.direction === 'UP')    dst = { x: user.position.x,     y: user.position.y - 1 }
-  if (user.direction === 'DOWN')  dst = { x: user.position.x,     y: user.position.y + 1 }
+  if (victimId) {
 
-  const victim = Object.values(global.users).find(u =>
-    u.position.x === dst.x && u.position.y === dst.y
-  )
-
-  if (victim) {
-
-    victim.HP -= global.attackDamage
+    const victim = global.users[victimId]
+    victim.HP   -= global.attackDamage
 
     if (victim.HP < 0) {
       victim.HP = 0

@@ -5,6 +5,7 @@ const io       = require('socket.io')(server)
 const handlers = require('./handlers')
 
 global.users = {}
+global.positions = {}
 global.mapSize = 1000
 global.io = io
 global.attackDamage = 15
