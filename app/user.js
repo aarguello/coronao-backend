@@ -1,7 +1,9 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
-module.exports.newConnection = (socket) => {
+module.exports.create = create
+
+function create(socket) {
 
   const user = {
     _id: socket.id,
@@ -16,21 +18,27 @@ module.exports.newConnection = (socket) => {
   global.users[socket.id] = user
   global.positions[user.position] = user._id
 
-  // Set up handlers
-  socket.on('USER_MOVE_LEFT',  module.exports.userMoveLeft.bind(this, user))
-  socket.on('USER_MOVE_RIGHT', module.exports.userMoveRight.bind(this, user))
-  socket.on('USER_MOVE_UP',    module.exports.userMoveUp.bind(this, user))
-  socket.on('USER_MOVE_DOWN',  module.exports.userMoveDown.bind(this, user))
-  socket.on('USER_ATTACK',     module.exports.userAttack.bind(this, user))
+  setupHandlers(socket)
+  emitters.userJoined(user)
 
   socket.on('disconnect', () => {
+    emitters.userLeft(user._id)
     delete global.positions[user.position]
     delete global.users[socket.id]
   })
 }
 
-module.exports.userMoveLeft = (user) => {
+function setupHandlers(socket) {
+  socket.on('USER_MOVE_LEFT',  moveLeft)
+  socket.on('USER_MOVE_RIGHT', moveRight)
+  socket.on('USER_MOVE_UP',    moveUp)
+  socket.on('USER_MOVE_DOWN',  moveDown)
+  socket.on('USER_ATTACK',     attack)
+}
 
+function moveLeft() {
+
+  const user = global.users[this.id]
   user.direction = 'LEFT'
 
   if (user.position[0] > 0 && !utils.getNeighbourUserId(user)) {
@@ -42,8 +50,9 @@ module.exports.userMoveLeft = (user) => {
   emitters.userPositionChange(user)
 }
 
-module.exports.userMoveRight = (user) => {
+function moveRight() {
 
+  const user = global.users[this.id]
   user.direction = 'RIGHT'
 
   if (user.position[0] < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
@@ -55,8 +64,9 @@ module.exports.userMoveRight = (user) => {
   emitters.userPositionChange(user)
 }
 
-module.exports.userMoveUp = (user) => {
+function moveUp() {
 
+  const user = global.users[this.id]
   user.direction = 'UP'
 
   if (user.position[1] > 0 && !utils.getNeighbourUserId(user)) {
@@ -68,8 +78,9 @@ module.exports.userMoveUp = (user) => {
   emitters.userPositionChange(user)
 }
 
-module.exports.userMoveDown = (user) => {
+function moveDown() {
 
+  const user = global.users[this.id]
   user.direction = 'DOWN'
 
   if (user.position[1] < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
@@ -81,8 +92,9 @@ module.exports.userMoveDown = (user) => {
   emitters.userPositionChange(user)
 }
 
-module.exports.userAttack = (user) => {
+function attack() {
 
+  const user = global.users[this.id]
   const victimId = utils.getNeighbourUserId(user)
 
   if (victimId && user.stamina >= 25) {

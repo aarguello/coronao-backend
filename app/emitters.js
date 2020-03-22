@@ -1,4 +1,12 @@
 
+module.exports.userJoined = (user) => {
+  global.io.emit('USER_JOINED', user)
+}
+
+module.exports.userLeft = (userId) => {
+  global.io.emit('USER_LEFT', userId)
+}
+
 module.exports.userPositionChange = (user) => {
 
   const _id       = user._id
@@ -21,8 +29,8 @@ module.exports.userApplyDamage = (user) => {
     _id,
     HP,
   })
-}
 
+}
 
 module.exports.userStaminaChange = (user) => {
 
@@ -34,6 +42,5 @@ module.exports.userStaminaChange = (user) => {
     _id,
     stamina,
   })
-
 
 }
