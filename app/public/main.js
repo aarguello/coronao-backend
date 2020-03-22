@@ -12,6 +12,10 @@ socket.on('USER_APPLY_DAMAGE', user => {
   console.log('USER_APPLY_DAMAGE', JSON.stringify(user))
 })
 
+socket.on('USER_JOINED', user => {
+  console.log('USER_JOINED', JSON.stringify(user))
+})
+
 function userMove(direction) {
   socket.emit('USER_MOVE_' + direction)
 }

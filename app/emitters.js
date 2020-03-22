@@ -1,4 +1,8 @@
 
+module.exports.userJoined = (user) => {
+  global.io.emit('USER_JOINED', user)
+}
+
 module.exports.userPositionChange = (user) => {
 
   const _id       = user._id

@@ -17,6 +17,7 @@ function create(socket) {
   global.positions[user.position] = user._id
 
   setupHandlers(socket)
+  emitters.userJoined(user)
 
   socket.on('disconnect', () => {
     delete global.positions[user.position]
