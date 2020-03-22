@@ -10,7 +10,7 @@ function initGlobals(io) {
   global.users = {}
   global.positions = {}
   global.items = loadItems('./data/items.json')
-  global.mapSize = 1000
+  global.mapSize = 32
   global.attackDamage = 15
   global.inventorySize = 9
 
