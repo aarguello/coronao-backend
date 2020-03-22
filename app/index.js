@@ -14,3 +14,6 @@ server.listen(3000, () => {
 utils.initGlobals(io)
 
 io.on('connection', user.create)
+io.origins((origin, callback) => {
+  callback(null, true)
+})
