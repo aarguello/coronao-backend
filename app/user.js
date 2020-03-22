@@ -20,6 +20,7 @@ function create(socket) {
   emitters.userJoined(user)
 
   socket.on('disconnect', () => {
+    emitters.userLeft(user._id)
     delete global.positions[user.position]
     delete global.users[socket.id]
   })
