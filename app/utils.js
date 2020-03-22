@@ -1,8 +1,17 @@
 
+module.exports.initGlobals          = initGlobals
 module.exports.getRandomColor       = getRandomColor
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
 module.exports.getNeighbourUserId   = getNeighbourUserId
+
+function initGlobals(io) {
+  global.io = io
+  global.users = {}
+  global.positions = {}
+  global.mapSize = 1000
+  global.attackDamage = 15
+}
 
 function getRandomColor() {
   const colors = ['blue', 'red', 'green', 'violet', 'yellow']
