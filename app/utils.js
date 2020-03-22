@@ -12,14 +12,16 @@ function getRandomColor() {
 
 function getRandomPosition() {
 
-  let x = getRandomInt(0, global.mapSize)
-  let y = getRandomInt(0, global.mapSize)
+  const position = [
+    getRandomInt(0, global.mapSize),
+    getRandomInt(0, global.mapSize),
+  ]
 
-  if (global.positions[[x, y]]) {
+  if (global.positions[position]) {
     return getRandomPosition()
   }
 
-  return {x, y}
+  return position
 }
 
 function getRandomInt(min, max) {
@@ -27,13 +29,13 @@ function getRandomInt(min, max) {
 }
 
 function getNeighbourPosition(position, direction) {
-  if (direction === 'LEFT')  return { x: position.x - 1, y: position.y }
-  if (direction === 'RIGHT') return { x: position.x + 1, y: position.y }
-  if (direction === 'UP')    return { x: position.x,     y: position.y - 1 }
-  if (direction === 'DOWN')  return { x: position.x,     y: position.y + 1 }
+  if (direction === 'LEFT')  return [position[0] - 1, position[1]]
+  if (direction === 'RIGHT') return [position[0] + 1, position[1]]
+  if (direction === 'UP')    return [position[0]    , position[1] - 1]
+  if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
 }
 
 function getNeighbourUserId(user) {
   const neighbourPosition = getNeighbourPosition(user.position, user.direction)
-  return global.positions[[neighbourPosition.x, neighbourPosition.y]]
+  return global.positions[neighbourPosition]
 }

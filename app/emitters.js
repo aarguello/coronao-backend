@@ -1,8 +1,8 @@
 
 module.exports.userPositionChange = (user) => {
 
-  const _id = user._id
-  const position = user.position
+  const _id       = user._id
+  const position  = user.position
   const direction = user.direction
 
   global.io.emit('USER_POSITION_CHANGE', {
@@ -15,7 +15,7 @@ module.exports.userPositionChange = (user) => {
 module.exports.userApplyDamage = (user) => {
 
   const _id = user._id
-  const HP = user.HP
+  const HP  = user.HP
 
   global.io.emit('USER_APPLY_DAMAGE', {
     _id,
