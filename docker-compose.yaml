@@ -5,7 +5,7 @@ services:
     command: npm start
     volumes:
       - .:/usr/app/
-      - node_modules:/usr/app/node_modules
+      - ./node_modules:/usr/app/node_modules
     ports:
       - "3000:3000"
     depends_on:
@@ -18,7 +18,3 @@ services:
       POSTGRES_USER: coronao
       POSTGRES_DB: coronao
       POSTGRES_PASSWORD: coronao
-
-volumes:
-  nodemodules:
-    external: true
