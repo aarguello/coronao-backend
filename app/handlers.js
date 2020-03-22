@@ -8,6 +8,7 @@ module.exports.newConnection = (socket) => {
     HP: 100,
     color: utils.getRandomColor(),
     position: utils.getRandomPosition(),
+    direction: 'DOWN',
   }
 
   global.users[socket.id] = user
@@ -29,6 +30,8 @@ module.exports.userMoveLeft = (user) => {
     user.position.x--
   }
 
+  user.direction = 'LEFT'
+
   emitters.userPositionChange(user)
 }
 
@@ -37,6 +40,8 @@ module.exports.userMoveRight = (user) => {
   if (user.position.x < global.mapSize - 1) {
     user.position.x++
   }
+
+  user.direction = 'RIGHT'
 
   emitters.userPositionChange(user)
 }
@@ -47,6 +52,8 @@ module.exports.userMoveUp = (user) => {
     user.position.y++
   }
 
+  user.direction = 'UP'
+
   emitters.userPositionChange(user)
 }
 
@@ -55,6 +62,8 @@ module.exports.userMoveDown = (user) => {
   if (user.position.y > 0) {
     user.position.y--
   }
+
+  user.direction = 'DOWN'
 
   emitters.userPositionChange(user)
 }

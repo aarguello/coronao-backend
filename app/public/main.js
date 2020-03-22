@@ -8,8 +8,9 @@ socket.on('USER_POSITION_CHANGE', user => {
   console.log(
     'User',
     user._id,
-    'changed position to (',
-    user.position.x, user.position.y, ')'
+    'moved',
+    user.direction.toLowerCase(),
+    '(', user.position.x, user.position.y, ')'
    )
 })
 
