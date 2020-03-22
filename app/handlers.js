@@ -49,8 +49,8 @@ module.exports.userMoveRight = (user) => {
 
 module.exports.userMoveUp = (user) => {
 
-  if (user.position.y < global.mapSize - 1) {
-    user.position.y++
+  if (user.position.y > 0) {
+    user.position.y--
   }
 
   user.direction = 'UP'
@@ -60,8 +60,8 @@ module.exports.userMoveUp = (user) => {
 
 module.exports.userMoveDown = (user) => {
 
-  if (user.position.y > 0) {
-    user.position.y--
+  if (user.position.y < global.mapSize - 1) {
+    user.position.y++
   }
 
   user.direction = 'DOWN'
@@ -75,8 +75,8 @@ module.exports.userAttack = (user) => {
 
   if (user.direction === 'LEFT')  dst = { x: user.position.x - 1, y: user.position.y }
   if (user.direction === 'RIGHT') dst = { x: user.position.x + 1, y: user.position.y }
-  if (user.direction === 'UP')    dst = { x: user.position.x,     y: user.position.y + 1 }
-  if (user.direction === 'DOWN')  dst = { x: user.position.x,     y: user.position.y - 1 }
+  if (user.direction === 'UP')    dst = { x: user.position.x,     y: user.position.y - 1 }
+  if (user.direction === 'DOWN')  dst = { x: user.position.x,     y: user.position.y + 1 }
 
   const victim = Object.values(global.users).find(u =>
     u.position.x === dst.x && u.position.y === dst.y
