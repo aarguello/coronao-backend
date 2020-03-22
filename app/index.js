@@ -6,9 +6,10 @@ const handlers = require('./handlers')
 
 global.users = {}
 global.positions = {}
-global.mapSize = 1000
+global.mapSize = 5
 global.io = io
 global.attackDamage = 15
+global.staminaRequired = 25
 
 app.use(express.static('app/public'))
 

@@ -22,3 +22,18 @@ module.exports.userApplyDamage = (user) => {
     HP,
   })
 }
+
+
+module.exports.userStaminaChange = (user) => {
+
+
+  const _id = user._id
+  const stamina = user.stamina
+
+  global.io.to(user._id).emit('USER_STAMINA_CHANGE', {
+    _id,
+    stamina,
+  })
+
+
+}

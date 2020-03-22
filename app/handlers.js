@@ -9,6 +9,8 @@ module.exports.newConnection = (socket) => {
     color: utils.getRandomColor(),
     position: utils.getRandomPosition(),
     direction: 'DOWN',
+    stamina: 100,
+
   }
 
   global.users[socket.id] = user
@@ -83,8 +85,10 @@ module.exports.userAttack = (user) => {
 
   const victimId = utils.getNeighbourUserId(user)
 
-  if (victimId) {
+  if (victimId && user.stamina >= 25) {
 
+
+    user.stamina -= global.staminaRequired
     const victim = global.users[victimId]
     victim.HP   -= global.attackDamage
 
@@ -93,5 +97,7 @@ module.exports.userAttack = (user) => {
     }
 
     emitters.userApplyDamage(victim)
+    emitters.userStaminaChange(user)
+
   }
 }
