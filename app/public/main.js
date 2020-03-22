@@ -5,15 +5,17 @@ socket.on('connect', () => {
 })
 
 socket.on('USER_POSITION_CHANGE', user => {
-  console.log(
-    'User',
-    user._id,
-    'moved',
-    user.direction.toLowerCase(),
-    '(', user.position.x, user.position.y, ')'
-   )
+  console.log('USER_POSITION_CHANGE', JSON.stringify(user))
+})
+
+socket.on('USER_APPLY_DAMAGE', user => {
+  console.log('USER_APPLY_DAMAGE', JSON.stringify(user))
 })
 
 function userMove(direction) {
   socket.emit('USER_MOVE_' + direction)
+}
+
+function userAttack() {
+  socket.emit('USER_ATTACK')
 }
