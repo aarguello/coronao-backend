@@ -2,7 +2,6 @@ version: '2'
 services:
   app:
     build: .
-    command: npm start
     volumes:
       - .:/usr/app/
       - ./node_modules:/usr/app/node_modules
