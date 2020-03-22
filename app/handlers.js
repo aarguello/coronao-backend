@@ -18,6 +18,7 @@ module.exports.newConnection = (socket) => {
   socket.on('USER_MOVE_RIGHT', module.exports.userMoveRight.bind(this, user))
   socket.on('USER_MOVE_UP',    module.exports.userMoveUp.bind(this, user))
   socket.on('USER_MOVE_DOWN',  module.exports.userMoveDown.bind(this, user))
+  socket.on('USER_ATTACK',     module.exports.userAttack.bind(this, user))
 
   socket.on('disconnect', () => {
     delete global.users[socket.id]
@@ -66,4 +67,29 @@ module.exports.userMoveDown = (user) => {
   user.direction = 'DOWN'
 
   emitters.userPositionChange(user)
+}
+
+module.exports.userAttack = (user) => {
+
+  let dst = {}
+
+  if (user.direction === 'LEFT')  dst = { x: user.position.x - 1, y: user.position.y }
+  if (user.direction === 'RIGHT') dst = { x: user.position.x + 1, y: user.position.y }
+  if (user.direction === 'UP')    dst = { x: user.position.x,     y: user.position.y + 1 }
+  if (user.direction === 'DOWN')  dst = { x: user.position.x,     y: user.position.y - 1 }
+
+  const victim = Object.values(global.users).find(u =>
+    u.position.x === dst.x && u.position.y === dst.y
+  )
+
+  if (victim) {
+
+    victim.HP -= global.attackDamage
+
+    if (victim.HP < 0) {
+      victim.HP = 0
+    }
+
+    emitters.userApplyDamage(victim)
+  }
 }

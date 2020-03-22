@@ -11,3 +11,14 @@ module.exports.userPositionChange = (user) => {
     direction,
   })
 }
+
+module.exports.userApplyDamage = (user) => {
+
+  const _id = user._id
+  const HP = user.HP
+
+  global.io.emit('USER_APPLY_DAMAGE', {
+    _id,
+    HP,
+  })
+}
