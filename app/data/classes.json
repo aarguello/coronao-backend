@@ -4,31 +4,26 @@
   "HP": 500,
   "mana": 0,
   "stamina": 250,
-  "physical_damage": [20, 45],
-  "physical_defense": [30, 50]
+  "physical_damage": 1.1
 }, {
   "_id": "",
   "name": "MAGE",
   "HP": 300,
   "mana": 2000,
   "stamina": 100,
-  "physical_damage": [5, 10],
-  "physical_defense": [10, 20],
-  "magical_damage": 20
+  "physical_damage": 0.5
 }, {
   "_id": "",
   "name": "BARD",
   "HP": 400,
   "stamina": 150,
   "mana": 1500,
-  "physical_damage": [10, 30],
-  "physical_defense": [10, 35]
+  "physical_damage": 0.75
 }, {
   "_id": "",
   "name": "PALADIN",
   "HP": 450,
   "stamina": 200,
   "mana": 800,
-  "physical_damage": [20, 30],
-  "physical_defense": [25, 40]
+  "physical_damage": 0.925
 }]

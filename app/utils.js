@@ -14,7 +14,7 @@ function initGlobals(io) {
   global.positions = {}
 
   global.mapSize = 32
-  global.baseDamage = 75
+  global.baseDamage = 100
   global.staminaRequired = 0
   global.inventorySize = 9
 

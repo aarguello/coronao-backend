@@ -116,9 +116,9 @@ function attack() {
 
   if (victim.HP > 0) {
 
-    const userDamange     = getUserPhysicalDamage(user)
+    const userDamage      = getUserPhysicalDamage(user)
     const victimDefense   = getUserPhysicalDefense(victim)
-    const inflictedDamage = global.baseDamage + userDamange - victimDefense
+    const inflictedDamage = Math.round(userDamage - victimDefense)
 
     user.stamina -= global.staminaRequired
     emitters.userAttacked(user._id, inflictedDamage)
@@ -142,14 +142,18 @@ function attack() {
 }
 
 function getUserPhysicalDamage(user) {
-  return userPhysicalAttributesCumulator(user, 'physical_damage')
+
+  const classDamage = global.classes[user.class].physical_damage
+  const itemsDamage = getEquipementBonus(user, 'physical_damage')
+
+  return global.baseDamage * classDamage + itemsDamage
 }
 
 function getUserPhysicalDefense(user) {
-  return userPhysicalAttributesCumulator(user, 'physical_defense')
+  return getEquipementBonus(user, 'physical_defense')
 }
 
-function userPhysicalAttributesCumulator(user, attribute) {
+function getEquipementBonus(user, attribute) {
 
   const reducer = (total, itemId) => {
 
