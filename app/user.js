@@ -113,6 +113,10 @@ function attack() {
     const victimDefense   = getUserPhysicalDefense(victim)
     const inflictedDamage = global.baseDamage + userDamange - victimDefense
 
+    user.stamina -= global.staminaRequired
+    emitters.userAttacked(user._id, inflictedDamage)
+    emitters.userStaminaChange(user._id, user.stamina)
+
     if (inflictedDamage > 0) {
 
       if (victim.HP - inflictedDamage > 0) {
@@ -121,15 +125,12 @@ function attack() {
         victim.HP = 0
       }
 
-      emitters.userApplyDamage(victim, inflictedDamage)
+      emitters.userApplyDamage(victim._id, victim.HP, inflictedDamage)
 
       if (victim.HP === 0) {
         killUser(victim)
       }
     }
-
-    user.stamina -= global.staminaRequired
-    emitters.userStaminaChange(user)
   }
 }
 

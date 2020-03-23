@@ -32,26 +32,16 @@ module.exports.userPositionChange = (user) => {
   })
 }
 
-module.exports.userApplyDamage = (user, damage) => {
-
-  const _id = user._id
-  const HP  = user.HP
-
-  global.io.emit('USER_APPLY_DAMAGE', {
-    _id,
-    HP,
-  }, damage)
+module.exports.userAttacked = (userId, inflictedDamage) => {
+  global.io.emit('USER_ATTACKED', userId, inflictedDamage)
 }
 
-module.exports.userStaminaChange = (user) => {
+module.exports.userApplyDamage = (_id, HP, inflictedDamage) => {
+  global.io.emit('USER_APPLY_DAMAGE', { _id, HP }, inflictedDamage)
+}
 
-  const _id     = user._id
-  const stamina = user.stamina
-
-  global.io.to(user._id).emit('USER_STAMINA_CHANGE', {
-    _id,
-    stamina,
-  })
+module.exports.userStaminaChange = (_id, stamina) => {
+  global.io.to(_id).emit('USER_STAMINA_CHANGE', { _id, stamina })
 }
 
 module.exports.userEquipedItem = (userId, itemId) => {
