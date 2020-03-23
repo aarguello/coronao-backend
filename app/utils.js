@@ -11,6 +11,7 @@ function initGlobals(io) {
   global.io = io
   global.users = {}
   global.positions = {}
+  global.aliveNPCs = []
 
   global.mapSize = 32
   global.baseDamage = 100
@@ -20,6 +21,7 @@ function initGlobals(io) {
 
   global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
+  global.NPCs    = importJSONArrayAsDictionary('./data/NPCs.json',    'name')
   global.items   = importJSONArrayAsDictionary('./data/items.json',   '_id')
   global.spells  = importJSONArrayAsDictionary('./data/spells.json',  '_id')
 }

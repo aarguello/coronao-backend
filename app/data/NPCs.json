@@ -1,0 +1,9 @@
+[{
+  "name": "BAT",
+  "HP": 25,
+  "physical_damage": [2, 4]
+}, {
+  "name": "ZOMBIE",
+  "HP": 100,
+  "physical_damage": [4, 10]
+}]
