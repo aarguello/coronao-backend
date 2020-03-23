@@ -31,6 +31,14 @@ module.exports.userApplyDamage = (_id, HP, inflictedDamage) => {
   global.io.emit('USER_APPLY_DAMAGE', { _id, HP }, inflictedDamage)
 }
 
+module.exports.userReceivedSpell = (_id, spellId) => {
+  global.io.emit('USER_RECEIVED_SPELL', { _id }, spellId)
+}
+
+module.exports.userManaChange = (_id, mana) => {
+  global.io.to(_id).emit('USER_MANA_CHANGE', { _id, mana })
+}
+
 module.exports.userStaminaChange = (_id, stamina) => {
   global.io.to(_id).emit('USER_STAMINA_CHANGE', { _id, stamina })
 }

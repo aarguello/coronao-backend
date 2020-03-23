@@ -3,7 +3,7 @@
   "name": "Brown hat",
   "body_part": "HEAD",
   "physical_defense": [4, 8],
-  "magical_defense": 20
+  "magical_defense": [20, 40]
 }, {
   "_id": "Wq0HhjkjN5zR8N8DENZF",
   "name": "Iron helm",
@@ -28,18 +28,18 @@
   "_id": "J0ldZPPAL2FZg1eqUS4T",
   "name": "Oak wand",
   "body_part": "RIGHT_HAND",
-  "magical_damage": 30
+  "magical_damage": [30, 35]
 }, {
   "_id": "5ihnF4fXoHTQycWfNfAH",
   "name": "Wooden arch",
   "body_part": "RIGHT_HAND",
-  "magical_damage": 30
+  "physical_damage": [10, 20]
 }, {
   "_id": "RVAl3xVPy4nn5v7M84vr",
   "name": "Bronze dagger",
   "body_part": "RIGHT_HAND",
-  "physical_damage": 30,
-  "stab_chance": 15
+  "physical_damage": [5, 15],
+  "stab_chance": [15, 20]
 }, {
   "_id": "G21gfv4T2YijDaTR0UVh",
   "name": "Oak shield",
@@ -54,5 +54,5 @@
   "_id": "2DuoNlOe5SlgANpeFvzo",
   "name": "Gold ring",
   "body_part": "FINGER",
-  "magical_defense": 18
+  "magical_defense": [15, 20]
 }]
