@@ -1,6 +1,5 @@
 module.exports.initGlobals          = initGlobals
 module.exports.getRandomInt         = getRandomInt
-module.exports.getRandomColor       = getRandomColor
 module.exports.getRandomClass       = getRandomClass
 module.exports.getRandomRace        = getRandomRace
 module.exports.getRandomPosition    = getRandomPosition
@@ -26,12 +25,6 @@ function initGlobals(io) {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
-}
-
-function getRandomColor() {
-  const colors = ['blue', 'red', 'green', 'violet', 'yellow']
-  const i = getRandomInt(0, colors.length)
-  return colors[i]
 }
 
 function getRandomClass() {

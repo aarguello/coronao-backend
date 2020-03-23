@@ -12,7 +12,6 @@ function create(socket) {
     _id: socket.id,
     class: userClass.name,
     race: userRace.name,
-    color: utils.getRandomColor(),
     position: utils.getRandomPosition(),
     direction: 'DOWN',
     inventory: {},
