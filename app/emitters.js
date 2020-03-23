@@ -15,25 +15,16 @@ module.exports.userJoined = (user, socket) => {
   socket.broadcast.emit('USER_JOINED', user)
 }
 
-module.exports.userLeft = (userId) => {
-  global.io.emit('USER_LEFT', userId)
+module.exports.userLeft = (_id) => {
+  global.io.emit('USER_LEFT', { _id })
 }
 
-module.exports.userPositionChange = (user) => {
-
-  const _id       = user._id
-  const position  = user.position
-  const direction = user.direction
-
-  global.io.emit('USER_POSITION_CHANGE', {
-    _id,
-    position,
-    direction,
-  })
+module.exports.userPositionChange = (_id, position, direction) => {
+  global.io.emit('USER_POSITION_CHANGE', { _id, position, direction })
 }
 
-module.exports.userAttacked = (userId, inflictedDamage) => {
-  global.io.emit('USER_ATTACKED', userId, inflictedDamage)
+module.exports.userAttacked = (_id, inflictedDamage) => {
+  global.io.emit('USER_ATTACKED', { _id }, inflictedDamage)
 }
 
 module.exports.userApplyDamage = (_id, HP, inflictedDamage) => {
@@ -44,14 +35,14 @@ module.exports.userStaminaChange = (_id, stamina) => {
   global.io.to(_id).emit('USER_STAMINA_CHANGE', { _id, stamina })
 }
 
-module.exports.userEquipedItem = (userId, itemId) => {
-  global.io.emit('USER_EQUIPED_ITEM', userId, itemId)
+module.exports.userEquipedItem = (_id, itemId) => {
+  global.io.emit('USER_EQUIPED_ITEM', { _id }, itemId)
 }
 
-module.exports.userUnequipedItem = (userId, itemId) => {
-  global.io.emit('USER_UNEQUIPED_ITEM', userId, itemId)
+module.exports.userUnequipedItem = (_id, itemId) => {
+  global.io.emit('USER_UNEQUIPED_ITEM', { _id }, itemId)
 }
 
-module.exports.userDied = (userId) => {
-  global.io.emit('USER_DIED', userId)
+module.exports.userDied = (_id) => {
+  global.io.emit('USER_DIED', { _id })
 }

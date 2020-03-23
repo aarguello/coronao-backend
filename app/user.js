@@ -51,7 +51,7 @@ function moveLeft() {
     global.positions[user.position] = user._id
   }
 
-  emitters.userPositionChange(user)
+  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveRight() {
@@ -65,7 +65,7 @@ function moveRight() {
     global.positions[user.position] = user._id
   }
 
-  emitters.userPositionChange(user)
+  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveUp() {
@@ -79,7 +79,7 @@ function moveUp() {
     global.positions[user.position] = user._id
   }
 
-  emitters.userPositionChange(user)
+  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveDown() {
@@ -93,7 +93,7 @@ function moveDown() {
     global.positions[user.position] = user._id
   }
 
-  emitters.userPositionChange(user)
+  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function attack() {
