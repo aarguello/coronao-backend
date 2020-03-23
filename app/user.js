@@ -3,7 +3,8 @@ const emitters = require('./emitters')
 const items    = require('./items')
 const spells   = require('./spells')
 
-module.exports.create = create
+module.exports.create        = create
+module.exports.inflictDamage = inflictDamage
 
 function create(socket) {
 
@@ -128,20 +129,7 @@ function attack() {
     emitters.userAttacked(user._id, inflictedDamage)
     emitters.userStaminaChange(user._id, user.stamina)
 
-    if (inflictedDamage > 0) {
-
-      if (victim.HP - inflictedDamage > 0) {
-        victim.HP -= inflictedDamage
-      } else {
-        victim.HP = 0
-      }
-
-      emitters.userApplyDamage(victim._id, victim.HP, inflictedDamage)
-
-      if (victim.HP === 0) {
-        killUser(victim)
-      }
-    }
+    inflictDamage(victim, inflictedDamage)
   }
 }
 
@@ -155,6 +143,25 @@ function getUserPhysicalDamage(user) {
 
 function getUserPhysicalDefense(user) {
   return items.getEquipementBonus(user, 'physical_defense')
+}
+
+function inflictDamage(target, damage) {
+
+  if (damage <= 0) {
+    return
+  }
+
+  if (target.HP - damage > 0) {
+    target.HP -= damage
+  } else {
+    target.HP = 0
+  }
+
+  emitters.userApplyDamage(target._id, target.HP, damage)
+
+  if (target.HP === 0) {
+    killUser(target)
+  }
 }
 
 function killUser(user) {
