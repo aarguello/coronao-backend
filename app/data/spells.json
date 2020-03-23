@@ -15,7 +15,7 @@
   "name": "Apocalypse",
   "type": "DAMAGE",
   "mana": 150,
-  "value": 0.75
+  "value": [100, 150]
 }, {
   "_id": "NC3t63uHbA7yAqv0tmpf",
   "name": "Heal",

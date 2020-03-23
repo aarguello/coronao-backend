@@ -1,5 +1,6 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
+const spells   = require('./spells')
 
 module.exports.create = create
 
@@ -46,6 +47,7 @@ function setupHandlers(socket) {
   socket.on('USER_ATTACK',     attack)
   socket.on('USER_EQUIP_ITEM', equipItem)
   socket.on('USER_SPEAK',      speak)
+  socket.on('USER_CAST_SPELL', spells.handleSpell)
 }
 
 function moveLeft() {
