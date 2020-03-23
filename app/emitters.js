@@ -49,3 +49,7 @@ module.exports.userEquipedItem = (userId, itemId) => {
 module.exports.userUnequipedItem = (userId, itemId) => {
   global.io.emit('USER_UNEQUIPED_ITEM', userId, itemId)
 }
+
+module.exports.userDied = (userId) => {
+  global.io.emit('USER_DIED', userId)
+}

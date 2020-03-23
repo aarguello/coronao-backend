@@ -99,14 +99,14 @@ function attack() {
   const user = global.users[this.id]
   const victimId = utils.getNeighbourUserId(user)
 
-  if (victimId && user.stamina >= global.staminaRequired) {
+  if (victimId && user.HP > 0 && user.stamina >= global.staminaRequired) {
 
     const victim  = global.users[victimId]
     victim.HP    -= global.attackDamage
     user.stamina -= global.staminaRequired
 
     if (victim.HP < 0) {
-      victim.HP = 0
+      killUser(victim)
     }
 
     emitters.userApplyDamage(victim)
@@ -143,4 +143,11 @@ function unequipItem(user, itemId) {
   const index = user.equipement.indexOf(itemId)
   user.equipement.splice(index, 1)
   emitters.userUnequipedItem(userId, itemId)
+}
+
+function killUser(user) {
+  user.HP = 0
+  user.stamina = 0
+  user.equipement = []
+  emitters.userDied(user._id)
 }
