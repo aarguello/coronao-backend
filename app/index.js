@@ -1,7 +1,7 @@
 const express  = require('express')
 const app      = express();
 const server   = require('http').createServer(app)
-const io       = require('socket.io')(server)
+const io       = require('socket.io')(server, {pingInterval: 3000})
 const utils    = require('./utils')
 const user     = require('./user')
 
