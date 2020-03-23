@@ -2,20 +2,25 @@ module.exports.initGlobals          = initGlobals
 module.exports.getRandomInt         = getRandomInt
 module.exports.getRandomColor       = getRandomColor
 module.exports.getRandomClass       = getRandomClass
+module.exports.getRandomRace        = getRandomRace
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
 module.exports.getNeighbourUserId   = getNeighbourUserId
 
 function initGlobals(io) {
+
   global.io = io
   global.users = {}
   global.positions = {}
-  global.items = loadItems('./data/items.json')
-  global.classes = loadClasses('./data/classes.json')
+
   global.mapSize = 32
   global.baseDamage = 75
   global.staminaRequired = 0
   global.inventorySize = 9
+
+  global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
+  global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
+  global.items   = importJSONArrayAsDictionary('./data/items.json',   '_id')
 }
 
 function getRandomInt(min, max) {
@@ -33,6 +38,13 @@ function getRandomClass() {
   const classNameIndex = getRandomInt(0, classNames.length)
   const randomClassName = classNames[classNameIndex]
   return global.classes[randomClassName]
+}
+
+function getRandomRace() {
+  const raceNames = Object.keys(global.races)
+  const raceNameIndex = getRandomInt(0, raceNames.length)
+  const randomRaceName = raceNames[raceNameIndex]
+  return global.races[randomRaceName]
 }
 
 function getRandomPosition() {
@@ -61,26 +73,14 @@ function getNeighbourUserId(user) {
   return global.positions[neighbourPosition]
 }
 
-function loadItems(itemsPath) {
+function importJSONArrayAsDictionary(path, key) {
 
-  const itemsArray = require(itemsPath)
+  const array = require(path)
 
-  const items = itemsArray.reduce((dict, item) => {
-    dict[item._id] = item
-    return dict
+  const dict = array.reduce((currentDict, item) => {
+    currentDict[item[key]] = item
+    return currentDict
   }, {})
 
-  return items
-}
-
-function loadClasses(classesPath) {
-
-  const classesArray = require(classesPath)
-
-  const classes = classesArray.reduce((dict, currentClass) => {
-    dict[currentClass.name] = currentClass
-    return dict
-  }, {})
-
-  return classes
+  return dict
 }
