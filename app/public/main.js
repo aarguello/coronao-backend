@@ -13,14 +13,12 @@ function userAttack() {
 }
 
 socket.on('USER_POSITION_CHANGE', updatePosition)
-socket.on('USER_JOINED', updatePosition)
+socket.on('USER_WELCOME', updatePosition)
 
 const onevent = socket.onevent
 
 socket.onevent = function (packet) {
-  const event = packet.data[0]
-  const data  = packet.data[1]
-  console.log(event, data)
+  console.log(packet.data)
   onevent.call(this, packet)
 }
 

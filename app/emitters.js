@@ -1,6 +1,18 @@
 
-module.exports.userJoined = (user) => {
-  global.io.emit('USER_JOINED', user)
+module.exports.userWelcome = (user) => {
+
+  const globals = {
+    users: global.users,
+    items: global.items,
+    mapSize: global.mapSize,
+    inventorySize :global.inventorySize,
+  }
+
+  global.io.to(user._id).emit('USER_WELCOME', user, globals)
+}
+
+module.exports.userJoined = (user, socket) => {
+  socket.broadcast.emit('USER_JOINED', user)
 }
 
 module.exports.userLeft = (userId) => {

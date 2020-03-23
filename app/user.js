@@ -20,7 +20,9 @@ function create(socket) {
   global.positions[user.position] = user._id
 
   setupHandlers(socket)
-  emitters.userJoined(user)
+
+  emitters.userWelcome(user)
+  emitters.userJoined(user, socket)
 
   socket.on('disconnect', () => {
     emitters.userLeft(user._id)
