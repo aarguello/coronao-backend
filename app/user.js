@@ -45,6 +45,7 @@ function setupHandlers(socket) {
   socket.on('USER_MOVE_DOWN',  moveDown)
   socket.on('USER_ATTACK',     attack)
   socket.on('USER_EQUIP_ITEM', equipItem)
+  socket.on('USER_SPEAK',      speak)
 }
 
 function moveLeft() {
@@ -209,4 +210,13 @@ function killUser(user) {
   user.stamina = 0
   user.equipement = []
   emitters.userDied(user._id)
+}
+
+function speak(message) {
+
+  if (message.length > global.messageMaxLength) {
+    message = message.slice(0, global.messageMaxLength) + '...'
+  }
+
+  emitters.userSpoke(this.id, message)
 }

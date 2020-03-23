@@ -17,6 +17,7 @@ function initGlobals(io) {
   global.baseDamage = 100
   global.staminaRequired = 0
   global.inventorySize = 9
+  global.messageMaxLength = 100
 
   global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
