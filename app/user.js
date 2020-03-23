@@ -1,5 +1,6 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
+const items    = require('./items')
 const spells   = require('./spells')
 
 module.exports.create = create
@@ -45,7 +46,7 @@ function setupHandlers(socket) {
   socket.on('USER_MOVE_UP',    moveUp)
   socket.on('USER_MOVE_DOWN',  moveDown)
   socket.on('USER_ATTACK',     attack)
-  socket.on('USER_EQUIP_ITEM', equipItem)
+  socket.on('USER_EQUIP_ITEM', items.equipItem)
   socket.on('USER_SPEAK',      speak)
   socket.on('USER_CAST_SPELL', spells.handleSpell)
 }
@@ -147,64 +148,13 @@ function attack() {
 function getUserPhysicalDamage(user) {
 
   const classDamage = global.classes[user.class].physical_damage
-  const itemsDamage = getEquipementBonus(user, 'physical_damage')
+  const itemsDamage = items.getEquipementBonus(user, 'physical_damage')
 
   return global.baseDamage * classDamage + itemsDamage
 }
 
 function getUserPhysicalDefense(user) {
-  return getEquipementBonus(user, 'physical_defense')
-}
-
-function getEquipementBonus(user, attribute) {
-
-  const reducer = (total, itemId) => {
-
-    let item = global.items[itemId]
-    let value = 0
-
-    if (item[attribute]) {
-      value = utils.getRandomInt(
-        item[attribute][0],
-        item[attribute][1] + 1
-      )
-    }
-
-    return total + value
-  }
-
-  return user.equipement.reduce(reducer, 0)
-}
-
-function equipItem(itemId) {
-
-  const userId = this.id
-  const user   = global.users[userId]
-  const item   = global.items[itemId]
-
-  if (!item || !user.inventory[itemId]) {
-    return
-  }
-
-  if (user.equipement.includes(itemId)) {
-    unequipItem(user, itemId)
-  } else {
-
-    user.equipement.forEach(id => {
-      if (global.items[id].body_part === item.body_part) {
-        unequipItem(user, id)
-      }
-    })
-
-    user.equipement.push(itemId)
-    emitters.userEquipedItem(userId, itemId)
-  }
-}
-
-function unequipItem(user, itemId) {
-  const index = user.equipement.indexOf(itemId)
-  user.equipement.splice(index, 1)
-  emitters.userUnequipedItem(userId, itemId)
+  return items.getEquipementBonus(user, 'physical_defense')
 }
 
 function killUser(user) {
