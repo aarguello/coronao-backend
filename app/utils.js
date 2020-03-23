@@ -1,4 +1,3 @@
-
 module.exports.initGlobals          = initGlobals
 module.exports.getRandomColor       = getRandomColor
 module.exports.getRandomPosition    = getRandomPosition
@@ -12,9 +11,10 @@ function initGlobals(io) {
   global.items = loadItems('./data/items.json')
   global.mapSize = 32
   global.attackDamage = 15
+  global.staminaRequired = 25
   global.inventorySize = 9
-
 }
+
 function getRandomColor() {
   const colors = ['blue', 'red', 'green', 'violet', 'yellow']
   const i = getRandomInt(0, colors.length)

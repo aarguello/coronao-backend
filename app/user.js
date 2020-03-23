@@ -12,7 +12,6 @@ function create(socket) {
     position: utils.getRandomPosition(),
     direction: 'DOWN',
     stamina: 100,
-
   }
 
   global.users[socket.id] = user
@@ -97,12 +96,11 @@ function attack() {
   const user = global.users[this.id]
   const victimId = utils.getNeighbourUserId(user)
 
-  if (victimId && user.stamina >= 25) {
+  if (victimId && user.stamina >= global.staminaRequired) {
 
-
+    const victim  = global.users[victimId]
+    victim.HP    -= global.attackDamage
     user.stamina -= global.staminaRequired
-    const victim = global.users[victimId]
-    victim.HP   -= global.attackDamage
 
     if (victim.HP < 0) {
       victim.HP = 0
@@ -110,6 +108,5 @@ function attack() {
 
     emitters.userApplyDamage(victim)
     emitters.userStaminaChange(user)
-
   }
 }
