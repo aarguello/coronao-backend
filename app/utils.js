@@ -21,6 +21,7 @@ function initGlobals(io) {
   global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
   global.items   = importJSONArrayAsDictionary('./data/items.json',   '_id')
+  global.spells  = importJSONArrayAsDictionary('./data/spells.json',  '_id')
 }
 
 function getRandomInt(min, max) {

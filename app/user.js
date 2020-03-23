@@ -16,6 +16,7 @@ function create(socket) {
     direction: 'DOWN',
     inventory: {},
     equipement: [],
+    spells: [],
   }
 
   user.HP      = userClass.HP + userRace.HP

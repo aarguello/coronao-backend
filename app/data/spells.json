@@ -1,0 +1,41 @@
+[{
+  "_id": "SDFKVuUMnvKVYjXl9JEY",
+  "name": "Magic misil",
+  "type": "DAMAGE",
+  "value": [50, 70],
+  "mana": 50
+}, {
+  "_id": "zAG5uBOmsC1jZ1wKBA29",
+  "name": "Thunderbolt",
+  "type": "DAMAGE",
+  "value": [70, 100],
+  "mana": 100
+}, {
+  "_id": "uIg54upHwdApsaLZWVNs",
+  "name": "Apocalypse",
+  "type": "DAMAGE",
+  "mana": 150,
+  "value": 0.75
+}, {
+  "_id": "NC3t63uHbA7yAqv0tmpf",
+  "name": "Heal",
+  "type": "HEAL",
+  "mana": 80,
+  "value": [80, 120]
+}, {
+  "_id": "55QVgxwJa7BJc2apChDi",
+  "name": "Freeze",
+  "type": "FREEZE",
+  "mana": 90,
+  "value": 8
+}, {
+  "_id": "KKuwrH5fN7pZK4X2LAUW",
+  "name": "Unfreeze",
+  "type": "UNFREEZE",
+  "mana": 80
+}, {
+  "_id": "15Q7qyRoflf85dXFac30",
+  "name": "Revive",
+  "type": "REVIVE",
+  "mana": 180
+}]
