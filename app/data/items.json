@@ -1,58 +1,58 @@
 [{
   "_id": "H07mwFXaKeuULQvOOkEv",
   "name": "Brown hat",
-  "equipable": "HEAD",
+  "body_part": "HEAD",
   "physical_defense": [4, 8],
   "magical_defense": 20
 }, {
   "_id": "Wq0HhjkjN5zR8N8DENZF",
   "name": "Iron helm",
-  "equipable": "HEAD",
+  "body_part": "HEAD",
   "physical_defense": [3, 10]
 }, {
   "_id": "jXnfxBE01Hx3YsTTi734",
   "name": "Plate armor",
-  "equipable": "TORSO",
+  "body_part": "TORSO",
   "physical_defense": [10, 20]
 }, {
   "_id": "XD0VuskON97LFPG0kdct",
   "name": "Tunic",
-  "equipable": "TORSO",
+  "body_part": "TORSO",
   "physical_defense": [5, 10]
 }, {
   "_id": "8Z5Fzc9t3VAQotaaZEag",
   "name": "Long sword",
-  "equipable": "RIGHT_HAND",
+  "body_part": "RIGHT_HAND",
   "physical_damage": [4, 12]
 }, {
   "_id": "J0ldZPPAL2FZg1eqUS4T",
   "name": "Oak wand",
-  "equipable": "RIGHT_HAND",
+  "body_part": "RIGHT_HAND",
   "magical_damage": 30
 }, {
   "_id": "5ihnF4fXoHTQycWfNfAH",
   "name": "Wooden arch",
-  "equipable": "RIGHT_HAND",
+  "body_part": "RIGHT_HAND",
   "magical_damage": 30
 }, {
   "_id": "RVAl3xVPy4nn5v7M84vr",
   "name": "Bronze dagger",
-  "equipable": "RIGHT_HAND",
+  "body_part": "RIGHT_HAND",
   "physical_damage": 30,
   "stab_chance": 15
 }, {
   "_id": "G21gfv4T2YijDaTR0UVh",
   "name": "Oak shield",
-  "equipable": "LEFT_HAND",
+  "body_part": "LEFT_HAND",
   "physical_defense": [6, 15]
 }, {
   "_id": "4I7A6d1kGyCgTsq9Psiz",
   "name": "Pine arrow",
-  "equipable": "LEFT_HAND",
+  "body_part": "LEFT_HAND",
   "physical_damage": [5, 10]
 }, {
   "_id": "2DuoNlOe5SlgANpeFvzo",
   "name": "Gold ring",
-  "equipable": "FINGER",
+  "body_part": "FINGER",
   "magical_defense": 18
 }]

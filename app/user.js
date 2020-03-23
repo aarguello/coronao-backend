@@ -8,10 +8,12 @@ function create(socket) {
   const user = {
     _id: socket.id,
     HP: 100,
+    stamina: 100,
     color: utils.getRandomColor(),
     position: utils.getRandomPosition(),
     direction: 'DOWN',
-    stamina: 100,
+    inventory: {},
+    equipement: [],
   }
 
   global.users[socket.id] = user
@@ -33,6 +35,7 @@ function setupHandlers(socket) {
   socket.on('USER_MOVE_UP',    moveUp)
   socket.on('USER_MOVE_DOWN',  moveDown)
   socket.on('USER_ATTACK',     attack)
+  socket.on('USER_EQUIP_ITEM', equipItem)
 }
 
 function moveLeft() {
@@ -109,4 +112,35 @@ function attack() {
     emitters.userApplyDamage(victim)
     emitters.userStaminaChange(user)
   }
+}
+
+function equipItem(itemId) {
+
+  const userId = this.id
+  const user   = global.users[userId]
+  const item   = global.items[itemId]
+
+  if (!item || !user.inventory[itemId]) {
+    return
+  }
+
+  if (user.equipement.includes(itemId)) {
+    unequipItem(user, itemId)
+  } else {
+
+    user.equipement.forEach(id => {
+      if (global.items[id].body_part === item.body_part) {
+        unequipItem(user, id)
+      }
+    })
+
+    user.equipement.push(itemId)
+    emitters.userEquipedItem(userId, itemId)
+  }
+}
+
+function unequipItem(user, itemId) {
+  const index = user.equipement.indexOf(itemId)
+  user.equipement.splice(index, 1)
+  emitters.userUnequipedItem(userId, itemId)
 }
