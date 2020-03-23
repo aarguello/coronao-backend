@@ -13,8 +13,8 @@ function initGlobals(io) {
   global.items = loadItems('./data/items.json')
   global.classes = loadClasses('./data/classes.json')
   global.mapSize = 32
-  global.baseDamage = 15
-  global.staminaRequired = 5
+  global.baseDamage = 75
+  global.staminaRequired = 0
   global.inventorySize = 9
 }
 
