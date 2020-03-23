@@ -6,11 +6,14 @@
     <script src="main.js"></script>
   </head>
   <body>
-    Connected with id <span id="socket_id"></span>
-    <button onclick="userMove('LEFT')">Move left</button>
-    <button onclick="userMove('RIGHT')">Move right</button>
-    <button onclick="userMove('UP')">Move up</button>
-    <button onclick="userMove('DOWN')">Move down</button>
-    <button onclick="userAttack()">Attack</button>
+    <div>User: <span id="socket_id"></span></div>
+    <div>Position: <span id="user_position"></span></div>
+    <br>
+    <b>Actions</b>
+    <div><button onclick="userMove('LEFT')">Move left</button></div>
+    <div><button onclick="userMove('RIGHT')">Move right</button></div>
+    <div><button onclick="userMove('UP')">Move up</button></div>
+    <div><button onclick="userMove('DOWN')">Move down</button></div>
+    <div><button onclick="userAttack()">Attack</button></div>
   </body>
 </html>
