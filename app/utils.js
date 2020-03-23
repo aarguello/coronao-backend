@@ -1,4 +1,5 @@
 module.exports.initGlobals          = initGlobals
+module.exports.getRandomInt         = getRandomInt
 module.exports.getRandomColor       = getRandomColor
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
@@ -10,8 +11,8 @@ function initGlobals(io) {
   global.positions = {}
   global.items = loadItems('./data/items.json')
   global.mapSize = 32
-  global.attackDamage = 15
-  global.staminaRequired = 25
+  global.baseDamage = 15
+  global.staminaRequired = 5
   global.inventorySize = 9
 }
 

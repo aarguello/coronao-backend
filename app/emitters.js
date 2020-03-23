@@ -20,7 +20,7 @@ module.exports.userPositionChange = (user) => {
   })
 }
 
-module.exports.userApplyDamage = (user) => {
+module.exports.userApplyDamage = (user, damage) => {
 
   const _id = user._id
   const HP  = user.HP
@@ -28,7 +28,7 @@ module.exports.userApplyDamage = (user) => {
   global.io.emit('USER_APPLY_DAMAGE', {
     _id,
     HP,
-  })
+  }, damage)
 }
 
 module.exports.userStaminaChange = (user) => {

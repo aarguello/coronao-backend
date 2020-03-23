@@ -96,22 +96,67 @@ function moveDown() {
 
 function attack() {
 
-  const user = global.users[this.id]
+  const user     = global.users[this.id]
   const victimId = utils.getNeighbourUserId(user)
 
-  if (victimId && user.HP > 0 && user.stamina >= global.staminaRequired) {
+  if (!victimId || user.HP === 0 || user.stamina < global.staminaRequired) {
+    return
+  }
 
-    const victim  = global.users[victimId]
-    victim.HP    -= global.attackDamage
-    user.stamina -= global.staminaRequired
+  const victim = global.users[victimId]
 
-    if (victim.HP < 0) {
-      killUser(victim)
+  if (victim.HP > 0) {
+
+    const userDamange     = getUserPhysicalDamage(user)
+    const victimDefense   = getUserPhysicalDefense(victim)
+    const inflictedDamage = global.baseDamage + userDamange - victimDefense
+
+    if (inflictedDamage > 0) {
+
+      if (victim.HP - inflictedDamage > 0) {
+        victim.HP -= inflictedDamage
+      } else {
+        victim.HP = 0
+      }
+
+      emitters.userApplyDamage(victim, inflictedDamage)
+
+      if (victim.HP === 0) {
+        killUser(victim)
+      }
     }
 
-    emitters.userApplyDamage(victim)
+    user.stamina -= global.staminaRequired
     emitters.userStaminaChange(user)
   }
+}
+
+function getUserPhysicalDamage(user) {
+  return userPhysicalAttributesCumulator(user, 'physical_damage')
+}
+
+function getUserPhysicalDefense(user) {
+  return userPhysicalAttributesCumulator(user, 'physical_defense')
+}
+
+function userPhysicalAttributesCumulator(user, attribute) {
+
+  const reducer = (total, itemId) => {
+
+    let item = global.items[itemId]
+    let value = 0
+
+    if (item[attribute]) {
+      value = utils.getRandomInt(
+        item[attribute][0],
+        item[attribute][1] + 1
+      )
+    }
+
+    return total + value
+  }
+
+  return user.equipement.reduce(reducer, 0)
 }
 
 function equipItem(itemId) {
