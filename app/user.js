@@ -5,16 +5,21 @@ module.exports.create = create
 
 function create(socket) {
 
+  const userClass = utils.getRandomClass()
+
   const user = {
     _id: socket.id,
-    HP: 100,
-    stamina: 100,
+    class: userClass.name,
     color: utils.getRandomColor(),
     position: utils.getRandomPosition(),
     direction: 'DOWN',
     inventory: {},
     equipement: [],
   }
+
+  user.HP      = userClass.HP
+  user.mana    = userClass.mana
+  user.stamina = userClass.stamina
 
   global.users[socket.id] = user
   global.positions[user.position] = user._id

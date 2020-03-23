@@ -1,0 +1,34 @@
+[{
+  "_id": "",
+  "name": "WARRIOR",
+  "HP": 500,
+  "mana": 0,
+  "stamina": 250,
+  "physical_damage": [8, 12],
+  "physical_defense": [10, 20]
+}, {
+  "_id": "",
+  "name": "MAGE",
+  "HP": 300,
+  "mana": 2000,
+  "stamina": 100,
+  "physical_damage": [4, 8],
+  "physical_defense": [0, 5],
+  "magical_damage": 20
+}, {
+  "_id": "",
+  "name": "BARD",
+  "HP": 400,
+  "stamina": 150,
+  "mana": 1500,
+  "physical_damage": [6, 10],
+  "physical_defense": [8, 12]
+}, {
+  "_id": "",
+  "name": "PALADIN",
+  "HP": 450,
+  "stamina": 200,
+  "mana": 800,
+  "physical_damage": [6, 10],
+  "physical_defense": [8, 12]
+}]

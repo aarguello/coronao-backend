@@ -1,6 +1,7 @@
 module.exports.initGlobals          = initGlobals
 module.exports.getRandomInt         = getRandomInt
 module.exports.getRandomColor       = getRandomColor
+module.exports.getRandomClass       = getRandomClass
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
 module.exports.getNeighbourUserId   = getNeighbourUserId
@@ -10,16 +11,28 @@ function initGlobals(io) {
   global.users = {}
   global.positions = {}
   global.items = loadItems('./data/items.json')
+  global.classes = loadClasses('./data/classes.json')
   global.mapSize = 32
   global.baseDamage = 15
   global.staminaRequired = 5
   global.inventorySize = 9
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min
+}
+
 function getRandomColor() {
   const colors = ['blue', 'red', 'green', 'violet', 'yellow']
   const i = getRandomInt(0, colors.length)
   return colors[i]
+}
+
+function getRandomClass() {
+  const classNames = Object.keys(global.classes)
+  const classNameIndex = getRandomInt(0, classNames.length)
+  const randomClassName = classNames[classNameIndex]
+  return global.classes[randomClassName]
 }
 
 function getRandomPosition() {
@@ -34,10 +47,6 @@ function getRandomPosition() {
   }
 
   return position
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min
 }
 
 function getNeighbourPosition(position, direction) {
@@ -62,4 +71,16 @@ function loadItems(itemsPath) {
   }, {})
 
   return items
+}
+
+function loadClasses(classesPath) {
+
+  const classesArray = require(classesPath)
+
+  const classes = classesArray.reduce((dict, currentClass) => {
+    dict[currentClass.name] = currentClass
+    return dict
+  }, {})
+
+  return classes
 }
