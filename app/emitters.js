@@ -19,8 +19,12 @@ module.exports.userLeft = (_id) => {
   global.io.emit('USER_LEFT', { _id })
 }
 
-module.exports.userPositionChange = (_id, position, direction) => {
-  global.io.emit('USER_POSITION_CHANGE', { _id, position, direction })
+module.exports.userPositionChanged = (_id, position) => {
+  global.io.emit('USER_POSITION_CHANGE', { _id, position })
+}
+
+module.exports.userDirectionChanged = (_id, direction) => {
+  global.io.emit('USER_DIRECTION_CHANGED', { _id, direction })
 }
 
 module.exports.userAttacked = (_id, damage) => {
