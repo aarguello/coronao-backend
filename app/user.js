@@ -22,7 +22,7 @@ function create(socket) {
     direction: 'DOWN',
     inventory: {},
     equipement: [],
-    spells: [],
+    spells: Object.keys(global.spells),
     max_HP: userClass.HP + userRace.HP,
     max_mana: userClass.mana + userRace.mana,
     max_stamina: userClass.stamina,
