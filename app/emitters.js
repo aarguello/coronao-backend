@@ -4,6 +4,7 @@ module.exports.userWelcome = (user) => {
   const globals = {
     users: global.users,
     items: global.items,
+    spells: global.spells,
     mapSize: global.mapSize,
     inventorySize :global.inventorySize,
   }
