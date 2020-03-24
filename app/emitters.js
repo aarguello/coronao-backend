@@ -27,20 +27,20 @@ module.exports.userAttacked = (_id, inflictedDamage) => {
   global.io.emit('USER_ATTACKED', { _id }, inflictedDamage)
 }
 
-module.exports.userApplyDamage = (_id, HP, inflictedDamage) => {
-  global.io.emit('USER_APPLY_DAMAGE', { _id, HP }, inflictedDamage)
-}
-
 module.exports.userReceivedSpell = (_id, spellId) => {
   global.io.emit('USER_RECEIVED_SPELL', { _id }, spellId)
 }
 
-module.exports.userManaChange = (_id, mana) => {
-  global.io.to(_id).emit('USER_MANA_CHANGE', { _id, mana })
+module.exports.userHPChanged = (_id, HP) => {
+  global.io.emit('USER_HP_CHANGED', { _id, HP })
 }
 
-module.exports.userStaminaChange = (_id, stamina) => {
-  global.io.to(_id).emit('USER_STAMINA_CHANGE', { _id, stamina })
+module.exports.userManaChanged = (_id, mana) => {
+  global.io.to(_id).emit('USER_MANA_CHANGED', { _id, mana })
+}
+
+module.exports.userStaminaChanged = (_id, stamina) => {
+  global.io.to(_id).emit('USER_STAMINA_CHANGED', { _id, stamina })
 }
 
 module.exports.userEquipedItem = (_id, itemId) => {

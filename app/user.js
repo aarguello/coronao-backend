@@ -3,8 +3,9 @@ const emitters = require('./emitters')
 const items    = require('./items')
 const spells   = require('./spells')
 
-module.exports.create        = create
-module.exports.inflictDamage = inflictDamage
+module.exports.create  = create
+module.exports.hurt    = hurt
+module.exports.heal    = heal
 
 function create(socket) {
 
@@ -22,7 +23,7 @@ function create(socket) {
     spells: [],
     max_HP: userClass.HP + userRace.HP,
     max_mana: userClass.mana + userRace.mana,
-    max_stamina: userClass.stamina
+    max_stamina: userClass.stamina,
   }
 
   user.HP = user.max_HP
@@ -130,9 +131,9 @@ function attack() {
 
     user.stamina -= global.staminaRequired
     emitters.userAttacked(user._id, inflictedDamage)
-    emitters.userStaminaChange(user._id, user.stamina)
+    emitters.userStaminaChanged(user._id, user.stamina)
 
-    inflictDamage(victim, inflictedDamage)
+    hurt(victim, inflictedDamage)
   }
 }
 
@@ -148,7 +149,7 @@ function getUserPhysicalDefense(user) {
   return items.getEquipementBonus(user, 'physical_defense')
 }
 
-function inflictDamage(target, damage) {
+function hurt(target, damage) {
 
   if (damage <= 0) {
     return
@@ -160,14 +161,29 @@ function inflictDamage(target, damage) {
     target.HP = 0
   }
 
-  emitters.userApplyDamage(target._id, target.HP, damage)
+  emitters.userHPChanged(target._id, target.HP)
 
   if (target.HP === 0) {
-    killUser(target)
+    kill(target)
   }
 }
 
-function killUser(user) {
+function heal(target, surplus) {
+
+  if (surplus <= 0) {
+    return
+  }
+
+  if (target.HP + surplus <= target.max_HP) {
+    target.HP += surplus
+  } else {
+    target.HP = target.max_HP
+  }
+
+  emitters.userHPChanged(target._id, target.HP)
+}
+
+function kill(user) {
   user.HP = 0
   user.stamina = 0
   user.equipement = []

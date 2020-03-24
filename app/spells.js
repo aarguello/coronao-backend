@@ -43,13 +43,19 @@ function damage(user, target, spell) {
   const classDamage  = global.classes[user.class].magical_damage
 
   const damage = Math.round(spellDamage * itemsDamage * classDamage - itemsDefense)
-  users.inflictDamage(target, damage)
+  users.hurt(target, damage)
 
   return true
 }
 
-function heal(spell, target) {
-  console.log('Heal user', target._id)
+function heal(user, target, spell) {
+
+  if (target.HP === 0) {
+    return
+  }
+
+  const surplus = utils.getRandomInt(spell.value[0], spell.value[1])
+  users.heal(target, surplus)
 }
 
 function revive(spell, target) {
@@ -76,5 +82,5 @@ function consumeMana(user, mana) {
     user.mana = 0
   }
 
-  emitters.userManaChange(user._id, user.mana)
+  emitters.userManaChanged(user._id, user.mana)
 }
