@@ -65,27 +65,10 @@ function getRandomPosition() {
 }
 
 function getNeighbourPosition(position, direction) {
-
-  let neighbour;
-
-  if (direction === 'LEFT')  neighbour = [position[0] - 1, position[1]]
-  if (direction === 'RIGHT') neighbour = [position[0] + 1, position[1]]
-  if (direction === 'UP')    neighbour = [position[0]    , position[1] - 1]
-  if (direction === 'DOWN')  neighbour = [position[0]    , position[1] + 1]
-
-  if (positionWithinMapBoundaries(neighbour)) {
-    return neighbour
-  } else {
-    return position
-  }
-}
-
-function positionWithinMapBoundaries(position) {
-
-  const checkX = 0 <= position[0] && position[0] < global.map.size
-  const checkY = 0 <= position[1] && position[1] < global.map.size
-
-  return checkX && checkY
+  if (direction === 'LEFT')  return [position[0] - 1, position[1]]
+  if (direction === 'RIGHT') return [position[0] + 1, position[1]]
+  if (direction === 'UP')    return [position[0]    , position[1] - 1]
+  if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
 }
 
 function getNeighbourUserId(user) {
