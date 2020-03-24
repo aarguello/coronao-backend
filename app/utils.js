@@ -8,22 +8,23 @@ module.exports.getNeighbourUserId   = getNeighbourUserId
 
 function initGlobals(io) {
 
-  global.io = io
-  global.users = {}
+  global.io        = io
+  global.users     = {}
+  global.aliveNPCs = {}
   global.positions = {}
-  global.aliveNPCs = []
 
-  global.mapSize = 32
-  global.baseDamage = 100
-  global.staminaRequired = 0
-  global.inventorySize = 9
+  global.mapSize          = 32
+  global.baseDamage       = 100
+  global.staminaRequired  = 0
+  global.inventorySize    = 9
   global.messageMaxLength = 100
 
-  // Milliseconds
   global.intervals = {
     frozen: 5000,
+    pathfinder: 1000,
   }
 
+  global.map     = importMap('./data/map-1.json')
   global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./data/NPCs.json',    'name')
@@ -52,11 +53,11 @@ function getRandomRace() {
 function getRandomPosition() {
 
   const position = [
-    getRandomInt(0, global.mapSize),
-    getRandomInt(0, global.mapSize),
+    getRandomInt(0, global.map.size),
+    getRandomInt(0, global.map.size),
   ]
 
-  if (global.positions[position]) {
+  if (global.positions[position] || global.map.collisions[position]) {
     return getRandomPosition()
   }
 
@@ -85,4 +86,40 @@ function importJSONArrayAsDictionary(path, key) {
   }, {})
 
   return dict
+}
+
+function importMap(path) {
+
+  const rawMap = require(path)
+
+  const map = {
+    collisions: {},
+    positions: {},
+    size: rawMap.width,
+  }
+
+  const collisions = rawMap.tilesets[0].tiles.map(t => (
+    t.properties && t.properties.some(p => p.name === 'collides' && p.value)
+  ))
+
+  const reducer = (map, tile, i) => {
+
+    if (collisions[i]) {
+
+      const position = [
+        Math.floor(i / map.size),
+        i % map.size,
+      ]
+
+      map.collisions[position] = true
+      map.positions[position] = { type: 'tile', collides: true }
+    }
+
+    return map
+  }
+
+  return rawMap.layers
+               .find(layer => layer.name === 'collision-1')
+               .data
+               .reduce(reducer, map)
 }
