@@ -98,28 +98,31 @@ function importMap(path) {
     size: rawMap.width,
   }
 
-  const collisions = rawMap.tilesets[0].tiles.map(t => (
+  const collisionLayers = rawMap.layers.filter(l => l.name.startsWith('collision'))
+  const collisionTiles  = rawMap.tilesets[0].tiles.map(t => (
     t.properties && t.properties.some(p => p.name === 'collides' && p.value)
   ))
 
-  const reducer = (map, tile, i) => {
-
-    if (collisions[i]) {
-
-      const position = [
-        Math.floor(i / map.size),
-        i % map.size,
-      ]
-
-      map.collisions[position] = true
-      map.positions[position] = { type: 'tile', collides: true }
+  for (let i = 0; i < map.size; i++) {
+    for (let j = 0; j < collisionLayers.length; j++) {
+      writeCollisionOnMap(collisionLayers[j].data[i], i)
     }
-
-    return map
   }
 
-  return rawMap.layers
-               .find(layer => layer.name === 'collision-1')
-               .data
-               .reduce(reducer, map)
+  function writeCollisionOnMap(tileId, index) {
+
+    if (!collisionTiles[tileId]) {
+      return
+    }
+
+    const position = [
+      Math.floor(index / map.size),
+      index % map.size,
+    ]
+
+    map.collisions[position] = true
+    map.positions[position] = { type: 'tile', collides: true }
+  }
+
+  return map
 }
