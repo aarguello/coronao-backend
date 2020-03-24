@@ -8,7 +8,7 @@ module.exports.userWelcome = (user) => {
     inventorySize :global.inventorySize,
   }
 
-  global.io.to(user._id).emit('USER_WELCOME', user, globals)
+  global.io.to(user._id).emit('USER_WELCOME', { user, globals })
 }
 
 module.exports.userJoined = (user, socket) => {
@@ -23,12 +23,12 @@ module.exports.userPositionChange = (_id, position, direction) => {
   global.io.emit('USER_POSITION_CHANGE', { _id, position, direction })
 }
 
-module.exports.userAttacked = (_id, inflictedDamage) => {
-  global.io.emit('USER_ATTACKED', { _id }, inflictedDamage)
+module.exports.userAttacked = (_id, damage) => {
+  global.io.emit('USER_ATTACKED', { user: { _id }, damage })
 }
 
 module.exports.userReceivedSpell = (_id, spellId) => {
-  global.io.emit('USER_RECEIVED_SPELL', { _id }, spellId)
+  global.io.emit('USER_RECEIVED_SPELL', { user: { _id }, spellId })
 }
 
 module.exports.userHPChanged = (_id, HP) => {
@@ -44,11 +44,11 @@ module.exports.userStaminaChanged = (_id, stamina) => {
 }
 
 module.exports.userEquipedItem = (_id, itemId) => {
-  global.io.emit('USER_EQUIPED_ITEM', { _id }, itemId)
+  global.io.emit('USER_EQUIPED_ITEM', { user: { _id }, itemId })
 }
 
 module.exports.userUnequipedItem = (_id, itemId) => {
-  global.io.emit('USER_UNEQUIPED_ITEM', { _id }, itemId)
+  global.io.emit('USER_UNEQUIPED_ITEM', { user: { _id }, itemId })
 }
 
 module.exports.userDied = (_id) => {
@@ -60,5 +60,5 @@ module.exports.userRevived = (_id) => {
 }
 
 module.exports.userSpoke = (_id, message) => {
-  global.io.emit('USER_SPOKE', { _id }, message)
+  global.io.emit('USER_SPOKE', { user: { _id }, message})
 }
