@@ -20,7 +20,7 @@ module.exports.userLeft = (_id) => {
 }
 
 module.exports.userPositionChanged = (_id, position) => {
-  global.io.emit('USER_POSITION_CHANGE', { _id, position })
+  global.io.emit('USER_POSITION_CHANGED', { _id, position })
 }
 
 module.exports.userDirectionChanged = (_id, direction) => {
@@ -65,4 +65,12 @@ module.exports.userRevived = (_id) => {
 
 module.exports.userSpoke = (_id, message) => {
   global.io.emit('USER_SPOKE', { user: { _id }, message})
+}
+
+module.exports.npcPositionChanged = (_id, position) => {
+  global.io.emit('NPC_POSITION_CHANGED', { _id, position })
+}
+
+module.exports.npcDirectionChanged = (_id, direction) => {
+  global.io.emit('NPC_DIRECTION_CHANGED', { _id, direction })
 }
