@@ -20,11 +20,14 @@ function create(socket) {
     inventory: {},
     equipement: [],
     spells: [],
+    max_HP: userClass.HP + userRace.HP,
+    max_mana: userClass.mana + userRace.mana,
+    max_stamina: userClass.stamina
   }
 
-  user.HP      = userClass.HP + userRace.HP
-  user.mana    = userClass.mana + userRace.mana
-  user.stamina = userClass.stamina
+  user.HP = user.max_HP
+  user.mana = user.max_mana
+  user.stamina = user.max_stamina
 
   global.users[socket.id] = user
   global.positions[user.position] = user._id
