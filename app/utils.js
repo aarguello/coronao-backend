@@ -19,6 +19,11 @@ function initGlobals(io) {
   global.inventorySize = 9
   global.messageMaxLength = 100
 
+  // Milliseconds
+  global.intervals = {
+    frozen: 5000,
+  }
+
   global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./data/NPCs.json',    'name')

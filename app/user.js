@@ -3,9 +3,11 @@ const emitters = require('./emitters')
 const items    = require('./items')
 const spells   = require('./spells')
 
-module.exports.create  = create
-module.exports.hurt    = hurt
-module.exports.heal    = heal
+module.exports.create   = create
+module.exports.hurt     = hurt
+module.exports.heal     = heal
+module.exports.freeze   = freeze
+module.exports.unfreeze = unfreeze
 
 function create(socket) {
 
@@ -59,9 +61,11 @@ function setupHandlers(socket) {
 function moveLeft() {
 
   const user = global.users[this.id]
+  const neighbour = utils.getNeighbourUserId(user)
+
   user.direction = 'LEFT'
 
-  if (user.position[0] > 0 && !utils.getNeighbourUserId(user)) {
+  if (user.position[0] > 0 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[0]--
     global.positions[user.position] = user._id
@@ -73,9 +77,11 @@ function moveLeft() {
 function moveRight() {
 
   const user = global.users[this.id]
+  const neighbour = utils.getNeighbourUserId(user)
+
   user.direction = 'RIGHT'
 
-  if (user.position[0] < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
+  if (user.position[0] < global.mapSize - 1 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[0]++
     global.positions[user.position] = user._id
@@ -87,9 +93,11 @@ function moveRight() {
 function moveUp() {
 
   const user = global.users[this.id]
+  const neighbour = utils.getNeighbourUserId(user)
+
   user.direction = 'UP'
 
-  if (user.position[1] > 0 && !utils.getNeighbourUserId(user)) {
+  if (user.position[1] > 0 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[1]--
     global.positions[user.position] = user._id
@@ -101,9 +109,11 @@ function moveUp() {
 function moveDown() {
 
   const user = global.users[this.id]
+  const neighbour = utils.getNeighbourUserId(user)
+
   user.direction = 'DOWN'
 
-  if (user.position[1] < global.mapSize - 1 && !utils.getNeighbourUserId(user)) {
+  if (user.position[1] < global.mapSize - 1 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[1]++
     global.positions[user.position] = user._id
@@ -187,7 +197,19 @@ function kill(user) {
   user.HP = 0
   user.stamina = 0
   user.equipement = []
+  unfreeze(user)
   emitters.userDied(user._id)
+}
+
+function freeze(user) {
+  user.frozen = true
+  user.frozenTimeout = setTimeout(() => user.frozen = false, global.intervals.frozen)
+}
+
+function unfreeze(user) {
+  user.frozen = false
+  clearTimeout(user.frozenTimeout)
+  delete user.frozenTimeout
 }
 
 function speak(message) {

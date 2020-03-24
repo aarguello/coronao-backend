@@ -74,12 +74,26 @@ function revive(user, target, spell) {
   emitters.userStaminaChanged(target._id, target.stamina)
 }
 
-function freeze(spell, target) {
-  console.log('Freeze user', target._id)
+function freeze(user, target) {
+
+  if (user._id === target._id || target.HP === 0 || target.frozen) {
+    return
+  }
+
+  users.freeze(target)
+
+  return true
 }
 
-function unfreeze(spell, target) {
-  console.log('Unfreeze user', target._id)
+function unfreeze(user, target) {
+
+  if (target.HP === 0 || !target.frozen) {
+    return
+  }
+
+  users.unfreeze(target)
+
+  return true
 }
 
 function consumeMana(user, mana) {
