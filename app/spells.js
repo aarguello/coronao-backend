@@ -13,34 +13,34 @@ const spellHandler = {
 
 module.exports.handleSpell = function (targetId, spellId) {
 
-  const user   = global.users[this.id]
   const target = global.users[targetId]
   const spell  = global.spells[spellId]
+  const caster = global.users[this.id]
 
-  const hasSpell = user.spells.includes(spellId)
+  const hasSpell = caster.spells.includes(spellId)
 
-  if (!target || !spell || !hasSpell || user.HP === 0 || spell.mana > user.mana) {
+  if (!target || !spell || !hasSpell || caster.HP === 0 || spell.mana > caster.mana) {
     return
   }
 
-  const cast = spellHandler[spell.type](user, target, spell)
+  const cast = spellHandler[spell.type](target, spell, caster)
 
   if (cast) {
     emitters.userReceivedSpell(target._id, spell._id)
-    consumeMana(user, spell.mana)
+    consumeMana(caster, spell.mana)
   }
 }
 
-function damage(user, target, spell) {
+function damage(target, spell, caster) {
 
-  if (user._id === target._id || target.HP === 0) {
+  if (caster._id === target._id || target.HP === 0) {
     return false
   }
 
   const spellDamage  = utils.getRandomInt(spell.value[0], spell.value[1])
-  const itemsDamage  = items.getEquipementBonus(user, 'magical_damage') / 100 + 1
-  const itemsDefense = items.getEquipementBonus(user, 'magical_defense')
-  const classDamage  = global.classes[user.class].magical_damage
+  const itemsDamage  = items.getEquipementBonus(caster, 'magical_damage') / 100 + 1
+  const itemsDefense = items.getEquipementBonus(caster, 'magical_defense')
+  const classDamage  = global.classes[caster.class].magical_damage
 
   const damage = Math.round(spellDamage * itemsDamage * classDamage - itemsDefense)
   users.hurt(target, damage)
@@ -48,7 +48,7 @@ function damage(user, target, spell) {
   return true
 }
 
-function heal(user, target, spell) {
+function heal(target, spell) {
 
   if (target.HP === 0) {
     return
@@ -56,9 +56,11 @@ function heal(user, target, spell) {
 
   const surplus = utils.getRandomInt(spell.value[0], spell.value[1])
   users.heal(target, surplus)
+
+  return true
 }
 
-function revive(user, target, spell) {
+function revive(target) {
 
   if (target.HP > 0) {
     return
@@ -72,11 +74,13 @@ function revive(user, target, spell) {
   emitters.userHPChanged(target._id, target.HP)
   emitters.userManaChanged(target._id, target.mana)
   emitters.userStaminaChanged(target._id, target.stamina)
+
+  return true
 }
 
-function freeze(user, target) {
+function freeze(target, spell, caster) {
 
-  if (user._id === target._id || target.HP === 0 || target.frozen) {
+  if (caster._id === target._id || target.HP === 0 || target.frozen) {
     return
   }
 
@@ -85,7 +89,7 @@ function freeze(user, target) {
   return true
 }
 
-function unfreeze(user, target) {
+function unfreeze(target) {
 
   if (target.HP === 0 || !target.frozen) {
     return
