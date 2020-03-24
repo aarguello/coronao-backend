@@ -55,6 +55,10 @@ module.exports.userDied = (_id) => {
   global.io.emit('USER_DIED', { _id })
 }
 
+module.exports.userRevived = (_id) => {
+  global.io.emit('USER_REVIVED', { _id })
+}
+
 module.exports.userSpoke = (_id, message) => {
   global.io.emit('USER_SPOKE', { _id }, message)
 }

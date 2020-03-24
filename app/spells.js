@@ -58,8 +58,20 @@ function heal(user, target, spell) {
   users.heal(target, surplus)
 }
 
-function revive(spell, target) {
-  console.log('Revive user', target._id)
+function revive(user, target, spell) {
+
+  if (target.HP > 0) {
+    return
+  }
+
+  target.HP = Math.round(target.max_HP * 0.2)
+  target.mana = Math.round(target.max_mana * 0.2)
+  target.stamina = Math.round(target.max_stamina * 0.2)
+
+  emitters.userRevived(target._id)
+  emitters.userHPChanged(target._id, target.HP)
+  emitters.userManaChanged(target._id, target.mana)
+  emitters.userStaminaChanged(target._id, target.stamina)
 }
 
 function freeze(spell, target) {
