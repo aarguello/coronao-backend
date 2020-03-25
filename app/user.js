@@ -8,15 +8,20 @@ module.exports.hurt     = hurt
 module.exports.heal     = heal
 module.exports.freeze   = freeze
 module.exports.unfreeze = unfreeze
+module.exports.destroy  = destroy
+module.exports.move     = move
+module.exports.attack   = attack
+module.exports.speak    = speak
 
-function create(socket) {
+function create(_id, name) {
 
   const userClass = utils.getRandomClass()
   const userRace  = utils.getRandomRace()
   const position  = utils.getRandomPosition()
 
   const user = {
-    _id: socket.id,
+    _id: _id,
+    name: name,
     class: userClass.name,
     race: userRace.name,
     direction: 'DOWN',
@@ -32,31 +37,19 @@ function create(socket) {
   user.mana = user.max_mana
   user.stamina = user.max_stamina
 
-  global.users[socket.id] = user
+  global.users[_id] = user
 
   moveActor('USER', user._id, position)
-  setupHandlers(socket)
-
-  emitters.userWelcome(user)
-  emitters.userJoined(user, socket)
-
-  socket.on('disconnect', () => {
-    emitters.userLeft(user._id)
-    delete global.map.positions[user.position].USER
-    delete global.users[socket.id]
-  })
-
   setInterval(() => updateUserStamina(user), global.intervals.staminaRecover)
 
-
+  return user
 }
 
-function setupHandlers(socket) {
-  socket.on('USER_MOVE', move)
-  socket.on('USER_SPEAK', speak)
-  socket.on('USER_ATTACK', attack)
-  socket.on('USER_EQUIP_ITEM', items.equipItem)
-  socket.on('USER_CAST_SPELL', spells.handleSpell)
+function destroy(userId) {
+  const user = global.users[userId]
+  delete global.map.positions[user.position].USER
+  delete global.users[userId]
+  emitters.userLeft(userId)
 }
 
 function move(direction) {
