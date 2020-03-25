@@ -97,7 +97,7 @@ function importMap(path) {
     t.properties && t.properties.some(p => p.name === 'collides' && p.value)
   ))
 
-  for (let i = 0; i < map.size; i++) {
+  for (let i = 0; i < map.size * map.size; i++) {
     for (let j = 0; j < collisionLayers.length; j++) {
       writeCollisionOnMap(collisionLayers[j].data[i], i)
     }
@@ -110,8 +110,8 @@ function importMap(path) {
     }
 
     const position = [
-      Math.floor(index / map.size),
       index % map.size,
+      Math.floor(index / map.size),
     ]
 
     map.positions[position] = { TILE: tileId }
