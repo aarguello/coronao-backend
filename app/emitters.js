@@ -4,6 +4,7 @@ module.exports.userWelcome = (user) => {
   const globals = {
     users: global.users,
     items: global.items,
+    spells: global.spells,
     mapSize: global.mapSize,
     inventorySize :global.inventorySize,
   }
@@ -19,8 +20,12 @@ module.exports.userLeft = (_id) => {
   global.io.emit('USER_LEFT', { _id })
 }
 
-module.exports.userPositionChange = (_id, position, direction) => {
-  global.io.emit('USER_POSITION_CHANGE', { _id, position, direction })
+module.exports.userPositionChanged = (_id, position) => {
+  global.io.emit('USER_POSITION_CHANGED', { _id, position })
+}
+
+module.exports.userDirectionChanged = (_id, direction) => {
+  global.io.emit('USER_DIRECTION_CHANGED', { _id, direction })
 }
 
 module.exports.userAttacked = (_id, damage) => {
@@ -61,4 +66,12 @@ module.exports.userRevived = (_id) => {
 
 module.exports.userSpoke = (_id, message) => {
   global.io.emit('USER_SPOKE', { user: { _id }, message})
+}
+
+module.exports.npcPositionChanged = (_id, position) => {
+  global.io.emit('NPC_POSITION_CHANGED', { _id, position })
+}
+
+module.exports.npcDirectionChanged = (_id, direction) => {
+  global.io.emit('NPC_DIRECTION_CHANGED', { _id, direction })
 }

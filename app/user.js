@@ -21,8 +21,8 @@ function create(socket) {
     position: utils.getRandomPosition(),
     direction: 'DOWN',
     inventory: {},
-    equipement: ['jXnfxBE01Hx3YsTTi734'],
-    spells: [],
+    equipement: [],
+    spells: Object.keys(global.spells),
     max_HP: userClass.HP + userRace.HP,
     max_mana: userClass.mana + userRace.mana,
     max_stamina: userClass.stamina,
@@ -67,15 +67,17 @@ function moveLeft() {
   const user = global.users[this.id]
   const neighbour = utils.getNeighbourUserId(user)
 
-  user.direction = 'LEFT'
+  if (user.direction != 'LEFT') {
+    user.direction = 'LEFT'
+    emitters.userDirectionChanged(user._id, user.direction)
+  }
 
   if (user.position[0] > 0 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[0]--
     global.positions[user.position] = user._id
+    emitters.userPositionChanged(user._id, user.position)
   }
-
-  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveRight() {
@@ -83,15 +85,17 @@ function moveRight() {
   const user = global.users[this.id]
   const neighbour = utils.getNeighbourUserId(user)
 
-  user.direction = 'RIGHT'
+  if (user.direction != 'RIGHT') {
+    user.direction = 'RIGHT'
+    emitters.userDirectionChanged(user._id, user.direction)
+  }
 
   if (user.position[0] < global.mapSize - 1 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[0]++
     global.positions[user.position] = user._id
+    emitters.userPositionChanged(user._id, user.position)
   }
-
-  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveUp() {
@@ -99,15 +103,17 @@ function moveUp() {
   const user = global.users[this.id]
   const neighbour = utils.getNeighbourUserId(user)
 
-  user.direction = 'UP'
+  if (user.direction != 'UP') {
+    user.direction = 'UP'
+    emitters.userDirectionChanged(user._id, user.direction)
+  }
 
   if (user.position[1] > 0 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
     user.position[1]--
     global.positions[user.position] = user._id
+    emitters.userPositionChanged(user._id, user.position)
   }
-
-  emitters.userPositionChange(user._id, user.position, user.direction)
 }
 
 function moveDown() {
@@ -115,7 +121,10 @@ function moveDown() {
   const user = global.users[this.id]
   const neighbour = utils.getNeighbourUserId(user)
 
-  user.direction = 'DOWN'
+  if (user.direction != 'DOWN') {
+    user.direction = 'DOWN'
+    emitters.userDirectionChanged(user._id, user.direction)
+  }
 
   if (user.position[1] < global.mapSize - 1 && !neighbour && !user.frozen) {
     delete global.positions[user.position]
@@ -123,7 +132,7 @@ function moveDown() {
     global.positions[user.position] = user._id
   }
 
-  emitters.userPositionChange(user._id, user.position, user.direction)
+  emitters.userPositionChanged(user._id, user.position)
 }
 
 function attack() {
