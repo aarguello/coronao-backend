@@ -45,7 +45,7 @@ module.exports.handleSpell = function (targetId, spellId) {
 
   if (cast) {
     emitters.userReceivedSpell(target._id, spell._id)
-    target.decreaseStat('MANA', spell.mana)
+    caster.decreaseStat('MANA', spell.mana)
   }
 }
 
