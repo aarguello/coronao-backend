@@ -245,7 +245,7 @@ function updateUserStamina(user) {
 
   }
 
-  console.log(user._id,user.max_stamina, user.stamina)
+  // console.log(user._id,user.max_stamina, user.stamina)
 
   emitters.userStaminaChanged(user._id, staplus)
 

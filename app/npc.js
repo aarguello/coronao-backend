@@ -9,5 +9,5 @@ module.exports.init = () => {
 }
 
 function someLocalFunction() {
-  console.log('Creating NPCs...')
+  // console.log('Creating NPCs...')
 }
