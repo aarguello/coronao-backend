@@ -1,14 +1,15 @@
+const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
 module.exports.handleBlow = function () {
 
   const user      = global.users[this.id]
-  const neighbour = utils.getNeighbourPosition(user.position, user.direction)
+  const neighbour = Map.getNeighbourPosition(user.position, user.direction)
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.HP === 0|| user.HP === 0 || user.stamina < global.staminaRequired) {
+  if (!target || target.HP === 0 || user.HP === 0 || user.stamina < global.staminaRequired) {
     return
   }
 

@@ -1,3 +1,4 @@
+const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
 const items    = require('./items')
@@ -40,10 +41,10 @@ class User {
       return
     }
 
-    const position = utils.getNeighbourPosition(this.position, direction)
+    const position = Map.getNeighbourPosition(this.position, direction)
 
-    utils.pivotActor('USER', this._id, direction, emitters.userDirectionChanged)
-    utils.moveActor('USER', this._id, position, emitters.userPositionChanged)
+    Map.pivotActor('USER', this._id, direction, emitters.userDirectionChanged)
+    Map.moveActor('USER', this._id, position, emitters.userPositionChanged)
   }
 
   speak(message) {

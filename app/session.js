@@ -1,8 +1,8 @@
 const User     = require('./user')
+const Map      = require('./map')
 const emitters = require('./emitters')
 const items    = require('./items')
 const combat   = require('./combat')
-const utils    = require('./utils')
 
 module.exports.login  = login
 module.exports.logout = logout
@@ -23,8 +23,8 @@ function login(name) {
 
   global.users[user._id] = user
 
-  const initialPosition = utils.getRandomPosition()
-  utils.moveActor('USER', user._id, initialPosition)
+  const initialPosition = Map.getRandomPosition()
+  Map.moveActor('USER', user._id, initialPosition)
 
   emitters.userWelcome(user)
   emitters.userJoined(user, this)
@@ -32,11 +32,11 @@ function login(name) {
 
 function logout() {
 
-  const user = global.users[this._id]
+  const user = global.users[this.id]
 
   if (user) {
     delete global.map.positions[user.position].USER
-    delete global.users[this._id]
-    emitters.userLeft(this._id)
+    delete global.users[this.id]
+    emitters.userLeft(this.id)
   }
 }
