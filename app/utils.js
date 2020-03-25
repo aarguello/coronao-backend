@@ -4,16 +4,15 @@ module.exports.getRandomClass       = getRandomClass
 module.exports.getRandomRace        = getRandomRace
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
-module.exports.getNeighbourUserId   = getNeighbourUserId
+module.exports.checkCollision       = checkCollision
+module.exports.positionInMap        = positionInMap
 
 function initGlobals(io) {
 
   global.io        = io
   global.users     = {}
   global.aliveNPCs = {}
-  global.positions = {}
 
-  global.mapSize          = 32
   global.baseDamage       = 100
   global.staminaRequired  = 20
   global.inventorySize    = 9
@@ -58,7 +57,7 @@ function getRandomPosition() {
     getRandomInt(0, global.map.size),
   ]
 
-  if (global.positions[position] || global.map.collisions[position]) {
+  if (checkCollision(position)) {
     return getRandomPosition()
   }
 
@@ -70,11 +69,6 @@ function getNeighbourPosition(position, direction) {
   if (direction === 'RIGHT') return [position[0] + 1, position[1]]
   if (direction === 'UP')    return [position[0]    , position[1] - 1]
   if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
-}
-
-function getNeighbourUserId(user) {
-  const neighbourPosition = getNeighbourPosition(user.position, user.direction)
-  return global.positions[neighbourPosition]
 }
 
 function importJSONArrayAsDictionary(path, key) {
@@ -94,7 +88,6 @@ function importMap(path) {
   const rawMap = require(path)
 
   const map = {
-    collisions: {},
     positions: {},
     size: rawMap.width,
   }
@@ -121,9 +114,21 @@ function importMap(path) {
       index % map.size,
     ]
 
-    map.collisions[position] = true
-    map.positions[position] = { type: 'tile', collides: true }
+    map.positions[position] = { TILE: tileId }
   }
 
   return map
+}
+
+function checkCollision(position) {
+  const data = global.map.positions[position]
+  return data && (data.USER || data.NPC || data.TILE)
+}
+
+function positionInMap(position) {
+
+  const checkX = 0 <= position[0] && position[0] < global.map.size
+  const checkY = 0 <= position[1] && position[1] < global.map.size
+
+  return checkX && checkY
 }

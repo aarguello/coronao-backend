@@ -5,7 +5,7 @@ module.exports.userWelcome = (user) => {
     users: global.users,
     items: global.items,
     spells: global.spells,
-    mapSize: global.mapSize,
+    mapSize: global.map.size,
     inventorySize :global.inventorySize,
   }
 
