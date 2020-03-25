@@ -15,13 +15,14 @@ function initGlobals(io) {
 
   global.mapSize          = 32
   global.baseDamage       = 100
-  global.staminaRequired  = 0
+  global.staminaRequired  = 20
   global.inventorySize    = 9
   global.messageMaxLength = 100
 
   global.intervals = {
     frozen: 5000,
     pathfinder: 1000,
+    staminaRecover: 5000,
   }
 
   global.map     = importMap('./data/map-1.json')

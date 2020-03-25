@@ -21,7 +21,7 @@ function create(socket) {
     position: utils.getRandomPosition(),
     direction: 'DOWN',
     inventory: {},
-    equipement: [],
+    equipement: ['jXnfxBE01Hx3YsTTi734'],
     spells: [],
     max_HP: userClass.HP + userRace.HP,
     max_mana: userClass.mana + userRace.mana,
@@ -45,6 +45,10 @@ function create(socket) {
     delete global.positions[user.position]
     delete global.users[socket.id]
   })
+
+  setInterval(() => updateUserStamina(user), global.intervals.staminaRecover)
+
+
 }
 
 function setupHandlers(socket) {
@@ -219,4 +223,31 @@ function speak(message) {
   }
 
   emitters.userSpoke(this.id, message)
+}
+
+function updateUserStamina(user) {
+
+  for (item of user.equipement) {
+  
+    if (global.items[item].body_part === 'TORSO' && user.stamina < user.max_stamina) {
+
+      var stamina_reg = 15
+
+      var staplus = user.stamina + stamina_reg
+
+      if (staplus >= user.max_stamina) {
+        user.stamina = user.max_stamina
+      } else {
+        user.stamina = staplus
+      }
+
+      break
+    }
+
+  }
+
+  console.log(user._id,user.max_stamina, user.stamina)
+
+  emitters.userStaminaChanged(user._id, staplus)
+
 }
