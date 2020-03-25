@@ -5,14 +5,14 @@ socket.on('connect', () => {
 })
 
 function userMove(direction) {
-  socket.emit('USER_MOVE_' + direction)
+  socket.emit('USER_MOVE', direction)
 }
 
 function userAttack() {
   socket.emit('USER_ATTACK')
 }
 
-socket.on('USER_POSITION_CHANGE', updatePosition)
+socket.on('USER_POSITION_CHANGED', updatePosition)
 socket.on('USER_WELCOME', updatePosition)
 
 const onevent = socket.onevent
@@ -23,6 +23,9 @@ socket.onevent = function (packet) {
 }
 
 function updatePosition(data) {
+
+  data = data.user ? data.user : data
+
   if (data._id === socket.id) {
     const x = data.position[0]
     const y = data.position[1]
