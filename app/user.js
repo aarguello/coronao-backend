@@ -1,7 +1,6 @@
 const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
-const items    = require('./items')
 
 class User {
 
@@ -29,7 +28,6 @@ class User {
 
     setInterval(this.rest.bind(this), global.intervals.staminaRecover)
   }
-
 
   /* Public  */
 
@@ -82,9 +80,9 @@ class User {
       return
     }
 
-    this.increaseStat('HP', this.max_HP * 0.2)
-    this.increaseStat('mana', this.max_mana * 0.2)
-    this.increaseStat('stamina', this.max_stamina * 0.2)
+    this.#setStat('HP', this.max_HP * 0.2)
+    this.#setStat('mana', this.max_mana * 0.2)
+    this.#setStat('stamina', this.max_stamina * 0.2)
 
     emitters.userRevived(this._id)
   }
@@ -112,9 +110,24 @@ class User {
     }
   }
 
+  toggleItem(itemId) {
+
+    const item = global.items[itemId]
+
+    if (!item || !this.inventory[itemId]) {
+      return
+    }
+
+    if (this.equipement.includes(itemId)) {
+      this.#unequipItem(item)
+    } else {
+      this.#equipItem(item)
+    }
+  }
+
   getPhysicalDamage() {
     const classDamage = global.classes[this.class].physical_damage
-    const itemsDamage = items.getEquipementBonus(this, 'physical_damage')
+    const itemsDamage = utils.getEquipementBonus(this.equipement, 'physical_damage')
     return global.baseDamage * classDamage + itemsDamage
   }
 
@@ -124,7 +137,7 @@ class User {
 
   getMagicalDamage() {
     const classDamage = global.classes[this.class].magical_damage
-    const itemsDamage = items.getEquipementBonus(this, 'magical_damage') / 100 + 1
+    const itemsDamage = utils.getEquipementBonus(this.equipement, 'magical_damage') / 100 + 1
     return classDamage * itemsDamage
   }
 
@@ -132,13 +145,12 @@ class User {
     return items.getEquipementBonus(this, 'magical_defense')
   }
 
-
   /* Private */
 
   #setStat(stat, value) {
 
     const min = 0
-    const max = this['MAX_' + stat]
+    const max = this['max_' + stat]
 
     if (value < min) {
       value = min
@@ -150,6 +162,25 @@ class User {
       this[stat] = value
       emitters.userStatChanged(stat, value)
     }
+  }
+
+  #equipItem(item) {
+
+    const itemInSameBodyPart = this.equipement.find(itemId =>
+      global.items[itemId].body_part === item.body_part
+    )
+
+    if (itemInSameBodyPart) {
+      this.#unequipItem(itemInSameBodyPart)
+    }
+
+    this.equipement.push(item._id)
+    emitters.userEquipedItem(this._id, item._id)
+  }
+
+  #unequipItem(item) {
+    this.equipement = this.equipement.filter(itemId => itemId !== item._id)
+    emitters.userUnequipedItem(this._id, item._id)
   }
 
   #kill() {

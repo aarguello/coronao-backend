@@ -1,7 +1,6 @@
 const User     = require('./user')
 const Map      = require('./map')
 const emitters = require('./emitters')
-const items    = require('./items')
 const combat   = require('./combat')
 
 module.exports.login  = login
@@ -15,11 +14,11 @@ function login(name) {
 
   const user = new User(this.id, name)
 
-  this.on('USER_MOVE',       (direction) => user.move(direction))
-  this.on('USER_SPEAK',      (message) => user.speak(message))
+  this.on('USER_MOVE',        (direction) => user.move(direction))
+  this.on('USER_SPEAK',       (message)   => user.speak(message))
+  this.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
   this.on('USER_ATTACK',     combat.handleBlow)
   this.on('USER_CAST_SPELL', combat.handleSpell)
-  this.on('USER_EQUIP_ITEM', items.equipItem)
 
   global.users[user._id] = user
 
