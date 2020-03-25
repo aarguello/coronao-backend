@@ -23,12 +23,12 @@ function initGlobals(io) {
     staminaRecover: 5000,
   }
 
-  global.map     = Map.load('./data/map-1.json')
-  global.classes = importJSONArrayAsDictionary('./data/classes.json', 'name')
-  global.races   = importJSONArrayAsDictionary('./data/races.json',   'name')
-  global.NPCs    = importJSONArrayAsDictionary('./data/NPCs.json',    'name')
-  global.items   = importJSONArrayAsDictionary('./data/items.json',   '_id')
-  global.spells  = importJSONArrayAsDictionary('./data/spells.json',  '_id')
+  global.map     = Map.load('./assets/map-1.json')
+  global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
+  global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')
+  global.NPCs    = importJSONArrayAsDictionary('./assets/NPCs.json',    'name')
+  global.items   = importJSONArrayAsDictionary('./assets/items.json',   '_id')
+  global.spells  = importJSONArrayAsDictionary('./assets/spells.json',  '_id')
 }
 
 function getRandomInt(min, max) {
