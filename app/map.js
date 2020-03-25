@@ -111,13 +111,13 @@ function load(path) {
 
   for (let i = 0; i < map.size * map.size; i++) {
     for (let j = 0; j < collisionLayers.length; j++) {
-      writeCollisionOnMap(collisionLayers[j].data[i], i)
+      writeCollisionOnMap(collisionLayers[j].data[i] - 1, i)
     }
   }
 
   function writeCollisionOnMap(tileId, index) {
 
-    if (!collisionTiles[tileId]) {
+    if (tileId === -1 || !collisionTiles[tileId]) {
       return
     }
 
