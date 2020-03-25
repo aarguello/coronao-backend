@@ -1,245 +1,163 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
 const items    = require('./items')
-const spells   = require('./spells')
 
-module.exports.create   = create
-module.exports.hurt     = hurt
-module.exports.heal     = heal
-module.exports.freeze   = freeze
-module.exports.unfreeze = unfreeze
-module.exports.destroy  = destroy
-module.exports.move     = move
-module.exports.attack   = attack
-module.exports.speak    = speak
+class User {
 
-function create(_id, name) {
+  #stats = ['HP', 'mana', 'stamina']
 
-  const userClass = utils.getRandomClass()
-  const userRace  = utils.getRandomRace()
-  const position  = utils.getRandomPosition()
+  constructor(_id, name) {
 
-  const user = {
-    _id: _id,
-    name: name,
-    class: userClass.name,
-    race: userRace.name,
-    direction: 'DOWN',
-    inventory: {},
-    equipement: [],
-    spells: Object.keys(global.spells),
-    max_HP: userClass.HP + userRace.HP,
-    max_mana: userClass.mana + userRace.mana,
-    max_stamina: userClass.stamina,
+    const userClass = utils.getRandomClass()
+    const userRace  = utils.getRandomRace()
+
+    this._id         = _id
+    this.name        = name
+    this.class       = userClass.name
+    this.race        = userRace.name
+    this.max_HP      = userClass.HP + userRace.HP
+    this.max_mana    = userClass.mana + userRace.mana
+    this.max_stamina = userClass.stamina
+    this.HP          = this.max_HP
+    this.mana        = this.max_mana
+    this.stamina     = this.max_stamina
+    this.direction   = 'DOWN'
+    this.inventory   = {}
+    this.equipement  = []
+    this.spells      = Object.keys(global.spells)
+
+    setInterval(this.rest.bind(this), global.intervals.staminaRecover)
   }
 
-  user.HP = user.max_HP
-  user.mana = user.max_mana
-  user.stamina = user.max_stamina
 
-  global.users[_id] = user
+  /* Public  */
 
-  moveActor('USER', user._id, position)
-  setInterval(() => updateUserStamina(user), global.intervals.staminaRecover)
+  move(direction) {
 
-  return user
-}
+    const allowedDirections = ['LEFT', 'RIGHT', 'UP', 'DOWN']
 
-function destroy(userId) {
-  const user = global.users[userId]
-  delete global.map.positions[user.position].USER
-  delete global.users[userId]
-  emitters.userLeft(userId)
-}
-
-function move(direction) {
-
-  if (!['LEFT', 'RIGHT', 'UP', 'DOWN'].includes(direction)) {
-    return
-  }
-
-  const user = global.users[this.id]
-  const position = utils.getNeighbourPosition(user.position, direction)
-
-  pivotActor('USER', user._id, direction, emitters.userDirectionChanged)
-  moveActor('USER', user._id, position, emitters.userPositionChanged)
-}
-
-function getActor(_id, type) {
-
-  let actor
-
-  if (type === 'USER') {
-    actor = global.users[_id]
-  }
-
-  if (type === 'NPC') {
-    actor = global.aliveNPCs[_id]
-  }
-
-  return actor
-}
-
-function moveActor(type, _id, position, emitter) {
-
-  const actor = getActor(_id, type)
-
-  if (!actor || !utils.positionInMap(position) || utils.checkCollision(position)) {
-    return
-  }
-
-  if (global.map.positions[actor.position]) {
-    delete global.map.positions[actor.position][type]
-  }
-
-  actor.position = position
-
-  if (position in global.map.positions) {
-    global.map.positions[position][type] = actor._id
-  } else {
-    global.map.positions[position] = { [type]: actor._id }
-  }
-
-  if (emitter) {
-    emitter(_id, position)
-  }
-}
-
-function pivotActor(type, _id, direction, emitter) {
-
-  const actor = getActor(_id, type)
-
-  if (!actor || actor.direction === direction) {
-    return
-  }
-
-  actor.direction = direction
-  emitter(actor._id, actor.direction)
-}
-
-function attack() {
-
-  const user     = global.users[this.id]
-  const position = utils.getNeighbourPosition(user.position, user.direction)
-  const victimId = (global.map.positions[position] || {}).USER
-
-  if (!victimId || user.HP === 0 || user.stamina < global.staminaRequired) {
-    return
-  }
-
-  const victim = global.users[victimId]
-
-  if (victim.HP > 0) {
-
-    const userDamage      = getUserPhysicalDamage(user)
-    const victimDefense   = getUserPhysicalDefense(victim)
-    const inflictedDamage = Math.round(userDamage - victimDefense)
-
-    user.stamina -= global.staminaRequired
-    emitters.userAttacked(user._id, inflictedDamage)
-    emitters.userStaminaChanged(user._id, user.stamina)
-
-    hurt(victim, inflictedDamage)
-  }
-}
-
-function getUserPhysicalDamage(user) {
-
-  const classDamage = global.classes[user.class].physical_damage
-  const itemsDamage = items.getEquipementBonus(user, 'physical_damage')
-
-  return global.baseDamage * classDamage + itemsDamage
-}
-
-function getUserPhysicalDefense(user) {
-  return items.getEquipementBonus(user, 'physical_defense')
-}
-
-function hurt(target, damage) {
-
-  if (damage <= 0) {
-    return
-  }
-
-  if (target.HP - damage > 0) {
-    target.HP -= damage
-  } else {
-    target.HP = 0
-  }
-
-  emitters.userHPChanged(target._id, target.HP)
-
-  if (target.HP === 0) {
-    kill(target)
-  }
-}
-
-function heal(target, surplus) {
-
-  if (surplus <= 0) {
-    return
-  }
-
-  if (target.HP + surplus <= target.max_HP) {
-    target.HP += surplus
-  } else {
-    target.HP = target.max_HP
-  }
-
-  emitters.userHPChanged(target._id, target.HP)
-}
-
-function kill(user) {
-  user.HP = 0
-  user.stamina = 0
-  user.equipement = []
-  unfreeze(user)
-  emitters.userDied(user._id)
-}
-
-function freeze(user) {
-  user.frozen = true
-  user.frozenTimeout = setTimeout(() => user.frozen = false, global.intervals.frozen)
-}
-
-function unfreeze(user) {
-  user.frozen = false
-  clearTimeout(user.frozenTimeout)
-  delete user.frozenTimeout
-}
-
-function speak(message) {
-
-  if (message.length > global.messageMaxLength) {
-    message = message.slice(0, global.messageMaxLength) + '...'
-  }
-
-  emitters.userSpoke(this.id, message)
-}
-
-function updateUserStamina(user) {
-
-  for (item of user.equipement) {
-  
-    if (global.items[item].body_part === 'TORSO' && user.stamina < user.max_stamina) {
-
-      var stamina_reg = 15
-
-      var staplus = user.stamina + stamina_reg
-
-      if (staplus >= user.max_stamina) {
-        user.stamina = user.max_stamina
-      } else {
-        user.stamina = staplus
-      }
-
-      break
+    if (!allowedDirections.includes(direction)) {
+      return
     }
 
+    const position = utils.getNeighbourPosition(this.position, direction)
+
+    utils.pivotActor('USER', this._id, direction, emitters.userDirectionChanged)
+    utils.moveActor('USER', this._id, position, emitters.userPositionChanged)
   }
 
-  // console.log(user._id,user.max_stamina, user.stamina)
+  speak(message) {
 
-  emitters.userStaminaChanged(user._id, staplus)
+    if (message.length > global.messageMaxLength) {
+      message = message.slice(0, global.messageMaxLength) + '...'
+    }
 
+    emitters.userSpoke(this._id, message)
+  }
+
+  rest() {
+
+    const covered = this.equipement.find(itemId =>
+      global.items[itemId].body_part === 'TORSO'
+    )
+
+    if (covered) {
+      this.increaseStat('stamina', 15)
+    }
+  }
+
+  suffer(damage) {
+
+    this.decreaseStat('HP', damage)
+
+    if (this.HP === 0) {
+      this.#kill(this)
+    }
+  }
+
+  revive() {
+
+    if (this.HP > 0) {
+      return
+    }
+
+    this.increaseStat('HP', this.max_HP * 0.2)
+    this.increaseStat('mana', this.max_mana * 0.2)
+    this.increaseStat('stamina', this.max_stamina * 0.2)
+
+    emitters.userRevived(this._id)
+  }
+
+  freeze() {
+    this.frozen = true
+    this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
+  }
+
+  unfreeze() {
+    this.frozen = false
+    clearTimeout(this.frozenTimeout)
+    delete this.frozenTimeout
+  }
+
+  increaseStat(stat, value) {
+    if (this.#stats.includes(stat)) {
+      return this.#setStat(stat, this[stat] + value)
+    }
+  }
+
+  decreaseStat(stat, value) {
+    if (this.#stats.includes(stat)) {
+      return this.#setStat(stat, this[stat] - value)
+    }
+  }
+
+  getPhysicalDamage() {
+    const classDamage = global.classes[this.class].physical_damage
+    const itemsDamage = items.getEquipementBonus(this, 'physical_damage')
+    return global.baseDamage * classDamage + itemsDamage
+  }
+
+  getPhysicalDefense() {
+    return items.getEquipementBonus(this, 'physical_defense')
+  }
+
+  getMagicalDamage() {
+    const classDamage = global.classes[this.class].magical_damage
+    const itemsDamage = items.getEquipementBonus(this, 'magical_damage') / 100 + 1
+    return classDamage * itemsDamage
+  }
+
+  getMagicalDefense() {
+    return items.getEquipementBonus(this, 'magical_defense')
+  }
+
+
+  /* Private */
+
+  #setStat(stat, value) {
+
+    const min = 0
+    const max = this['MAX_' + stat]
+
+    if (value < min) {
+      value = min
+    } else if (value > max) {
+      value = max
+    }
+
+    if (this[stat] != value) {
+      this[stat] = value
+      emitters.userStatChanged(stat, value)
+    }
+  }
+
+  #kill() {
+    this.HP = 0
+    this.stamina = 0
+    this.equipement = []
+    this.unfreeze()
+    emitters.userDied(this._id)
+  }
 }
+
+module.exports = User

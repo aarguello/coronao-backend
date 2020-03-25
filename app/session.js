@@ -1,7 +1,8 @@
-const user     = require('./user')
+const User     = require('./user')
 const emitters = require('./emitters')
 const items    = require('./items')
 const spells   = require('./spells')
+const utils    = require('./utils')
 
 module.exports.login  = login
 module.exports.logout = logout
@@ -12,20 +13,30 @@ function login(name) {
     return
   }
 
-  const newUser = user.create(this.id, name)
+  const user = new User(this.id, name)
 
-  this.on('USER_MOVE',       user.move)
-  this.on('USER_SPEAK',      user.speak)
-  this.on('USER_ATTACK',     user.attack)
-  this.on('USER_EQUIP_ITEM', items.equipItem)
+  this.on('USER_MOVE',       (direction) => user.move(direction))
+  this.on('USER_SPEAK',      (message) => user.speak(message))
+  this.on('USER_ATTACK',     spells.handleBlow)
   this.on('USER_CAST_SPELL', spells.handleSpell)
+  this.on('USER_EQUIP_ITEM', items.equipItem)
 
-  emitters.userWelcome(newUser)
-  emitters.userJoined(newUser, this)
+  global.users[user._id] = user
+
+  const initialPosition = utils.getRandomPosition()
+  utils.moveActor('USER', user._id, initialPosition)
+
+  emitters.userWelcome(user)
+  emitters.userJoined(user, this)
 }
 
 function logout() {
-  if (this.id in global.users) {
-    user.destroy(this.id)
+
+  const user = global.users[this._id]
+
+  if (user) {
+    delete global.map.positions[user.position].USER
+    delete global.users[this._id]
+    emitters.userLeft(this._id)
   }
 }

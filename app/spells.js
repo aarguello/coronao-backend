@@ -1,17 +1,34 @@
 const utils    = require('./utils')
-const users    = require('./user')
-const items    = require('./items')
 const emitters = require('./emitters')
 
-const spellHandler = {
-  'DAMAGE':   damage,
-  'HEAL':     heal,
-  'REVIVE':   revive,
-  'FREEZE':   freeze,
-  'UNFREEZE': unfreeze,
+module.exports.handleBlow = function () {
+
+  const user      = global.users[this.id]
+  const neighbour = utils.getNeighbourPosition(user.position, user.direction)
+  const tile      = global.map.positions[neighbour]
+  const target    = global.users[tile && tile.USER]
+
+  if (!target || target.HP === 0|| user.HP === 0 || user.stamina < global.staminaRequired) {
+    return
+  }
+
+  const damage = global.baseDamage + user.getPhysicalDamage() - target.getPhysicalDefense()
+
+  target.suffer(damage)
+  emitters.userAttacked(user._id, damage)
+
+  user.decreaseStat('stamina', global.staminaRequired)
 }
 
 module.exports.handleSpell = function (targetId, spellId) {
+
+  const spellHandler = {
+    'DAMAGE':   damage,
+    'HEAL':     heal,
+    'REVIVE':   revive,
+    'FREEZE':   freeze,
+    'UNFREEZE': unfreeze,
+  }
 
   const target = global.users[targetId]
   const spell  = global.spells[spellId]
@@ -27,7 +44,7 @@ module.exports.handleSpell = function (targetId, spellId) {
 
   if (cast) {
     emitters.userReceivedSpell(target._id, spell._id)
-    consumeMana(caster, spell.mana)
+    target.decreaseStat('MANA', spell.mana)
   }
 }
 
@@ -37,13 +54,12 @@ function damage(target, spell, caster) {
     return false
   }
 
-  const spellDamage  = utils.getRandomInt(spell.value[0], spell.value[1])
-  const itemsDamage  = items.getEquipementBonus(caster, 'magical_damage') / 100 + 1
-  const itemsDefense = items.getEquipementBonus(caster, 'magical_defense')
-  const classDamage  = global.classes[caster.class].magical_damage
+  const spellDamage   = utils.getRandomInt(spell.value[0], spell.value[1])
+  const casterDamage  = caster.getMagicalDamage()
+  const targetDefense = target.getMagicalDefense()
 
-  const damage = Math.round(spellDamage * itemsDamage * classDamage - itemsDefense)
-  users.hurt(target, damage)
+  const damage = Math.round(spellDamage * casterDamage - targetDefense)
+  target.suffer(damage)
 
   return true
 }
@@ -54,8 +70,7 @@ function heal(target, spell) {
     return
   }
 
-  const surplus = utils.getRandomInt(spell.value[0], spell.value[1])
-  users.heal(target, surplus)
+  target.increaseStat('HP', utils.getRandomInt(spell.value[0], spell.value[1]))
 
   return true
 }
@@ -66,14 +81,7 @@ function revive(target) {
     return
   }
 
-  target.HP = Math.round(target.max_HP * 0.2)
-  target.mana = Math.round(target.max_mana * 0.2)
-  target.stamina = Math.round(target.max_stamina * 0.2)
-
-  emitters.userRevived(target._id)
-  emitters.userHPChanged(target._id, target.HP)
-  emitters.userManaChanged(target._id, target.mana)
-  emitters.userStaminaChanged(target._id, target.stamina)
+  target.revive()
 
   return true
 }
@@ -84,7 +92,7 @@ function freeze(target, spell, caster) {
     return
   }
 
-  users.freeze(target)
+  target.freeze()
 
   return true
 }
@@ -95,22 +103,7 @@ function unfreeze(target) {
     return
   }
 
-  users.unfreeze(target)
+  target.unfreeze()
 
   return true
-}
-
-function consumeMana(user, mana) {
-
-  if (mana <= 0) {
-    return
-  }
-
-  if (user.mana - mana > 0) {
-    user.mana -= mana
-  } else {
-    user.mana = 0
-  }
-
-  emitters.userManaChanged(user._id, user.mana)
 }

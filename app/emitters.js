@@ -36,16 +36,8 @@ module.exports.userReceivedSpell = (_id, spellId) => {
   global.io.emit('USER_RECEIVED_SPELL', { user: { _id }, spellId })
 }
 
-module.exports.userHPChanged = (_id, HP) => {
-  global.io.emit('USER_HP_CHANGED', { _id, HP })
-}
-
-module.exports.userManaChanged = (_id, mana) => {
-  global.io.to(_id).emit('USER_MANA_CHANGED', { _id, mana })
-}
-
-module.exports.userStaminaChanged = (_id, stamina) => {
-  global.io.to(_id).emit('USER_STAMINA_CHANGED', { _id, stamina })
+module.exports.userStatChanged = (stat, value) => {
+  global.io.emit(`USER_${stat.toUpperCase()}_CHANGED`, { [stat]: value })
 }
 
 module.exports.userEquipedItem = (_id, itemId) => {
