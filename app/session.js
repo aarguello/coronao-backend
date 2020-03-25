@@ -1,7 +1,7 @@
 const User     = require('./user')
 const emitters = require('./emitters')
 const items    = require('./items')
-const spells   = require('./spells')
+const combat   = require('./combat')
 const utils    = require('./utils')
 
 module.exports.login  = login
@@ -17,8 +17,8 @@ function login(name) {
 
   this.on('USER_MOVE',       (direction) => user.move(direction))
   this.on('USER_SPEAK',      (message) => user.speak(message))
-  this.on('USER_ATTACK',     spells.handleBlow)
-  this.on('USER_CAST_SPELL', spells.handleSpell)
+  this.on('USER_ATTACK',     combat.handleBlow)
+  this.on('USER_CAST_SPELL', combat.handleSpell)
   this.on('USER_EQUIP_ITEM', items.equipItem)
 
   global.users[user._id] = user
