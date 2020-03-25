@@ -132,7 +132,7 @@ class User {
   }
 
   getPhysicalDefense() {
-    return items.getEquipementBonus(this, 'physical_defense')
+    return utils.getEquipementBonus(this.equipement, 'physical_defense')
   }
 
   getMagicalDamage() {
@@ -142,7 +142,7 @@ class User {
   }
 
   getMagicalDefense() {
-    return items.getEquipementBonus(this, 'magical_defense')
+    return utils.getEquipementBonus(this.equipement, 'magical_defense')
   }
 
   /* Private */
@@ -160,7 +160,7 @@ class User {
 
     if (this[stat] != value) {
       this[stat] = value
-      emitters.userStatChanged(stat, value)
+      emitters.userStatChanged(this._id, stat, value)
     }
   }
 

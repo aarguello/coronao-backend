@@ -36,8 +36,8 @@ module.exports.userReceivedSpell = (_id, spellId) => {
   global.io.emit('USER_RECEIVED_SPELL', { user: { _id }, spellId })
 }
 
-module.exports.userStatChanged = (stat, value) => {
-  global.io.emit(`USER_${stat.toUpperCase()}_CHANGED`, { [stat]: value })
+module.exports.userStatChanged = (_id, stat, value) => {
+  global.io.emit(`USER_${stat.toUpperCase()}_CHANGED`, { _id, [stat]: value })
 }
 
 module.exports.userEquipedItem = (_id, itemId) => {
