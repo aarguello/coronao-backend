@@ -51,7 +51,7 @@ class User {
 
     const allowedDirections = ['LEFT', 'RIGHT', 'UP', 'DOWN']
 
-    if (!allowedDirections.includes(direction)) {
+    if (!allowedDirections.includes(direction) || this.meditating) {
       return
     }
 
@@ -68,6 +68,14 @@ class User {
     }
 
     emitters.userSpoke(this._id, message)
+  }
+
+  meditate() {
+    if (this.meditating) {
+      this.#stopMeditating()
+    } else if (this.mana < this.stats.mana.max) {
+      this.#startMeditating()
+    }
   }
 
   rest() {
@@ -199,11 +207,34 @@ class User {
     emitters.userUnequipedItem(this._id, item._id)
   }
 
+  #startMeditating() {
+    this.meditating = true
+    this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.meditate)
+    emitters.userStartedMeditating()
+  }
+
+  #stopMeditating() {
+    this.meditating = false
+    clearInterval(this.meditateInterval)
+    delete this.meditateInterval
+    emitters.userStoppedMeditating()
+  }
+
+  #meditation() {
+
+    this.increaseStat('mana', this.mana * global.meditateIncrement)
+
+    if (this.mana === this.stats.mana.max) {
+      this.#stopMeditating()
+    }
+  }
+
   #kill() {
     this.#setStat('hp', 0)
     this.#setStat('stamina', 0)
     this.equipement = []
     this.unfreeze()
+    this.#stopMeditating()
     emitters.userDied(this._id)
   }
 }

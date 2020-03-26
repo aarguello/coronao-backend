@@ -12,15 +12,17 @@ function initGlobals(io) {
   global.users     = {}
   global.aliveNPCs = {}
 
-  global.baseDamage       = 100
-  global.staminaRequired  = 20
-  global.inventorySize    = 9
-  global.messageMaxLength = 100
+  global.baseDamage        = 100
+  global.staminaRequired   = 20
+  global.meditateIncrement = 0.04
+  global.inventorySize     = 9
+  global.messageMaxLength  = 100
 
   global.intervals = {
     frozen: 5000,
     pathfinder: 1000,
     staminaRecover: 5000,
+    meditate: 1000,
   }
 
   global.map     = Map.load('./assets/map-1.json')

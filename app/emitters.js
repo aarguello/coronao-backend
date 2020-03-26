@@ -60,6 +60,14 @@ module.exports.userSpoke = (_id, message) => {
   global.io.emit('USER_SPOKE', { user: { _id }, message})
 }
 
+module.exports.userStartedMeditating = (_id) => {
+  global.io.emit('USER_STARTED_MEDITATING', { _id })
+}
+
+module.exports.userStoppedMeditating = (_id) => {
+  global.io.emit('USER_STOPPED_MEDITATING', { _id })
+}
+
 module.exports.npcPositionChanged = (_id, position) => {
   global.io.emit('NPC_POSITION_CHANGED', { _id, position })
 }

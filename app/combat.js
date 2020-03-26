@@ -9,7 +9,7 @@ module.exports.handleBlow = function () {
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.hp === 0 || user.hp === 0 || user.stamina < global.staminaRequired) {
+  if (!target || target.hp === 0 || user.hp === 0|| user.stamina < global.staminaRequired || caster.meditating) {
     return
   }
 
@@ -38,7 +38,7 @@ module.exports.handleSpell = function (spellId, position) {
 
   const hasSpell = caster.spells.includes(spellId)
 
-  if (!target || !spell || !hasSpell || caster.hp === 0 || spell.mana > caster.mana) {
+  if (!target || !spell || !hasSpell || caster.hp === 0 || spell.mana > caster.mana || caster.meditating) {
     return
   }
 
