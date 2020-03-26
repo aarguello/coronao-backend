@@ -21,7 +21,7 @@ module.exports.handleBlow = function () {
   user.decreaseStat('stamina', global.staminaRequired)
 }
 
-module.exports.handleSpell = function (targetId, spellId) {
+module.exports.handleSpell = function (spellId, position) {
 
   const spellHandler = {
     'DAMAGE':   damage,
@@ -31,7 +31,8 @@ module.exports.handleSpell = function (targetId, spellId) {
     'UNFREEZE': unfreeze,
   }
 
-  const target = global.users[targetId]
+  const tile   = global.map.positions[position]
+  const target = global.users[tile && tile.USER]
   const spell  = global.spells[spellId]
   const caster = global.users[this.id]
 
