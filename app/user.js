@@ -83,7 +83,7 @@ class User {
 
   suffer(damage) {
 
-    this.decreaseStat('hp', damage)
+    this.decreaseStat('hp', Math.round(damage))
 
     if (this.hp === 0) {
       this.#kill(this)
