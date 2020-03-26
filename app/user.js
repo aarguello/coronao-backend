@@ -122,7 +122,6 @@ class User {
 
   decreaseStat(stat, value) {
     if (this.stats[stat]) {
-      console.log('Trying to decrease', this[stat] - value)
       return this.#setStat(stat, this[stat] - value)
     }
   }
