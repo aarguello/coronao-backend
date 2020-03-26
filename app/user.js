@@ -96,9 +96,9 @@ class User {
       return
     }
 
-    this.#setStat('hp', this.max_HP * 0.2)
-    this.#setStat('mana', this.max_mana * 0.2)
-    this.#setStat('stamina', this.max_stamina * 0.2)
+    this.#setStat('hp', this.stats.hp.max * 0.2)
+    this.#setStat('mana', this.stats.mana.max * 0.2)
+    this.#setStat('stamina', this.stats.stamina.max * 0.2)
 
     emitters.userRevived(this._id)
   }
