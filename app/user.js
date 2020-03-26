@@ -91,7 +91,7 @@ class User {
 
   suffer(damage) {
 
-    this.decreaseStat('hp', Math.round(damage))
+    this.decreaseStat('hp', damage)
 
     if (this.hp === 0) {
       this.#kill(this)
@@ -183,7 +183,7 @@ class User {
     }
 
     if (this[stat] != value) {
-      this.stats[stat].current = value
+      this.stats[stat].current = Math.round(value)
       emitters.userStatChanged(this._id, stat, this.stats[stat])
     }
   }

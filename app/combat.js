@@ -60,7 +60,7 @@ function damage(target, spell, caster) {
   const casterDamage  = caster.getMagicalDamage()
   const targetDefense = target.getMagicalDefense()
 
-  const damage = Math.round(spellDamage * casterDamage - targetDefense)
+  const damage = spellDamage * casterDamage - targetDefense
   target.suffer(damage)
 
   return true
