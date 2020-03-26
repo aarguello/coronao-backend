@@ -74,7 +74,7 @@ function moveActor(type, _id, position, emitter) {
 
   const actor = getActor(_id, type)
 
-  if (!actor || !positionInMap(position) || checkCollision(position)) {
+  if (!actor || actor.frozen || !positionInMap(position) || checkCollision(position)) {
     return
   }
 
