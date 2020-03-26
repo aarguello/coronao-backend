@@ -1,7 +1,7 @@
 [{
   "_id": "",
   "name": "WARRIOR",
-  "HP": 500,
+  "hp": 500,
   "mana": 0,
   "stamina": 250,
   "physical_damage": 1.1,
@@ -9,7 +9,7 @@
 }, {
   "_id": "",
   "name": "MAGE",
-  "HP": 300,
+  "hp": 300,
   "mana": 2000,
   "stamina": 100,
   "physical_damage": 0.5,
@@ -17,7 +17,7 @@
 }, {
   "_id": "",
   "name": "BARD",
-  "HP": 400,
+  "hp": 400,
   "stamina": 150,
   "mana": 1500,
   "physical_damage": 0.75,
@@ -25,7 +25,7 @@
 }, {
   "_id": "",
   "name": "PALADIN",
-  "HP": 450,
+  "hp": 450,
   "stamina": 200,
   "mana": 800,
   "physical_damage": 0.925,

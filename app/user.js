@@ -4,29 +4,45 @@ const emitters = require('./emitters')
 
 class User {
 
-  #stats = ['HP', 'mana', 'stamina']
-
   constructor(_id, name) {
 
     const userClass = utils.getRandomClass()
     const userRace  = utils.getRandomRace()
 
+    const HP      = userClass.hp + userRace.hp
+    const MANA    = userClass.mana + userRace.mana
+    const STAMINA = userClass.stamina
+
     this._id         = _id
     this.name        = name
     this.class       = userClass.name
     this.race        = userRace.name
-    this.max_HP      = userClass.HP + userRace.HP
-    this.max_mana    = userClass.mana + userRace.mana
-    this.max_stamina = userClass.stamina
-    this.HP          = this.max_HP
-    this.mana        = this.max_mana
-    this.stamina     = this.max_stamina
     this.direction   = 'DOWN'
     this.inventory   = {}
     this.equipement  = []
     this.spells      = Object.keys(global.spells)
 
+    this.stats = {
+      hp:      { current: HP,      max: HP },
+      mana:    { current: MANA,    max: MANA },
+      stamina: { current: STAMINA, max: STAMINA },
+    }
+
     setInterval(this.rest.bind(this), global.intervals.staminaRecover)
+  }
+
+  /* Getters */
+
+  get hp() {
+    return this.stats.hp.current
+  }
+
+  get mana() {
+    return this.stats.mana.current
+  }
+
+  get stamina() {
+    return this.stats.stamina.current
   }
 
   /* Public  */
@@ -67,20 +83,20 @@ class User {
 
   suffer(damage) {
 
-    this.decreaseStat('HP', damage)
+    this.decreaseStat('hp', damage)
 
-    if (this.HP === 0) {
+    if (this.hp === 0) {
       this.#kill(this)
     }
   }
 
   revive() {
 
-    if (this.HP > 0) {
+    if (this.hp > 0) {
       return
     }
 
-    this.#setStat('HP', this.max_HP * 0.2)
+    this.#setStat('hp', this.max_HP * 0.2)
     this.#setStat('mana', this.max_mana * 0.2)
     this.#setStat('stamina', this.max_stamina * 0.2)
 
@@ -99,13 +115,14 @@ class User {
   }
 
   increaseStat(stat, value) {
-    if (this.#stats.includes(stat)) {
+    if (this.stats[stat]) {
       return this.#setStat(stat, this[stat] + value)
     }
   }
 
   decreaseStat(stat, value) {
-    if (this.#stats.includes(stat)) {
+    if (this.stats[stat]) {
+      console.log('Trying to decrease', this[stat] - value)
       return this.#setStat(stat, this[stat] - value)
     }
   }
@@ -150,7 +167,7 @@ class User {
   #setStat(stat, value) {
 
     const min = 0
-    const max = this['max_' + stat]
+    const max = this.stats[stat].max
 
     if (value < min) {
       value = min
@@ -159,8 +176,8 @@ class User {
     }
 
     if (this[stat] != value) {
-      this[stat] = value
-      emitters.userStatChanged(this._id, stat, value)
+      this.stats[stat].current = value
+      emitters.userStatChanged(this._id, stat, this.stats[stat])
     }
   }
 
@@ -184,8 +201,8 @@ class User {
   }
 
   #kill() {
-    this.HP = 0
-    this.stamina = 0
+    this.#setStat('hp', 0)
+    this.#setStat('stamina', 0)
     this.equipement = []
     this.unfreeze()
     emitters.userDied(this._id)

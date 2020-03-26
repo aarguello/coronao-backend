@@ -1,16 +1,16 @@
 [{
   "_id": "",
   "name": "HUMAN",
-  "HP": 50,
+  "hp": 50,
   "mana": 50
 }, {
   "_id": "",
   "name": "ELF",
-  "HP": 25,
+  "hp": 25,
   "mana": 100
 }, {
   "_id": "",
   "name": "DWARF",
-  "HP": 75,
+  "hp": 75,
   "mana": 0
 }]

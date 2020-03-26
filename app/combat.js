@@ -9,11 +9,11 @@ module.exports.handleBlow = function () {
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.HP === 0 || user.HP === 0 || user.stamina < global.staminaRequired) {
+  if (!target || target.hp === 0 || user.hp === 0 || user.stamina < global.staminaRequired) {
     return
   }
 
-  const damage = global.baseDamage + user.getPhysicalDamage() - target.getPhysicalDefense()
+  const damage = user.getPhysicalDamage() - target.getPhysicalDefense()
 
   target.suffer(damage)
   emitters.userAttacked(user._id, damage)
@@ -37,7 +37,7 @@ module.exports.handleSpell = function (targetId, spellId) {
 
   const hasSpell = caster.spells.includes(spellId)
 
-  if (!target || !spell || !hasSpell || caster.HP === 0 || spell.mana > caster.mana) {
+  if (!target || !spell || !hasSpell || caster.hp === 0 || spell.mana > caster.mana) {
     return
   }
 
@@ -45,13 +45,13 @@ module.exports.handleSpell = function (targetId, spellId) {
 
   if (cast) {
     emitters.userReceivedSpell(target._id, spell._id)
-    caster.decreaseStat('MANA', spell.mana)
+    caster.decreaseStat('mana', spell.mana)
   }
 }
 
 function damage(target, spell, caster) {
 
-  if (caster._id === target._id || target.HP === 0) {
+  if (caster._id === target._id || target.hp === 0) {
     return false
   }
 
@@ -67,18 +67,18 @@ function damage(target, spell, caster) {
 
 function heal(target, spell) {
 
-  if (target.HP === 0) {
+  if (target.hp === 0) {
     return
   }
 
-  target.increaseStat('HP', utils.getRandomInt(spell.value[0], spell.value[1]))
+  target.increaseStat('hp', utils.getRandomInt(spell.value[0], spell.value[1]))
 
   return true
 }
 
 function revive(target) {
 
-  if (target.HP > 0) {
+  if (target.hp > 0) {
     return
   }
 
@@ -89,7 +89,7 @@ function revive(target) {
 
 function freeze(target, spell, caster) {
 
-  if (caster._id === target._id || target.HP === 0 || target.frozen) {
+  if (caster._id === target._id || target.hp === 0 || target.frozen) {
     return
   }
 
@@ -100,7 +100,7 @@ function freeze(target, spell, caster) {
 
 function unfreeze(target) {
 
-  if (target.HP === 0 || !target.frozen) {
+  if (target.hp === 0 || !target.frozen) {
     return
   }
 
