@@ -222,23 +222,31 @@ class User {
   }
 
   #makeVisible() {
-    this.invisible = false
+
     clearTimeout(this.invisibilityTimeout)
     delete this.invisibilityTimeout
-    emitters.userVisibilityChanged(this._id, false)
+
+    if (this.invisible) {
+      this.invisible = false
+      emitters.userVisibilityChanged(this._id, false)
+    }
   }
 
   #startMeditating() {
     this.meditating = true
     this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.meditate)
-    emitters.userStartedMeditating()
+    emitters.userStartedMeditating(this._id)
   }
 
   #stopMeditating() {
-    this.meditating = false
+
     clearInterval(this.meditateInterval)
     delete this.meditateInterval
-    emitters.userStoppedMeditating()
+
+    if (this.meditating) {
+      this.meditating = false
+      emitters.userStoppedMeditating(this._id)
+    }
   }
 
   #meditation() {
