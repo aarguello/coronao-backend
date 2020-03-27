@@ -4,12 +4,18 @@ const emitters = require('./emitters')
 
 module.exports.handleBlow = function () {
 
-  const user      = global.users[this.id]
+  const user = global.users[this.id]
+
+  if (user.hp === 0 || user.meditating || user.stamina < global.blowEffort) {
+    return
+  }
+
   const neighbour = Map.getNeighbourPosition(user.position, user.direction)
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.hp === 0 || user.hp === 0 || user.stamina < global.blowEffort || user.meditating) {
+  if (!target || target.hp === 0) {
+    emitters.userAttacked(user._id, 0)
     return
   }
 
