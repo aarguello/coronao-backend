@@ -15,13 +15,14 @@ function initGlobals(io) {
   global.baseDamage        = 100
   global.blowEffort        = 20
   global.meditateIncrement = 0.04
+  global.staminaIncrement  = 40
   global.inventorySize     = 9
   global.messageMaxLength  = 100
 
   global.intervals = {
     frozen: 5000,
     pathfinder: 1000,
-    staminaRecover: 5000,
+    staminaRecover: 3000,
     meditate: 1000,
     invisibility: 8000,
   }

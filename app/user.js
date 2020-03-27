@@ -85,7 +85,7 @@ class User {
     )
 
     if (covered) {
-      this.increaseStat('stamina', 15)
+      this.increaseStat('stamina', global.staminaIncrement)
     }
   }
 
