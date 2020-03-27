@@ -1,13 +1,14 @@
 const utils = require('./utils')
 
-module.exports.getRandomPosition    = getRandomPosition
-module.exports.getNeighbourPosition = getNeighbourPosition
-module.exports.checkCollision       = checkCollision
-module.exports.positionInMap        = positionInMap
-module.exports.getActor             = getActor
-module.exports.pivotActor           = pivotActor
-module.exports.moveActor            = moveActor
-module.exports.load                 = load
+module.exports.getRandomPosition          = getRandomPosition
+module.exports.getNeighbourPosition       = getNeighbourPosition
+module.exports.getNearestNeighbourAtSight = getNearestNeighbourAtSight
+module.exports.checkCollision             = checkCollision
+module.exports.positionInMap              = positionInMap
+module.exports.getActor                   = getActor
+module.exports.pivotActor                 = pivotActor
+module.exports.moveActor                  = moveActor
+module.exports.load                       = load
 
 function getRandomPosition() {
 
@@ -28,6 +29,26 @@ function getNeighbourPosition(position, direction) {
   if (direction === 'RIGHT') return [position[0] + 1, position[1]]
   if (direction === 'UP')    return [position[0]    , position[1] - 1]
   if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
+}
+
+function getNearestNeighbourAtSight(position, fov, type) {
+
+  let closest = {
+    id: null,
+    position: []
+  }
+
+  Object.entries(global.map.positions).forEach(([pos, tile]) => {
+    if (type in tile) {
+      distanceBetween = getDistance(position, pos)
+      if ((distanceBetween <= fov && distanceBetween < getDistance(position, closest.position)) || !closest.id) {
+        closest.id = tile[type]
+        closest.position = pos
+      }
+    }
+  })
+
+  return closest.id
 }
 
 function checkCollision(position) {
@@ -130,4 +151,18 @@ function load(path) {
   }
 
   return map
+}
+
+function getDistance(P, Q) {
+
+  const R = [
+    P[0] - Q[0],
+    P[1] - Q[1],
+  ]
+
+  return getNorm(R)
+}
+
+function getNorm(V) {
+  return Math.sqrt(V[0] * V[0] + V[1] * V[1])
 }

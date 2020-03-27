@@ -5,6 +5,7 @@ module.exports.getRandomInt        = getRandomInt
 module.exports.getRandomBool       = getRandomBool
 module.exports.getRandomClass      = getRandomClass
 module.exports.getRandomRace       = getRandomRace
+module.exports.getRandomNPC        = getRandomNPC
 module.exports.getEquipementBonus  = getEquipementBonus
 
 function initGlobals(io) {
@@ -56,6 +57,13 @@ function getRandomRace() {
   const raceNameIndex = getRandomInt(0, raceNames.length)
   const randomRaceName = raceNames[raceNameIndex]
   return global.races[randomRaceName]
+}
+
+function getRandomNPC() {
+  const npcNames = Object.keys(global.NPCs)
+  const npcIndex = getRandomInt(0, npcNames.length)
+  const randomNPCName = npcNames[npcIndex]
+  return global.NPCs[randomNPCName]
 }
 
 function getEquipementBonus(equipement, attribute) {

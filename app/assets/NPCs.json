@@ -1,9 +1,11 @@
 [{
   "name": "BAT",
   "HP": 25,
-  "physical_damage": [2, 4]
+  "physical_damage": [2, 4],
+  "fov": 20
 }, {
   "name": "ZOMBIE",
   "HP": 100,
-  "physical_damage": [4, 10]
+  "physical_damage": [4, 10],
+  "fov": 30
 }]
