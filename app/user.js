@@ -18,8 +18,8 @@ class User {
     this.class       = userClass.name
     this.race        = userRace.name
     this.direction   = 'DOWN'
-    this.inventory   = {}
-    this.equipement  = []
+    this.inventory   = { 'XD0VuskON97LFPG0kdct': 1 }
+    this.equipement  = ['XD0VuskON97LFPG0kdct']
     this.spells      = Object.keys(global.spells)
 
     this.stats = {
