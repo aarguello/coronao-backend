@@ -6,6 +6,7 @@ module.exports.userWelcome = (user) => {
     items: global.items,
     spells: global.spells,
     mapSize: global.map.size,
+    aliveNPCs: global.aliveNPCs,
     inventorySize :global.inventorySize,
   }
 
@@ -74,6 +75,10 @@ module.exports.userStartedMeditating = (_id) => {
 
 module.exports.userStoppedMeditating = (_id) => {
   global.io.emit('USER_STOPPED_MEDITATING', { _id })
+}
+
+module.exports.npcSpawned = (npc) => {
+  global.io.emit('NPC_SPAWNED', npc)
 }
 
 module.exports.npcPositionChanged = (_id, position) => {

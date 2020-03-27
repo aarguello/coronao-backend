@@ -10,9 +10,9 @@ module.exports.init = () => {
 }
 
 function spawnRandomNPCs(amount) {
-  console.log('Creating ', amount,' NPCs...')
   for (i = 0; i < amount; i++) {
-    create()
+    const npc = create()
+    emitters.npcSpawned(npc)
   }
 }
 
@@ -83,6 +83,8 @@ function create() {
       this.reposition(direction, path[1])
     }
   }
+
+  return npc
 }
 
 function makeNPCsFollowUsers () {
