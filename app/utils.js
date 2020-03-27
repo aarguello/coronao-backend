@@ -60,7 +60,7 @@ function getEquipementBonus(equipement, attribute) {
     let value = 0
 
     if (item[attribute]) {
-      value = utils.getRandomInt(
+      value = getRandomInt(
         item[attribute][0],
         item[attribute][1] + 1
       )
