@@ -13,7 +13,7 @@ function initGlobals(io) {
   global.aliveNPCs = {}
 
   global.baseDamage        = 100
-  global.staminaRequired   = 20
+  global.blowEffort        = 20
   global.meditateIncrement = 0.04
   global.inventorySize     = 9
   global.messageMaxLength  = 100

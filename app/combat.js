@@ -9,7 +9,7 @@ module.exports.handleBlow = function () {
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.hp === 0 || user.hp === 0|| user.stamina < global.staminaRequired || caster.meditating) {
+  if (!target || target.hp === 0 || user.hp === 0|| user.stamina < global.blowEffort || caster.meditating) {
     return
   }
 
@@ -18,7 +18,7 @@ module.exports.handleBlow = function () {
   target.suffer(damage)
   emitters.userAttacked(user._id, damage)
 
-  user.decreaseStat('stamina', global.staminaRequired)
+  user.decreaseStat('stamina', global.blowEffort)
 }
 
 module.exports.handleSpell = function (spellId, position) {
