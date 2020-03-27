@@ -9,7 +9,7 @@ module.exports.handleBlow = function () {
   const tile      = global.map.positions[neighbour]
   const target    = global.users[tile && tile.USER]
 
-  if (!target || target.hp === 0 || user.hp === 0|| user.stamina < global.blowEffort || caster.meditating) {
+  if (!target || target.hp === 0 || user.hp === 0 || user.stamina < global.blowEffort || user.meditating) {
     return
   }
 
