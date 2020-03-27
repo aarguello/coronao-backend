@@ -66,8 +66,8 @@ function create() {
     let finder = new PF.AStarFinder()
 
     Object.keys(global.map.positions).forEach((positionStr) => {
-      const position = positionStr.split(',')
-      if (Map.checkCollision(position)) grid.setWalkableAt(...position, false)
+      const position = positionStr.split(',').map(Number)
+      if (Map.checkCollision(position) && !utils.arraysMatch(target, position)) grid.setWalkableAt(...position, false)
     })
 
     let path = finder.findPath(this.position[0], this.position[1], target.position[0], target.position[1], grid)

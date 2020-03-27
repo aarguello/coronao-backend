@@ -7,6 +7,7 @@ module.exports.getRandomClass      = getRandomClass
 module.exports.getRandomRace       = getRandomRace
 module.exports.getRandomNPC        = getRandomNPC
 module.exports.getEquipementBonus  = getEquipementBonus
+module.exports.arraysMatch         = arraysMatch
 
 function initGlobals(io) {
 
@@ -96,4 +97,15 @@ function importJSONArrayAsDictionary(path, key) {
   }, {})
 
   return dict
+}
+
+function arraysMatch(arr1, arr2) {
+
+  if (arr1.length !== arr2.length) return false
+
+  for (var i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) return false
+  }
+
+  return true
 }
