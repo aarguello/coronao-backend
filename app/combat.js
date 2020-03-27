@@ -13,10 +13,16 @@ module.exports.handleBlow = function () {
     return
   }
 
-  const damage = user.getPhysicalDamage() - target.getPhysicalDefense()
+  const missChance = target.getEvasion()
+  const blowLands  = utils.getRandomBool(missChance)
 
-  target.suffer(damage)
-  emitters.userAttacked(user._id, damage)
+  if (blowLands) {
+    const damage = user.getPhysicalDamage() - target.getPhysicalDefense()
+    target.suffer(damage)
+    emitters.userAttacked(user._id, damage)
+  } else {
+    emitters.userMissedAttack(user._id)
+  }
 
   user.decreaseStat('stamina', global.blowEffort)
 }

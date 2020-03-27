@@ -5,7 +5,8 @@
   "mana": 0,
   "stamina": 250,
   "physical_damage": 1.1,
-  "magical_damage": 1
+  "magical_damage": 1,
+  "evasion": 1.15
 }, {
   "_id": "",
   "name": "MAGE",
@@ -13,7 +14,8 @@
   "mana": 2000,
   "stamina": 100,
   "physical_damage": 0.5,
-  "magical_damage": 1.2
+  "magical_damage": 1.2,
+  "evasion": 1.05
 }, {
   "_id": "",
   "name": "BARD",
@@ -21,7 +23,8 @@
   "stamina": 150,
   "mana": 1500,
   "physical_damage": 0.75,
-  "magical_damage": 1.1
+  "magical_damage": 1.1,
+  "evasion": 1.2
 }, {
   "_id": "",
   "name": "PALADIN",
@@ -29,5 +32,6 @@
   "stamina": 200,
   "mana": 800,
   "physical_damage": 0.925,
-  "magical_damage": 1.05
+  "magical_damage": 1.05,
+  "evasion": 1.1
 }]

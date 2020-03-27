@@ -183,6 +183,10 @@ class User {
     return utils.getEquipementBonus(this.equipement, 'magical_defense')
   }
 
+  getEvasion() {
+    return global.classes[this.class].evasion - 1
+  }
+
   /* Private */
 
   #setStat(stat, value) {

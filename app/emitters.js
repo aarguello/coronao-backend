@@ -32,6 +32,10 @@ module.exports.userAttacked = (_id, damage) => {
   global.io.emit('USER_ATTACKED', { user: { _id }, damage })
 }
 
+module.exports.userMissedAttack = (_id) => {
+  global.io.emit('USER_MISSED_ATTACK', { _id })
+}
+
 module.exports.userReceivedSpell = (_id, spellId) => {
   global.io.emit('USER_RECEIVED_SPELL', { user: { _id }, spellId })
 }

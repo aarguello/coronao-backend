@@ -2,6 +2,7 @@ const Map = require('./map')
 
 module.exports.initGlobals         = initGlobals
 module.exports.getRandomInt        = getRandomInt
+module.exports.getRandomBool       = getRandomBool
 module.exports.getRandomClass      = getRandomClass
 module.exports.getRandomRace       = getRandomRace
 module.exports.getEquipementBonus  = getEquipementBonus
@@ -37,6 +38,10 @@ function initGlobals(io) {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
+}
+
+function getRandomBool(falseProbability) {
+  return Math.random() >= falseProbability
 }
 
 function getRandomClass() {
