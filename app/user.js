@@ -1,10 +1,13 @@
+const Actor    = require('./model/actor')
 const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
-class User {
+class User extends Actor {
 
   constructor(_id, name) {
+
+    super(_id)
 
     const userClass = utils.getRandomClass()
     const userRace  = utils.getRandomRace()
