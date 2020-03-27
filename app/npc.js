@@ -67,7 +67,7 @@ function create() {
 
     Object.keys(global.map.positions).forEach((positionStr) => {
       const position = positionStr.split(',').map(Number)
-      if (Map.checkCollision(position) && !utils.arraysMatch(target, position)) grid.setWalkableAt(...position, false)
+      if (Map.checkCollision(position) && !utils.arraysMatch(target.position, position)) grid.setWalkableAt(...position, false)
     })
 
     let path = finder.findPath(this.position[0], this.position[1], target.position[0], target.position[1], grid)
