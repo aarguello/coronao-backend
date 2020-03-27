@@ -23,6 +23,7 @@ function initGlobals(io) {
     pathfinder: 1000,
     staminaRecover: 5000,
     meditate: 1000,
+    invisibility: 8000,
   }
 
   global.map     = Map.load('./assets/map-1.json')

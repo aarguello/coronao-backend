@@ -24,11 +24,12 @@ module.exports.handleBlow = function () {
 module.exports.handleSpell = function (spellId, position) {
 
   const spellHandler = {
-    'DAMAGE':   damage,
-    'HEAL':     heal,
-    'REVIVE':   revive,
-    'FREEZE':   freeze,
-    'UNFREEZE': unfreeze,
+    'DAMAGE':       damage,
+    'HEAL':         heal,
+    'REVIVE':       revive,
+    'FREEZE':       freeze,
+    'UNFREEZE':     unfreeze,
+    'INVISIBILITY': invisibility,
   }
 
   const tile   = global.map.positions[position]
@@ -106,6 +107,17 @@ function unfreeze(target) {
   }
 
   target.unfreeze()
+
+  return true
+}
+
+function invisibility(target) {
+
+  if (target.HP === 0) {
+    return
+  }
+
+  target.makeInvisible(global.intervals.invisibility)
 
   return true
 }

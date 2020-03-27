@@ -38,4 +38,9 @@
   "name": "Revive",
   "type": "REVIVE",
   "mana": 180
+}, {
+  "_id": "ugrI5joEK0MMK6SQxBmm",
+  "name": "Invisibility",
+  "type": "INVISIBILITY",
+  "mana": 400
 }]

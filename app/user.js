@@ -122,6 +122,20 @@ class User {
     delete this.frozenTimeout
   }
 
+  makeInvisible(duration) {
+
+    clearTimeout(this.invisibilityTimeout)
+
+    if (!this.invisible) {
+      this.invisible = true
+      emitters.userVisibilityChanged(this._id, true)
+    }
+
+    if (duration) {
+      this.invisibilityTimeout = setTimeout(this.#makeVisible.bind(this), duration)
+    }
+  }
+
   increaseStat(stat, value) {
     if (this.stats[stat]) {
       return this.#setStat(stat, this[stat] + value)
@@ -207,6 +221,13 @@ class User {
     emitters.userUnequipedItem(this._id, item._id)
   }
 
+  #makeVisible() {
+    this.invisible = false
+    clearTimeout(this.invisibilityTimeout)
+    delete this.invisibilityTimeout
+    emitters.userVisibilityChanged(this._id, false)
+  }
+
   #startMeditating() {
     this.meditating = true
     this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.meditate)
@@ -234,6 +255,7 @@ class User {
     this.#setStat('stamina', 0)
     this.equipement = []
     this.unfreeze()
+    this.#makeVisible()
     this.#stopMeditating()
     emitters.userDied(this._id)
   }

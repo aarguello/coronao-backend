@@ -40,6 +40,10 @@ module.exports.userStatChanged = (_id, stat, value) => {
   global.io.emit(`USER_STAT_CHANGED`, { _id, stats: { [stat]: value } })
 }
 
+module.exports.userVisibilityChanged = (_id, invisible) => {
+  global.io.emit(`USER_VISIBILITY_CHANGED`, { _id, invisible })
+}
+
 module.exports.userEquipedItem = (_id, itemId) => {
   global.io.emit('USER_EQUIPED_ITEM', { user: { _id }, itemId })
 }
