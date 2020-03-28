@@ -31,13 +31,14 @@ class Npc extends Actor {
   }
 
   move(direction) {
+
     if (!Map.directions.includes(direction)) {
       return
     }
 
-    const moved = super.move(direction)
+    const [ moved, pivoted ] = super.move(direction)
 
-    if (this.direction !== direction) {
+    if (pivoted) {
       emitters.npcDirectionChanged(this._id, this.direction)
     }
 

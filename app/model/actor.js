@@ -18,12 +18,16 @@ class Actor {
 
   move(direction) {
 
-    this.direction = direction
+    const position = Map.getNeighbourPosition(this.position, direction)
 
-    if (!this.frozen) {
-      const position = Map.getNeighbourPosition(this.position, direction)
-      return Map.updateActorPosition(this, position)
-    }
+    const pivoted = this.pivot(direction)
+    const moved = !this.frozen && Map.updateActorPosition(this, position)
+
+    return [ moved, pivoted ]
+  }
+
+  pivot(direction) {
+    return (this.direction !== direction) && (this.direction = direction)
   }
 
   suffer(damage) {
