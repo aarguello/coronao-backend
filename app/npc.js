@@ -13,23 +13,21 @@ class Npc extends Actor {
 
     super(_id)
 
+    const hp = { current: npcClass.HP, max: npcClass.HP }
     const isMutated = Math.random() >= 0.8
 
     this.name      = npcClass.name
     this.type      = 'NPC'
     this.position  = Map.getRandomPosition()
     this.fov       = npcClass.fov
-    this.max_HP    = npcClass.HP
+    this.stats     = { hp }
     this.damage    = npcClass.physical_damage
     this.mutated   = isMutated
 
     if (isMutated) {
-      this.damage = this.damage.map(function(x){return x**2})
-      this.max_HP *= 2
+      this.damage = this.damage.map(x => x**2)
+      this.stats.hp.max *= 2
     }
-
-    this.HP = this.max_HP
-
   }
 
   move(direction) {
@@ -86,6 +84,15 @@ class Npc extends Actor {
     }
   }
 
+  setStat(stat, value) {
+
+    const valueChanged = super.setStat(stat, value)
+
+    if (valueChanged) {
+      emitters.npcStatChanged(this._id, stat, this.stats[stat])
+    }
+  }
+
   getEvasion() {
     return 0
   }
@@ -106,7 +113,7 @@ function spawnRandomNPCs(amount) {
     const npc = new Npc(utils.getRandomNPC())
 
     global.aliveNPCs[npc._id] = npc
-    Map.updateActorPosition(user, Map.getRandomPosition())
+    Map.updateActorPosition(npc, Map.getRandomPosition())
 
     emitters.npcSpawned(npc)
   }
