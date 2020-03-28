@@ -7,21 +7,18 @@ class User extends Actor {
 
   #events = new EventEmitter()
 
-  constructor(_id, name) {
+  constructor(_id, name, race, class_) {
 
     super(_id)
 
-    const userClass = utils.getRandomClass()
-    const userRace  = utils.getRandomRace()
+    const HP      = class_.hp + race.hp
+    const MANA    = class_.mana + race.mana
+    const STAMINA = class_.stamina
 
-    const HP      = userClass.hp + userRace.hp
-    const MANA    = userClass.mana + userRace.mana
-    const STAMINA = userClass.stamina
-
-    this.name        = name
     this.type        = 'USER'
-    this.class       = userClass.name
-    this.race        = userRace.name
+    this.name        = name
+    this.class       = class_.name
+    this.race        = race.name
     this.inventory   = { 'XD0VuskON97LFPG0kdct': 1 }
     this.equipement  = ['XD0VuskON97LFPG0kdct']
     this.spells      = Object.keys(global.spells)

@@ -2,32 +2,44 @@ const User      = require('./user')
 const Map       = require('./map')
 const broadcast = require('./emitters')
 const combat    = require('./combat')
+const utils     = require('./utils')
 
-module.exports.login  = login
+module.exports.login  = signUp
 module.exports.logout = logout
 
-function login(name) {
+function signUp(name) {
 
-  if (this.id in global.users) {
+  const idTaken   = this.id in global.users
+  const nameTaken = Object.keys(global.users).find(u => u.name === name)
+
+  if (idTaken || nameTaken) {
     return
   }
 
-  const user = new User(this.id, name)
-
-  this.on('USER_MOVE',        (direction) => user.move(direction))
-  this.on('USER_SPEAK',       (message)   => user.speak(message))
-  this.on('USER_MEDITATE',    ()          => user.meditate())
-  this.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
-  this.on('USER_ATTACK',     combat.handleBlow)
-  this.on('USER_CAST_SPELL', combat.handleSpell)
+  const user = new User(
+    this.id,
+    name,
+    utils.getRandomRace(),
+    utils.getRandomClass(),
+  )
 
   global.users[user._id] = user
   Map.updateActorPosition(user, Map.getRandomPosition())
 
+  registerSocketHandlers(this, user)
   registerEventsBroadcast(user)
 
   broadcast.userWelcome(user)
   broadcast.userJoined(user, this)
+}
+
+function registerSocketHandlers(socket, user) {
+  socket.on('USER_MOVE',        (direction) => user.move(direction))
+  socket.on('USER_SPEAK',       (message)   => user.speak(message))
+  socket.on('USER_MEDITATE',    ()          => user.meditate())
+  socket.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
+  socket.on('USER_ATTACK',      combat.handleBlow)
+  socket.on('USER_CAST_SPELL',  combat.handleSpell)
 }
 
 function registerEventsBroadcast(user) {
