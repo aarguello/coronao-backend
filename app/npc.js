@@ -85,6 +85,14 @@ class Npc extends Actor {
       this.move(direction)
     }
   }
+
+  getEvasion() {
+    return 0
+  }
+
+  getPhysicalDefense() {
+    return 0
+  }
 }
 
 function makeNPCsFollowUsers () {
