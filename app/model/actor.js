@@ -37,7 +37,6 @@ class Actor {
 
   kill() {
     this.setStat('hp', 0)
-    this.setStat('stamina', 0)
     this.unfreeze()
   }
 
