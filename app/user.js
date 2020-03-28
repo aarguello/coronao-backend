@@ -1,9 +1,11 @@
-const Actor    = require('./model/actor')
-const Map      = require('./map')
-const utils    = require('./utils')
-const emitters = require('./emitters')
+const Actor        = require('./model/actor')
+const Map          = require('./map')
+const utils        = require('./utils')
+const EventEmitter = require('events')
 
 class User extends Actor {
+
+  #events = new EventEmitter()
 
   constructor(_id, name) {
 
@@ -45,6 +47,10 @@ class User extends Actor {
 
   /* Public  */
 
+  on(action, handler) {
+    this.#events.on(action, handler.bind(null, this._id))
+  }
+
   move(direction) {
 
     if (!Map.directions.includes(direction) || this.meditating) {
@@ -54,11 +60,11 @@ class User extends Actor {
     const [ moved, pivoted ] = super.move(direction)
 
     if (pivoted) {
-      emitters.userDirectionChanged(this._id, this.direction)
+      this.#events.emit('DIRECTION_CHANGED', this.direction)
     }
 
     if (moved) {
-      emitters.userPositionChanged(this._id, this.position)
+      this.#events.emit('POSITION_CHANGED', this.position)
     }
   }
 
@@ -68,7 +74,7 @@ class User extends Actor {
       message = message.slice(0, global.messageMaxLength) + '...'
     }
 
-    emitters.userSpoke(this._id, message)
+    this.#events.emit('SPOKE', message)
   }
 
   meditate() {
@@ -96,7 +102,7 @@ class User extends Actor {
     this.#stopMeditating()
     this.#makeVisible()
     this.equipement = []
-    emitters.userDied(this._id)
+    this.#events.emit('DIED')
   }
 
   revive() {
@@ -109,7 +115,7 @@ class User extends Actor {
     this.setStat('mana', this.stats.mana.max * 0.2)
     this.setStat('stamina', this.stats.stamina.max * 0.2)
 
-    emitters.userRevived(this._id)
+    this.#events.emit('REVIVED')
   }
 
   makeInvisible(duration) {
@@ -118,7 +124,7 @@ class User extends Actor {
 
     if (!this.invisible) {
       this.invisible = true
-      emitters.userVisibilityChanged(this._id, true)
+      this.#events.emit('VISIBILITY_CHANGED', true)
     }
 
     if (duration) {
@@ -176,7 +182,7 @@ class User extends Actor {
     const valueChanged = super.setStat(stat, value)
 
     if (valueChanged) {
-      emitters.userStatChanged(this._id, stat, this.stats[stat])
+      this.#events.emit('STAT_CHANGED', stat, this.stats[stat])
     }
   }
 
@@ -191,12 +197,12 @@ class User extends Actor {
     }
 
     this.equipement.push(item._id)
-    emitters.userEquipedItem(this._id, item._id)
+    this.#events.emit('EQUIPED_ITEM', item._id)
   }
 
   #unequipItem(item) {
     this.equipement = this.equipement.filter(itemId => itemId !== item._id)
-    emitters.userUnequipedItem(this._id, item._id)
+    this.#events.emit('UNEQUIPED_ITEM', item._id)
   }
 
   #makeVisible() {
@@ -206,14 +212,14 @@ class User extends Actor {
 
     if (this.invisible) {
       this.invisible = false
-      emitters.userVisibilityChanged(this._id, false)
+      this.#events.emit('VISIBILITY_CHANGED', false)
     }
   }
 
   #startMeditating() {
     this.meditating = true
     this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.meditate)
-    emitters.userStartedMeditating(this._id)
+    this.#events.emit('STARTED_MEDITATING')
   }
 
   #stopMeditating() {
@@ -223,7 +229,7 @@ class User extends Actor {
 
     if (this.meditating) {
       this.meditating = false
-      emitters.userStoppedMeditating(this._id)
+      this.#events.emit('STOPPED_MEDITATING')
     }
   }
 

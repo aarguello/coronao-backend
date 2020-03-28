@@ -1,7 +1,7 @@
-const User     = require('./user')
-const Map      = require('./map')
-const emitters = require('./emitters')
-const combat   = require('./combat')
+const User      = require('./user')
+const Map       = require('./map')
+const broadcast = require('./emitters')
+const combat    = require('./combat')
 
 module.exports.login  = login
 module.exports.logout = logout
@@ -22,11 +22,26 @@ function login(name) {
   this.on('USER_CAST_SPELL', combat.handleSpell)
 
   global.users[user._id] = user
-
   Map.updateActorPosition(user, Map.getRandomPosition())
 
-  emitters.userWelcome(user)
-  emitters.userJoined(user, this)
+  registerEventsBroadcast(user)
+
+  broadcast.userWelcome(user)
+  broadcast.userJoined(user, this)
+}
+
+function registerEventsBroadcast(user) {
+  user.on('SPOKE',              broadcast.userSpoke)
+  user.on('DIED',               broadcast.userDied)
+  user.on('REVIVED',            broadcast.userRevived)
+  user.on('DIRECTION_CHANGED',  broadcast.userDirectionChanged)
+  user.on('POSITION_CHANGED',   broadcast.userPositionChanged)
+  user.on('VISIBILITY_CHANGED', broadcast.userVisibilityChanged)
+  user.on('STAT_CHANGED',       broadcast.userStatChanged)
+  user.on('EQUIPED_ITEM',       broadcast.userEquipedItem)
+  user.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)
+  user.on('STARTED_MEDITATING', broadcast.userStartedMeditating)
+  user.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
 }
 
 function logout() {
@@ -36,6 +51,6 @@ function logout() {
   if (user) {
     delete global.map.positions[user.position].USER
     delete global.users[this.id]
-    emitters.userLeft(this.id)
+    broadcast.userLeft(this.id)
   }
 }
