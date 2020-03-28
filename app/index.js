@@ -10,7 +10,8 @@ server.listen(3000, () => {
   console.log('Listening on port 3000')
 })
 
-require('./utils').initGlobals(io)
+require('./emitters').setIO(io)
+require('./utils').initGlobals()
 require('./npc').init()
 
 io.on('connection', registerBaseHandlers)

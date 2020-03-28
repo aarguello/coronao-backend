@@ -10,9 +10,8 @@ module.exports.getEquipementBonus  = getEquipementBonus
 module.exports.arraysMatch         = arraysMatch
 module.exports.weightedRandom      = weightedRandom
 
-function initGlobals(io) {
+function initGlobals() {
 
-  global.io        = io
   global.users     = {}
   global.aliveNPCs = {}
 
