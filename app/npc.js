@@ -101,7 +101,8 @@ function makeNPCsFollowUsers () {
   })
 }
 
-function spawnRandomNPCs(amount) {
+function spawnRandomNPCs() {
+  amount = utils.getRandomInt(...global.mapNPCs.amount)
   for (i = 0; i < amount; i++) {
     const npc = new Npc(utils.getRandomNPC())
 
@@ -113,6 +114,6 @@ function spawnRandomNPCs(amount) {
 }
 
 module.exports.init = () => {
-  spawnRandomNPCs(3)
+  spawnRandomNPCs()
   setInterval(makeNPCsFollowUsers, global.intervals.pathfinder)
 }

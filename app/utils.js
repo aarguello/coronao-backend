@@ -8,6 +8,7 @@ module.exports.getRandomRace       = getRandomRace
 module.exports.getRandomNPC        = getRandomNPC
 module.exports.getEquipementBonus  = getEquipementBonus
 module.exports.arraysMatch         = arraysMatch
+module.exports.weightedRandom      = weightedRandom
 
 function initGlobals(io) {
 
@@ -30,12 +31,14 @@ function initGlobals(io) {
     invisibility: 8000,
   }
 
-  global.map     = Map.load('./assets/map-1.json')
+  const selectedMap = 'map-1'
+  global.map     = Map.load(`./assets/${selectedMap}.json`)
   global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./assets/NPCs.json',    'name')
   global.items   = importJSONArrayAsDictionary('./assets/items.json',   '_id')
   global.spells  = importJSONArrayAsDictionary('./assets/spells.json',  '_id')
+  global.mapNPCs = importJSONArrayAsDictionary('./assets/mapNPCs.json',  'map')[selectedMap]
 }
 
 function getRandomInt(min, max) {
@@ -61,10 +64,18 @@ function getRandomRace() {
 }
 
 function getRandomNPC() {
-  const npcNames = Object.keys(global.NPCs)
-  const npcIndex = getRandomInt(0, npcNames.length)
-  const randomNPCName = npcNames[npcIndex]
+  npcProbs = global.mapNPCs['spawnProbabilities']
+  randomNPCName = weightedRandom(npcProbs)
+  console.log(randomNPCName)
   return global.NPCs[randomNPCName]
+}
+
+function weightedRandom(prob) {
+  let i, sum=0, r=Math.random()
+  for (i in prob) {
+    sum += prob[i]
+    if (r <= sum) return i
+  }
 }
 
 function getEquipementBonus(equipement, attribute) {

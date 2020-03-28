@@ -1,0 +1,8 @@
+[{
+    "map": "map-1",
+    "amount": [10, 20],
+    "spawnProbabilities":{
+        "BAT": 0.2,
+        "ZOMBIE": 0.8
+    }
+}]
