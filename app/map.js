@@ -5,6 +5,7 @@ const directions = ['LEFT', 'RIGHT', 'UP', 'DOWN']
 module.exports.directions           = directions
 module.exports.getRandomPosition    = getRandomPosition
 module.exports.getNeighbourPosition = getNeighbourPosition
+module.exports.getActorInTile       = getActorInTile
 module.exports.getNearestUser       = getNearestUser
 module.exports.checkCollision       = checkCollision
 module.exports.positionInMap        = positionInMap
@@ -33,6 +34,17 @@ function getNeighbourPosition(position, direction) {
   if (direction === 'RIGHT') return [position[0] + 1, position[1]]
   if (direction === 'UP')    return [position[0]    , position[1] - 1]
   if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
+}
+
+function getActorInTile(position) {
+
+  const tile = global.map.positions[position] || {}
+
+  if (tile.USER) {
+    return global.users[tile.USER]
+  } else if (tile.NPC) {
+    return global.aliveNPCs[tile.NPC]
+  }
 }
 
 function getNearestUser(position, fov) {

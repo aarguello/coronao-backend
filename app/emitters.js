@@ -88,3 +88,7 @@ module.exports.npcPositionChanged = (_id, position) => {
 module.exports.npcDirectionChanged = (_id, direction) => {
   global.io.emit('NPC_DIRECTION_CHANGED', { _id, direction })
 }
+
+module.exports.npcStatChanged = (_id, stat, value) => {
+  global.io.emit(`NPC_STAT_CHANGED`, { _id, stats: { [stat]: value } })
+}

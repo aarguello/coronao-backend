@@ -11,8 +11,7 @@ module.exports.handleBlow = function () {
   }
 
   const neighbour = Map.getNeighbourPosition(user.position, user.direction)
-  const tile      = global.map.positions[neighbour]
-  const target    = global.users[tile && tile.USER]
+  const target    = Map.getActorInTile(neighbour)
 
   if (!target || target.hp === 0) {
     emitters.userAttacked(user._id, 0)

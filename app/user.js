@@ -92,6 +92,7 @@ class User extends Actor {
 
   kill() {
     super.kill()
+    this.setStat('stamina', 0)
     this.#stopMeditating()
     this.#makeVisible()
     this.equipement = []
