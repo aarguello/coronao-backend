@@ -7,6 +7,8 @@ const emitters = require('./emitters')
 
 class Npc extends Actor {
 
+  emitter = new (require('events').EventEmitter);
+
   constructor(npcClass) {
 
     const _id = '_' + Math.random().toString(36).substr(2, 9)
@@ -96,6 +98,7 @@ class Npc extends Actor {
 
   kill() {
     super.kill()
+    this.emitter.emit('DIED')
     emitters.npcDied(this._id)
   }
 
@@ -131,6 +134,10 @@ function spawnRandomNPCs() {
     Map.updateActorPosition(npc, Map.getRandomPosition())
 
     emitters.npcSpawned(npc)
+    npc.emitter.on('DIED', () => {
+      delete global.map.positions[npc.position].NPC
+      delete global.aliveNPCs[npc._id]
+    })
   }
 }
 
