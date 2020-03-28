@@ -2,17 +2,17 @@ const utils = require('./utils')
 
 const directions = ['LEFT', 'RIGHT', 'UP', 'DOWN']
 
-module.exports.directions                 = directions
-module.exports.getRandomPosition          = getRandomPosition
-module.exports.getNeighbourPosition       = getNeighbourPosition
-module.exports.getNearestNeighbourAtSight = getNearestNeighbourAtSight
-module.exports.checkCollision             = checkCollision
-module.exports.positionInMap              = positionInMap
-module.exports.getActor                   = getActor
-module.exports.pivotActor                 = pivotActor
-module.exports.moveActor                  = moveActor
-module.exports.updateActorPosition        = updateActorPosition
-module.exports.load                       = load
+module.exports.directions           = directions
+module.exports.getRandomPosition    = getRandomPosition
+module.exports.getNeighbourPosition = getNeighbourPosition
+module.exports.getNearestUser       = getNearestUser
+module.exports.checkCollision       = checkCollision
+module.exports.positionInMap        = positionInMap
+module.exports.getActor             = getActor
+module.exports.pivotActor           = pivotActor
+module.exports.moveActor            = moveActor
+module.exports.updateActorPosition  = updateActorPosition
+module.exports.load                 = load
 
 function getRandomPosition() {
 
@@ -35,19 +35,23 @@ function getNeighbourPosition(position, direction) {
   if (direction === 'DOWN')  return [position[0]    , position[1] + 1]
 }
 
-function getNearestNeighbourAtSight(position, fov, type) {
+function getNearestUser(position, fov) {
 
   let closest = {
     id: null,
     position: []
   }
+  const type = "USER"
 
   Object.entries(global.map.positions).forEach(([pos, tile]) => {
     if (type in tile) {
-      distanceBetween = getDistance(position, pos)
-      if ((distanceBetween <= fov && distanceBetween < getDistance(position, closest.position)) || !closest.id) {
-        closest.id = tile[type]
-        closest.position = pos
+      user = global.users[tile[type]]
+      if (user.hp > 0) {
+        distanceBetween = getDistance(position, pos)
+        if ((distanceBetween <= fov && distanceBetween < getDistance(position, closest.position)) || !closest.id) {
+          closest.id = user
+          closest.position = pos
+        }
       }
     }
   })

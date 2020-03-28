@@ -1,67 +1,69 @@
+const Actor    = require('./model/actor')
 const Map      = require('./map')
 const utils    = require('./utils')
 const PF       = require('pathfinding')
 const user     = require('./user')
 const emitters = require('./emitters')
 
-module.exports.init = () => {
-  spawnRandomNPCs(3)
-  setInterval(makeNPCsFollowUsers, global.intervals.pathfinder)
-}
+class Npc extends Actor {
 
-function spawnRandomNPCs(amount) {
-  for (i = 0; i < amount; i++) {
-    const npc = create()
-    emitters.npcSpawned(npc)
-  }
-}
+  constructor(npcClass) {
 
-function create() {
+    const _id = '_' + Math.random().toString(36).substr(2, 9)
 
-  const npcClass = utils.getRandomNPC()
-  const isMutated = Math.random() >= 0.8
+    super(_id)
 
-  const npc = {
-    _id: '_' + Math.random().toString(36).substr(2, 9),
-    name: npcClass.name,
-    position: Map.getRandomPosition(),
-    fov: npcClass.fov,
-    direction: 'DOWN',
-    max_HP: npcClass.HP,
-    damage: npcClass.physical_damage,
-    mutated: isMutated,
-  }
+    const isMutated = Math.random() >= 0.8
 
-  if (isMutated) {
-    npc.damage = npc.damage.map(function(x){return x**2})
-    npc.max_HP *= 2
+    this.name      = npcClass.name
+    this.type      = 'NPC'
+    this.position  = Map.getRandomPosition()
+    this.fov       = npcClass.fov
+    this.max_HP    = npcClass.HP
+    this.damage    = npcClass.physical_damage
+    this.mutated   = isMutated
+
+    if (isMutated) {
+      this.damage = this.damage.map(function(x){return x**2})
+      this.max_HP *= 2
+    }
+
+    this.HP = this.max_HP
+
   }
 
-  npc.HP = npc.max_HP
+  move(direction) {
+    if (!Map.directions.includes(direction)) {
+      return
+    }
 
-  global.aliveNPCs[npc._id] = npc
-  Map.moveActor('NPC', npc._id, npc.position)
+    const moved = super.move(direction)
 
-  npc.reposition = function (direction, position) {
-    if (!this.frozen) {
-      Map.pivotActor('NPC', this._id, direction, emitters.npcDirectionChanged)
-      Map.moveActor('NPC', this._id, position, emitters.npcPositionChanged)
+    if (this.direction !== direction) {
+      emitters.npcDirectionChanged(this._id, this.direction)
+    }
+
+    if (moved) {
+      emitters.npcPositionChanged(this._id, this.position)
     }
   }
 
-  npc.freeze = function () {
+  freeze() {
     this.frozen = true
     this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
   }
 
-  npc.followClosest = function () {
-    closestId = Map.getNearestNeighbourAtSight(this.position, this.fov, "USER")
-    if (closestId) {
-      this.follow(global.users[closestId])
+  followClosest() {
+    if (!this.currentTarget || this.currentTarget.hp === 0) {
+      const closestUser = Map.getNearestUser(this.position, this.fov)
+      if (closestUser) {
+        this.currentTarget = closestUser
+      }
     }
+    if (this.currentTarget) this.follow(this.currentTarget)
   }
 
-  npc.follow = function (target){
+  follow(target){
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
 
@@ -80,11 +82,9 @@ function create() {
       if (path[0][0] - path[1][0] == 1)   direction = 'LEFT'
       if (path[0][1] - path[1][1] == -1)  direction = 'DOWN'
       if (path[0][1] - path[1][1] == 1)   direction = 'UP'
-      this.reposition(direction, path[1])
+      this.move(direction)
     }
   }
-
-  return npc
 }
 
 function makeNPCsFollowUsers () {
@@ -93,3 +93,18 @@ function makeNPCsFollowUsers () {
   })
 }
 
+function spawnRandomNPCs(amount) {
+  for (i = 0; i < amount; i++) {
+    const npc = new Npc(utils.getRandomNPC())
+
+    global.aliveNPCs[npc._id] = npc
+    Map.updateActorPosition(user, Map.getRandomPosition())
+
+    emitters.npcSpawned(npc)
+  }
+}
+
+module.exports.init = () => {
+  spawnRandomNPCs(3)
+  setInterval(makeNPCsFollowUsers, global.intervals.pathfinder)
+}
