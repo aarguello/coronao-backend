@@ -125,23 +125,31 @@ function makeNPCsFollowUsers () {
   })
 }
 
-function spawnRandomNPCs() {
-  amount = utils.getRandomInt(...global.mapNPCs.amount)
-  for (i = 0; i < amount; i++) {
-    const npc = new Npc(utils.getRandomNPC())
+function spawnNPC() {
 
-    global.aliveNPCs[npc._id] = npc
-    Map.updateActorPosition(npc, Map.getRandomPosition())
+  const npc = new Npc(utils.getRandomNPC())
 
-    emitters.npcSpawned(npc)
-    npc.emitter.on('DIED', () => {
-      delete global.map.positions[npc.position].NPC
-      delete global.aliveNPCs[npc._id]
-    })
-  }
+  global.aliveNPCs[npc._id] = npc
+  Map.updateActorPosition(npc, Map.getRandomPosition())
+
+  npc.emitter.on('DIED', () => haveFuneral(npc))
+
+  emitters.npcSpawned(npc)
+}
+
+function haveFuneral(npc) {
+  delete global.map.positions[npc.position].NPC
+  delete global.aliveNPCs[npc._id]
+  spawnNPC()
 }
 
 module.exports.init = () => {
-  spawnRandomNPCs()
+
+  amount = utils.getRandomInt(...global.mapNPCs.amount)
+
+  for (i = 0; i < amount; i++) {
+    spawnNPC()
+  }
+
   setInterval(makeNPCsFollowUsers, global.intervals.pathfinder)
 }
