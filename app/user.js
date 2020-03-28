@@ -16,11 +16,10 @@ class User extends Actor {
     const MANA    = userClass.mana + userRace.mana
     const STAMINA = userClass.stamina
 
-    this._id         = _id
     this.name        = name
+    this.type        = 'USER'
     this.class       = userClass.name
     this.race        = userRace.name
-    this.direction   = 'DOWN'
     this.inventory   = { 'XD0VuskON97LFPG0kdct': 1 }
     this.equipement  = ['XD0VuskON97LFPG0kdct']
     this.spells      = Object.keys(global.spells)
@@ -36,10 +35,6 @@ class User extends Actor {
 
   /* Getters */
 
-  get hp() {
-    return this.stats.hp.current
-  }
-
   get mana() {
     return this.stats.mana.current
   }
@@ -52,16 +47,19 @@ class User extends Actor {
 
   move(direction) {
 
-    const allowedDirections = ['LEFT', 'RIGHT', 'UP', 'DOWN']
-
-    if (!allowedDirections.includes(direction) || this.meditating) {
+    if (!Map.directions.includes(direction) || this.meditating) {
       return
     }
 
-    const position = Map.getNeighbourPosition(this.position, direction)
+    const moved = super.move(direction)
 
-    Map.pivotActor('USER', this._id, direction, emitters.userDirectionChanged)
-    Map.moveActor('USER', this._id, position, emitters.userPositionChanged)
+    if (this.direction !== direction) {
+      emitters.userDirectionChanged(this._id, this.direction)
+    }
+
+    if (moved) {
+      emitters.userPositionChanged(this._id, this.position)
+    }
   }
 
   speak(message) {
@@ -92,13 +90,12 @@ class User extends Actor {
     }
   }
 
-  suffer(damage) {
-
-    this.decreaseStat('hp', damage)
-
-    if (this.hp === 0) {
-      this.#kill(this)
-    }
+  kill() {
+    super.kill()
+    this.#stopMeditating()
+    this.#makeVisible()
+    this.equipement = []
+    emitters.userDied(this._id)
   }
 
   revive() {
@@ -107,22 +104,11 @@ class User extends Actor {
       return
     }
 
-    this.#setStat('hp', this.stats.hp.max * 0.2)
-    this.#setStat('mana', this.stats.mana.max * 0.2)
-    this.#setStat('stamina', this.stats.stamina.max * 0.2)
+    this.setStat('hp', this.stats.hp.max * 0.2)
+    this.setStat('mana', this.stats.mana.max * 0.2)
+    this.setStat('stamina', this.stats.stamina.max * 0.2)
 
     emitters.userRevived(this._id)
-  }
-
-  freeze() {
-    this.frozen = true
-    this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
-  }
-
-  unfreeze() {
-    this.frozen = false
-    clearTimeout(this.frozenTimeout)
-    delete this.frozenTimeout
   }
 
   makeInvisible(duration) {
@@ -136,18 +122,6 @@ class User extends Actor {
 
     if (duration) {
       this.invisibilityTimeout = setTimeout(this.#makeVisible.bind(this), duration)
-    }
-  }
-
-  increaseStat(stat, value) {
-    if (this.stats[stat]) {
-      return this.#setStat(stat, this[stat] + value)
-    }
-  }
-
-  decreaseStat(stat, value) {
-    if (this.stats[stat]) {
-      return this.#setStat(stat, this[stat] - value)
     }
   }
 
@@ -192,19 +166,11 @@ class User extends Actor {
 
   /* Private */
 
-  #setStat(stat, value) {
+  setStat(stat, value) {
 
-    const min = 0
-    const max = this.stats[stat].max
+    const valueChanged = super.setStat(stat, value)
 
-    if (value < min) {
-      value = min
-    } else if (value > max) {
-      value = max
-    }
-
-    if (this[stat] != value) {
-      this.stats[stat].current = Math.round(value)
+    if (valueChanged) {
       emitters.userStatChanged(this._id, stat, this.stats[stat])
     }
   }
@@ -263,16 +229,6 @@ class User extends Actor {
     if (this.mana === this.stats.mana.max) {
       this.#stopMeditating()
     }
-  }
-
-  #kill() {
-    this.#setStat('hp', 0)
-    this.#setStat('stamina', 0)
-    this.equipement = []
-    this.unfreeze()
-    this.#makeVisible()
-    this.#stopMeditating()
-    emitters.userDied(this._id)
   }
 }
 

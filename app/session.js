@@ -23,8 +23,7 @@ function login(name) {
 
   global.users[user._id] = user
 
-  const initialPosition = Map.getRandomPosition()
-  Map.moveActor('USER', user._id, initialPosition)
+  Map.updateActorPosition(user, Map.getRandomPosition())
 
   emitters.userWelcome(user)
   emitters.userJoined(user, this)

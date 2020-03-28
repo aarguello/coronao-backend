@@ -1,5 +1,8 @@
 const utils = require('./utils')
 
+const directions = ['LEFT', 'RIGHT', 'UP', 'DOWN']
+
+module.exports.directions                 = directions
 module.exports.getRandomPosition          = getRandomPosition
 module.exports.getNeighbourPosition       = getNeighbourPosition
 module.exports.getNearestNeighbourAtSight = getNearestNeighbourAtSight
@@ -8,6 +11,7 @@ module.exports.positionInMap              = positionInMap
 module.exports.getActor                   = getActor
 module.exports.pivotActor                 = pivotActor
 module.exports.moveActor                  = moveActor
+module.exports.updateActorPosition        = updateActorPosition
 module.exports.load                       = load
 
 function getRandomPosition() {
@@ -114,6 +118,27 @@ function moveActor(type, _id, position, emitter) {
   if (emitter) {
     emitter(_id, position)
   }
+}
+
+function updateActorPosition(actor, position) {
+
+  if (checkCollision(position)) {
+    return
+  }
+
+  if (global.map.positions[actor.position]) {
+    delete global.map.positions[actor.position][actor.type]
+  }
+
+  actor.position = position
+
+  if (position in global.map.positions) {
+    global.map.positions[position][actor.type] = actor._id
+  } else {
+    global.map.positions[position] = { [actor.type]: actor._id }
+  }
+
+  return true
 }
 
 function load(path) {
