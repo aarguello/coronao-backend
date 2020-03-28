@@ -31,6 +31,10 @@ module.exports.userDirectionChanged = (_id, direction) => {
   this.io.emit('USER_DIRECTION_CHANGED', { _id, direction })
 }
 
+module.exports.userInventoryChanged = (_id, itemId, amount) => {
+  this.io.emit('USER_INVENTORY_CHANGED', { _id, inventory : { [itemId]: amount } })
+}
+
 module.exports.userAttacked = (_id, damage) => {
   this.io.emit('USER_ATTACKED', { user: { _id }, damage })
 }

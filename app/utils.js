@@ -28,6 +28,7 @@ function initGlobals() {
     staminaRecover: 3000,
     meditate: 1000,
     invisibility: 8000,
+    consumeItem: 125,
   }
 
   const selectedMap = 'map-1'

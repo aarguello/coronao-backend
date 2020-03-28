@@ -137,10 +137,14 @@ class User extends Actor {
       return
     }
 
-    if (this.equipement.includes(itemId)) {
-      this.#unequipItem(item)
+    if (item.consumable) {
+        this.#consumeItem(item)
     } else {
-      this.#equipItem(item)
+      if (this.equipement.includes(itemId)) {
+        this.#unequipItem(item)
+      } else {
+        this.#equipItem(item)
+      }
     }
   }
 
@@ -237,6 +241,39 @@ class User extends Actor {
     if (this.mana === this.stats.mana.max) {
       this.#stopMeditating()
     }
+  }
+
+  #consumeItem(item) {
+
+    if (Date.now() - this.itemUsedTimestamp < global.intervals.consumeItem) {
+      return
+    }
+
+    let value = item.value
+
+    if (item.consumable === 'mana') {
+      value *= this.stats['mana'].max / 100
+    }
+
+    this.itemUsedTimestamp = Date.now()
+
+    this.increaseStat(item.consumable, value)
+    this.#decreaseInventory(item._id, 1)
+  }
+
+  #decreaseInventory(itemId, amount) {
+
+    if (!this.inventory[itemId]) {
+      return
+    }
+
+    if (this.inventory[itemId] - amount > 0) {
+      this.inventory[itemId] -= amount
+    } else {
+      delete this.inventory[itemId]
+    }
+
+    this.#events.emit('INVENTORY_CHANGED', this._id, itemId, this.inventory[itemId] || 0)
   }
 }
 

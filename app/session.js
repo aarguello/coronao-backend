@@ -49,6 +49,7 @@ function registerEventsBroadcast(user) {
   user.on('DIRECTION_CHANGED',  broadcast.userDirectionChanged)
   user.on('POSITION_CHANGED',   broadcast.userPositionChanged)
   user.on('VISIBILITY_CHANGED', broadcast.userVisibilityChanged)
+  user.on('INVENTORY_CHANGED',  broadcast.userInventoryChanged)
   user.on('STAT_CHANGED',       broadcast.userStatChanged)
   user.on('EQUIPED_ITEM',       broadcast.userEquipedItem)
   user.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)

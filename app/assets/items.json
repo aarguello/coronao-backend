@@ -55,4 +55,14 @@
   "name": "Gold ring",
   "body_part": "FINGER",
   "magical_defense": [15, 20]
+}, {
+  "_id": "vBFVyGsUj9beNGjmJpVi",
+  "name": "Red potion",
+  "consumable": "hp",
+  "value": 30
+}, {
+  "_id": "p024Y6sJFnb9IfDVFgkS",
+  "name": "Blue potion",
+  "consumable": "mana",
+  "value": 15
 }]
