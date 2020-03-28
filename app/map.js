@@ -57,7 +57,7 @@ function getNearestNeighbourAtSight(position, fov, type) {
 
 function checkCollision(position) {
   const data = global.map.positions[position]
-  return data && (data.USER || data.NPC || data.TILE)
+  return data && (data.USER || data.NPC || data.TILE) || !positionInMap(position)
 }
 
 function positionInMap(position) {
