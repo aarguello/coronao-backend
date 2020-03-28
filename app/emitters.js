@@ -81,6 +81,10 @@ module.exports.npcSpawned = (npc) => {
   global.io.emit('NPC_SPAWNED', npc)
 }
 
+module.exports.npcDied = (_id) => {
+  global.io.emit('NPC_DIED', { _id })
+}
+
 module.exports.npcPositionChanged = (_id, position) => {
   global.io.emit('NPC_POSITION_CHANGED', { _id, position })
 }
@@ -91,4 +95,8 @@ module.exports.npcDirectionChanged = (_id, direction) => {
 
 module.exports.npcStatChanged = (_id, stat, value) => {
   global.io.emit(`NPC_STAT_CHANGED`, { _id, stats: { [stat]: value } })
+}
+
+module.exports.npcReceivedSpell = (_id, spellId) => {
+  global.io.emit('NPC_RECEIVED_SPELL', { npc: { _id }, spellId })
 }

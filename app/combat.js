@@ -43,22 +43,26 @@ module.exports.handleSpell = function (spellId, position) {
     'INVISIBILITY': invisibility,
   }
 
-  const tile   = global.map.positions[position]
-  const target = global.users[tile && tile.USER]
   const spell  = global.spells[spellId]
-  const caster = global.users[this.id]
+  const target = Map.getActorInTile(position)
 
-  const hasSpell = caster.spells.includes(spellId)
+  if (!spell || !target || !target.affectedBy(spell)) {
+    return
+  }
 
-  if (!target || !spell || !hasSpell || caster.hp === 0 || spell.mana > caster.mana || caster.meditating) {
+  const caster   = global.users[this.id]
+  const hasSpell = caster.spells.includes(spell._id)
+
+  if (!hasSpell || caster.hp === 0 || spell.mana > caster.mana || caster.meditating) {
     return
   }
 
   const cast = spellHandler[spell.type](target, spell, caster)
 
   if (cast) {
-    emitters.userReceivedSpell(target._id, spell._id)
     caster.decreaseStat('mana', spell.mana)
+    if (target.type === 'USER') emitters.userReceivedSpell(target._id, spell._id)
+    if (target.type === 'NPC')  emitters.npcReceivedSpell(target._id, spell._id)
   }
 }
 

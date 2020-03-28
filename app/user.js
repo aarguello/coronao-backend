@@ -165,6 +165,10 @@ class User extends Actor {
     return global.classes[this.class].evasion - 1
   }
 
+  affectedBy(spell) {
+    return true
+  }
+
   /* Private */
 
   setStat(stat, value) {

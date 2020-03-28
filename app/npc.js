@@ -94,12 +94,25 @@ class Npc extends Actor {
     }
   }
 
+  kill() {
+    super.kill()
+    emitters.npcDied(this._id)
+  }
+
   getEvasion() {
     return 0
   }
 
   getPhysicalDefense() {
     return 0
+  }
+
+  getMagicalDefense() {
+    return 0
+  }
+
+  affectedBy(spell) {
+    return ['DAMAGE', 'FREEZE', 'UNFREEZE'].includes(spell.type)
   }
 }
 
