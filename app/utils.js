@@ -66,7 +66,6 @@ function getRandomRace() {
 function getRandomNPC() {
   npcProbs = global.mapNPCs['spawnProbabilities']
   randomNPCName = weightedRandom(npcProbs)
-  console.log(randomNPCName)
   return global.NPCs[randomNPCName]
 }
 
