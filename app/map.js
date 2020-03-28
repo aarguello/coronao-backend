@@ -9,9 +9,6 @@ module.exports.getActorInTile       = getActorInTile
 module.exports.getNearestUser       = getNearestUser
 module.exports.checkCollision       = checkCollision
 module.exports.positionInMap        = positionInMap
-module.exports.getActor             = getActor
-module.exports.pivotActor           = pivotActor
-module.exports.moveActor            = moveActor
 module.exports.updateActorPosition  = updateActorPosition
 module.exports.load                 = load
 
@@ -82,58 +79,6 @@ function positionInMap(position) {
   const checkY = 0 <= position[1] && position[1] < global.map.size
 
   return checkX && checkY
-}
-
-function getActor(_id, type) {
-
-  let actor
-
-  if (type === 'USER') {
-    actor = global.users[_id]
-  }
-
-  if (type === 'NPC') {
-    actor = global.aliveNPCs[_id]
-  }
-
-  return actor
-}
-
-function pivotActor(type, _id, direction, emitter) {
-
-  const actor = getActor(_id, type)
-
-  if (!actor || actor.direction === direction) {
-    return
-  }
-
-  actor.direction = direction
-  emitter(actor._id, actor.direction)
-}
-
-function moveActor(type, _id, position, emitter) {
-
-  const actor = getActor(_id, type)
-
-  if (!actor || actor.frozen || !positionInMap(position) || checkCollision(position)) {
-    return
-  }
-
-  if (global.map.positions[actor.position]) {
-    delete global.map.positions[actor.position][type]
-  }
-
-  actor.position = position
-
-  if (position in global.map.positions) {
-    global.map.positions[position][type] = actor._id
-  } else {
-    global.map.positions[position] = { [type]: actor._id }
-  }
-
-  if (emitter) {
-    emitter(_id, position)
-  }
 }
 
 function updateActorPosition(actor, position) {
