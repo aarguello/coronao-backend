@@ -38,11 +38,12 @@ function registerSocketHandlers(socket, user) {
   socket.on('USER_SPEAK',       (message)   => user.speak(message))
   socket.on('USER_MEDITATE',    ()          => user.meditate())
   socket.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
-  socket.on('USER_ATTACK',      combat.handleBlow)
+  socket.on('USER_ATTACK',      ()          => user.attack())
   socket.on('USER_CAST_SPELL',  combat.handleSpell)
 }
 
 function registerEventsBroadcast(user) {
+  user.on('ATTACKED',           broadcast.userAttacked)
   user.on('SPOKE',              broadcast.userSpoke)
   user.on('DIED',               broadcast.userDied)
   user.on('REVIVED',            broadcast.userRevived)

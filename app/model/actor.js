@@ -1,5 +1,5 @@
-
-const Map = require('../map')
+const Map   = require('../map')
+const utils = require('../utils')
 
 class Actor {
 
@@ -28,6 +28,20 @@ class Actor {
 
   pivot(direction) {
     return (this.direction !== direction) && (this.direction = direction)
+  }
+
+  attack(target) {
+
+    let damage     = 0
+    let missChance = target.getEvasion()
+    let blowLands  = utils.getRandomBool(missChance)
+
+    if (blowLands) {
+      damage = this.getPhysicalDamage() - target.getPhysicalDefense()
+      target.suffer(damage)
+    }
+
+    return damage
   }
 
   suffer(damage) {

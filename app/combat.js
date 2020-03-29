@@ -2,36 +2,6 @@ const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
-module.exports.handleBlow = function () {
-
-  const user = global.users[this.id]
-
-  if (user.hp === 0 || user.meditating || user.stamina < global.blowEffort) {
-    return
-  }
-
-  const neighbour = Map.getNeighbourPosition(user.position, user.direction)
-  const target    = Map.getActorInTile(neighbour)
-
-  if (!target || target.hp === 0) {
-    emitters.userAttacked(user._id, 0)
-    return
-  }
-
-  const missChance = target.getEvasion()
-  const blowLands  = utils.getRandomBool(missChance)
-
-  if (blowLands) {
-    const damage = user.getPhysicalDamage() - target.getPhysicalDefense()
-    target.suffer(damage)
-    emitters.userAttacked(user._id, damage)
-  } else {
-    emitters.userMissedAttack(user._id)
-  }
-
-  user.decreaseStat('stamina', global.blowEffort)
-}
-
 module.exports.handleSpell = function (spellId, position) {
 
   const spellHandler = {

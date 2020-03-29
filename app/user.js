@@ -65,6 +65,24 @@ class User extends Actor {
     }
   }
 
+  attack() {
+
+    if (this.hp === 0 || this.meditating || this.stamina < global.blowEffort) {
+      return
+    }
+
+    let damage    =  0
+    let neighbour = Map.getNeighbourPosition(this.position, this.direction)
+    let target    = Map.getActorInTile(neighbour)
+
+    if (target && target.hp > 0) {
+      damage = super.attack(target)
+    }
+
+    this.#events.emit('ATTACKED', damage)
+    this.decreaseStat('stamina', global.blowEffort)
+  }
+
   speak(message) {
 
     if (message.length > global.messageMaxLength) {
