@@ -5,7 +5,7 @@ class Actor {
 
   constructor(_id) {
     this._id = _id
-    this.direction = 'DOWN'
+    this.stats = { hp: { current: 0, max: 0 } }
   }
 
   /* Getters */
