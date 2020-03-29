@@ -2,7 +2,7 @@ const Actor = require('./actor')
 
 beforeEach(() => {
   global.map = { positions: {}, size: 2 }
-});
+})
 
 test('Create actor', () => {
 
@@ -15,17 +15,34 @@ test('Create actor', () => {
   expect(actor.stats.hp.max).toBe(0)
 })
 
-test('it should pivot actor when moving', () => {
+test('it should pivot actor when moving to different direction', () => {
 
   // Arrange
-  const actor = new Actor('')
-  actor.position = [0, 0]
+  const actor     = new Actor('')
+  actor.direction = 'DOWN'
+  actor.position  = [0, 0]
 
   // Act
-  actor.move('RIGHT')
+  const [ moved, pivoted ] = actor.move('RIGHT')
 
   // Assert
+  expect(pivoted).toBe('RIGHT')
   expect(actor.direction).toBe('RIGHT')
+})
+
+test('it should not pivot actor when moving to same direction', () => {
+
+  // Arrange
+  const actor     = new Actor('')
+  actor.direction = 'DOWN'
+  actor.position  = [0, 0]
+
+  // Act
+  const [ moved, pivoted ] = actor.move('DOWN')
+
+  // Assert
+  expect(pivoted).toBe(false)
+  expect(actor.direction).toBe('DOWN')
 })
 
 test('it should move actor when neighbour position is free', () => {
