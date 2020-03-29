@@ -1,5 +1,9 @@
 const Actor = require('./actor')
 
+beforeEach(() => {
+  global.map = { positions: {}, size: 2 }
+});
+
 test('Create actor', () => {
 
   // Arrange
@@ -16,7 +20,6 @@ test('it should pivot actor when moving', () => {
   // Arrange
   const actor = new Actor('')
   actor.position = [0, 0]
-  global.map = { positions: {}, size: 2 }
 
   // Act
   actor.move('RIGHT')
@@ -30,7 +33,6 @@ test('it should move actor when neighbour position is free', () => {
   // Arrange
   const actor = new Actor('')
   actor.position = [0, 0]
-  global.map = { positions: {}, size: 2 }
 
   // Act
   actor.move('RIGHT')
@@ -44,7 +46,7 @@ test('it should not move actor when neighbour position is taken', () => {
   // Arrange
   const actor = new Actor('')
   actor.position = [0, 0]
-  global.map = { positions: { '1,0': { USER: 'some other user'} }, size: 2 }
+  global.map.positions = { '1,0': { USER: 'some other user'} }
 
   // Act
   actor.move('RIGHT')
