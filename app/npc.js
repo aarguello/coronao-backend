@@ -238,7 +238,7 @@ module.exports.init = () => {
 
   for (i = 0; i < amount; i++) {
     spawnNPC()
-  }<
+  }
 
   setInterval(makeNPCsPerformActions, global.intervals.npcActions)
 }
