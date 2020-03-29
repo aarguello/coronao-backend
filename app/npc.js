@@ -56,7 +56,7 @@ class Npc extends Actor {
 
   followClosest() {
     const closestUser = Map.getNearestUser(this.position, this.fov)
-    this.follow(closestUser)
+    if (closestUser) this.follow(closestUser)
   }
 
   follow(target){
