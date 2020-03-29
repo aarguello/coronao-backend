@@ -34,8 +34,8 @@ class Npc extends Actor {
     if (isMutated) {
       this.damage = this._damage.map(x => x**2)
       this.stats.hp.max *= 2
-      this.movementSpeed *= 1.2
-      this.attackSpeed *= 1.1
+      this.movementSpeed *= 0.8
+      this.attackSpeed *= 0.7
     }
 
   }
