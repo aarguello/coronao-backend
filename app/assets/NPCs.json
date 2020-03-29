@@ -1,12 +1,12 @@
 [{
   "name": "BAT",
-  "HP": 25,
+  "HP": 250,
   "physical_damage": [20, 40],
   "attack_speed": 1000,
   "fov": 20
 }, {
   "name": "ZOMBIE",
-  "HP": 100,
+  "HP": 400,
   "physical_damage": [20, 50],
   "attack_speed": 500,
   "fov": 30
