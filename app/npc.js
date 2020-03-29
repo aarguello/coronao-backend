@@ -23,12 +23,12 @@ class Npc extends Actor {
     this.position    = Map.getRandomPosition()
     this.fov         = npcClass.fov
     this.stats       = { hp }
-    this.damage      = npcClass.physical_damage
+    this._damage      = npcClass.physical_damage
     this.attackSpeed = npcClass.attack_speed
     this.mutated     = isMutated
 
     if (isMutated) {
-      this.damage = this.damage.map(x => x**2)
+      this.damage = this._damage.map(x => x**2)
       this.stats.hp.max *= 2
     }
 
@@ -37,7 +37,7 @@ class Npc extends Actor {
 
   /* Getters */
   get damage() {
-    return utils.getRandomInt(...this.damage)
+    return utils.getRandomInt(...this._damage)
   }
 
   isCloseToAttack(target) {
