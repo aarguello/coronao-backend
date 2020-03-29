@@ -111,7 +111,7 @@ class Npc extends Actor {
     let path = finder.findPath(this.position[0], this.position[1], target.position[0], target.position[1], grid)
 
     // if it's not 1 position away
-    if (path.length > 2) {
+    if (path.length > 1) {
       //advance just 1 next tile
       let direction
       if (path[0][0] - path[1][0] == -1)  direction = 'RIGHT'
