@@ -24,7 +24,7 @@ function initGlobals() {
 
   global.intervals = {
     frozen: 5000,
-    pathfinder: 1000,
+    npcActions: 250,
     staminaRecover: 3000,
     meditate: 1000,
     invisibility: 8000,

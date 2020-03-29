@@ -32,7 +32,7 @@ class Npc extends Actor {
     this.lastAttack = 0
 
     if (isMutated) {
-      this.damage = this._damage.map(x => x**2)
+      this.damage = this._damage.map(x => x*2)
       this.stats.hp.max *= 2
       this.movementSpeed *= 0.8
       this.attackSpeed *= 0.7
@@ -238,7 +238,7 @@ module.exports.init = () => {
 
   for (i = 0; i < amount; i++) {
     spawnNPC()
-  }
+  }<
 
-  setInterval(makeNPCsPerformActions, 250)
+  setInterval(makeNPCsPerformActions, global.intervals.npcActions)
 }
