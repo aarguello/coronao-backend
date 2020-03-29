@@ -18,18 +18,42 @@ class Npc extends Actor {
     const hp = { current: npcClass.HP, max: npcClass.HP }
     const isMutated = Math.random() >= 0.8
 
-    this.name      = npcClass.name
-    this.type      = 'NPC'
-    this.position  = Map.getRandomPosition()
-    this.fov       = npcClass.fov
-    this.stats     = { hp }
-    this.damage    = npcClass.physical_damage
-    this.mutated   = isMutated
+    this.name        = npcClass.name
+    this.type        = 'NPC'
+    this.position    = Map.getRandomPosition()
+    this.fov         = npcClass.fov
+    this.stats       = { hp }
+    this.damage      = npcClass.physical_damage
+    this.attackSpeed = npcClass.attack_speed
+    this.mutated     = isMutated
 
     if (isMutated) {
       this.damage = this.damage.map(x => x**2)
       this.stats.hp.max *= 2
     }
+
+    setInterval(this.attack.bind(this), this.attackSpeed)
+  }
+
+  isCloseToAttack(target) {
+    const neighbour = Map.getNeighbourPosition(this.position, this.direction)
+    if (target == Map.getActorInTile(neighbour)) {
+      return true
+    }
+
+    return false
+  }
+
+  attack() {
+    if (!this.currentTarget) return
+    let isClose = this.isCloseToAttack(this.currentTarget)
+    if (isClose) {
+      super.attack(this.currentTarget)
+    }
+  }
+
+  getPhysicalDamage() {
+    return this.damage
   }
 
   move(direction) {
@@ -56,11 +80,15 @@ class Npc extends Actor {
 
   followClosest() {
     const closestUser = Map.getNearestUser(this.position, this.fov)
-    if (closestUser) this.follow(closestUser)
+    if (closestUser) {
+      this.currentTarget = closestUser
+      this.follow(closestUser)
+    } else {
+      this.currentTarget = null
+    }
   }
 
   follow(target){
-    this.currentTarget = target
 
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
