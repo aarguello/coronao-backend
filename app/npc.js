@@ -97,7 +97,6 @@ class Npc extends Actor {
   }
 
   getOrLookForPrey() {
-    if (this.isHunting()) return this.currentTarget
     this.currentTarget = Map.getNearestUser(this.position, this.fov)
     return this.currentTarget
   }
