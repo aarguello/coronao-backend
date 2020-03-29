@@ -94,8 +94,8 @@ class Npc extends Actor {
       this.currentTarget = closestUser
       this.follow(closestUser)
     } else {
-      this.randomMove()
       this.currentTarget = null
+      this.randomMove()
     }
   }
 
