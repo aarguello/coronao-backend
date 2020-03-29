@@ -19,8 +19,8 @@ function signUp(name) {
   const user = new User(
     this.id,
     name,
-    utils.getRandomRace(),
-    utils.getRandomClass(),
+    Object.values(global.races).find(r => r.name === 'HUMAN'),
+    Object.values(global.classes).find(c => c.name === 'BARD'),
   )
 
   global.users[user._id] = user
