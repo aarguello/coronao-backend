@@ -37,7 +37,13 @@ class Actor {
     let blowLands  = utils.getRandomBool(missChance)
 
     if (blowLands) {
+
       damage = this.getPhysicalDamage() - target.getPhysicalDefense()
+
+      if (damage < 0) {
+        damage = 0
+      }
+
       target.suffer(damage)
     }
 
