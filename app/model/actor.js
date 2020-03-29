@@ -37,7 +37,13 @@ class Actor {
     let blowLands  = utils.getRandomBool(missChance)
 
     if (blowLands) {
+
       damage = this.getPhysicalDamage() - target.getPhysicalDefense()
+
+      if (damage < 0) {
+        damage = 0
+      }
+
       target.suffer(damage)
     }
 
@@ -70,13 +76,13 @@ class Actor {
   }
 
   increaseStat(stat, value) {
-    if (this.stats[stat] && value > 0) {
+    if (this.stats[stat]) {
       return this.setStat(stat, this[stat] + value)
     }
   }
 
   decreaseStat(stat, value) {
-    if (this.stats[stat] && value > 0) {
+    if (this.stats[stat]) {
       return this.setStat(stat, this[stat] - value)
     }
   }
