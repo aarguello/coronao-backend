@@ -35,6 +35,11 @@ class Npc extends Actor {
     setInterval(this.attack.bind(this), this.attackSpeed)
   }
 
+  /* Getters */
+  get damage() {
+    return utils.getRandomInt(...this.damage)
+  }
+
   isCloseToAttack(target) {
     const neighbour = Map.getNeighbourPosition(this.position, this.direction)
     if (target == Map.getActorInTile(neighbour)) {
