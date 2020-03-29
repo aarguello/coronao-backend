@@ -70,13 +70,13 @@ class Actor {
   }
 
   increaseStat(stat, value) {
-    if (this.stats[stat]) {
+    if (this.stats[stat] && value > 0) {
       return this.setStat(stat, this[stat] + value)
     }
   }
 
   decreaseStat(stat, value) {
-    if (this.stats[stat]) {
+    if (this.stats[stat] && value > 0) {
       return this.setStat(stat, this[stat] - value)
     }
   }
