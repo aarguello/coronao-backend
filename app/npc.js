@@ -55,16 +55,13 @@ class Npc extends Actor {
   }
 
   followClosest() {
-    if (!this.currentTarget || this.currentTarget.hp === 0) {
-      const closestUser = Map.getNearestUser(this.position, this.fov)
-      if (closestUser) {
-        this.currentTarget = closestUser
-      }
-    }
-    if (this.currentTarget) this.follow(this.currentTarget)
+    const closestUser = Map.getNearestUser(this.position, this.fov)
+    this.follow(closestUser)
   }
 
   follow(target){
+    this.currentTarget = target
+
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
 
