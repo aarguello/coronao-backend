@@ -18,21 +18,26 @@ class Npc extends Actor {
     const hp = { current: npcClass.HP, max: npcClass.HP }
     const isMutated = Math.random() >= 0.8
 
-    this.name        = npcClass.name
-    this.type        = 'NPC'
-    this.position    = Map.getRandomPosition()
-    this.fov         = npcClass.fov
-    this.stats       = { hp }
-    this._damage      = npcClass.physical_damage
-    this.attackSpeed = npcClass.attack_speed
-    this.mutated     = isMutated
+    this.name           = npcClass.name
+    this.type           = 'NPC'
+    this.position       = Map.getRandomPosition()
+    this.fov            = npcClass.fov
+    this.stats          = { hp }
+    this._damage        = npcClass.physical_damage
+    this.attackSpeed    = npcClass.attack_speed
+    this.movementSpeed  = npcClass.movement_speed
+    this.mutated        = isMutated
+
+    this.lastMove   = 0
+    this.lastAttack = 0
 
     if (isMutated) {
       this.damage = this._damage.map(x => x**2)
       this.stats.hp.max *= 2
+      this.movementSpeed *= 1.2
+      this.attackSpeed *= 1.1
     }
 
-    setInterval(this.attack.bind(this), this.attackSpeed)
   }
 
   /* Getters */
@@ -55,10 +60,11 @@ class Npc extends Actor {
   }
 
   attack() {
-    if (!this.currentTarget) return
+    if (!this.isHunting()) return
     let isClose = this.isCloseToAttack(this.currentTarget)
     if (isClose) {
       super.attack(this.currentTarget)
+      this.lastAttack = Date.now()
     }
   }
 
@@ -81,6 +87,8 @@ class Npc extends Actor {
     if (moved) {
       emitters.npcPositionChanged(this._id, this.position)
     }
+
+    this.lastMove = Date.now()
   }
 
   freeze() {
@@ -88,19 +96,21 @@ class Npc extends Actor {
     this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
   }
 
-  followClosest() {
-    const closestUser = Map.getNearestUser(this.position, this.fov)
-    if (closestUser) {
-      this.currentTarget = closestUser
-      this.follow(closestUser)
-    } else {
-      this.currentTarget = null
-      this.randomMove()
+  getOrLookForPrey() {
+    if (this.isHunting()) return this.currentTarget
+    this.currentTarget = Map.getNearestUser(this.position, this.fov)
+    return this.currentTarget
+  }
+
+  followPrey() {
+    const prey = this.getOrLookForPrey()
+    if (prey) {
+      this.follow(prey)
     }
   }
 
-  randomMove() {
-    switch(utils.getRandomInt(0, 3)) {
+  wander() {
+    switch(utils.getRandomInt(0, 10)) {
       case 0:
         this.move('UP')
         break
@@ -112,6 +122,8 @@ class Npc extends Actor {
         break
       case 3:
         this.move('RIGHT')
+        break
+      default:
         break
     }
   }
@@ -170,11 +182,35 @@ class Npc extends Actor {
   affectedBy(spell) {
     return ['DAMAGE', 'FREEZE', 'UNFREEZE'].includes(spell.type)
   }
+
+  isHunting(){
+    if (this.currentTarget && this.currentTarget.hp > 0) return true
+    return false
+  }
+
+  performActions() {
+    const currentTime = Date.now()
+    const prey = this.getOrLookForPrey()
+
+    if (prey) {
+      if (currentTime - this.lastAttack  >= this.attackSpeed) {
+        this.attack()
+      }
+      if (currentTime - this.lastMove >= this.movementSpeed) {
+        this.followPrey()
+      }  
+    } else {
+      if (currentTime - this.lastMove >= this.movementSpeed) {
+        this.wander()
+      }  
+    }
+  }
+
 }
 
-function makeNPCsFollowUsers () {
+function makeNPCsPerformActions () {
   Object.entries(global.aliveNPCs).forEach(([_, npc]) => {
-    npc.followClosest()
+    npc.performActions()
   })
 }
 
@@ -204,5 +240,5 @@ module.exports.init = () => {
     spawnNPC()
   }
 
-  setInterval(makeNPCsFollowUsers, global.intervals.pathfinder)
+  setInterval(makeNPCsPerformActions, 250)
 }
