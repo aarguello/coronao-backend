@@ -111,6 +111,12 @@ class User extends Actor {
     }
   }
 
+  suffer(damage) {
+    // Until frontend implements meditation, this is the only way to recover mana
+    this.increaseStat('mana', damage * 2)
+    super.suffer(damage)
+  }
+
   kill() {
     super.kill()
     this.setStat('stamina', 0)
