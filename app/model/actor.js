@@ -64,9 +64,9 @@ class Actor {
     this.unfreeze()
   }
 
-  freeze() {
+  freeze(duration) {
     this.frozen = true
-    this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
+    this.frozenTimeout = setTimeout(() => this.frozen = false, duration)
   }
 
   unfreeze() {

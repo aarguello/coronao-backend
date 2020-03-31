@@ -91,11 +91,6 @@ class Npc extends Actor {
     this.lastMove = Date.now()
   }
 
-  freeze() {
-    this.frozen = true
-    this.frozenTimeout = setTimeout(() => this.frozen = false, global.intervals.frozen)
-  }
-
   getOrLookForPrey() {
     this.currentTarget = Map.getNearestUser(this.position, this.fov)
     return this.currentTarget
@@ -197,11 +192,11 @@ class Npc extends Actor {
       }
       if (currentTime - this.lastMove >= this.movementSpeed) {
         this.followPrey()
-      }  
+      }
     } else {
       if (currentTime - this.lastMove >= this.movementSpeed) {
         this.wander()
-      }  
+      }
     }
   }
 

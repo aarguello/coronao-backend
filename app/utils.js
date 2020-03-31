@@ -23,11 +23,9 @@ function initGlobals() {
   global.messageMaxLength  = 100
 
   global.intervals = {
-    frozen: 5000,
     npcActions: 250,
     staminaRecover: 3000,
     meditate: 1000,
-    invisibility: 8000,
     consumeItem: 125,
   }
 

@@ -80,7 +80,13 @@ function freeze(target, spell, caster) {
     return
   }
 
-  target.freeze()
+  let duration = spell.value
+
+  if (target.type === 'NPC') {
+    duration *= 2
+  }
+
+  target.freeze(duration)
 
   return true
 }
@@ -96,13 +102,13 @@ function unfreeze(target) {
   return true
 }
 
-function invisibility(target) {
+function invisibility(target, spell) {
 
   if (target.HP === 0) {
     return
   }
 
-  target.makeInvisible(global.intervals.invisibility)
+  target.makeInvisible(spell.value)
 
   return true
 }
