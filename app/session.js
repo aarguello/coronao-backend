@@ -7,20 +7,22 @@ const utils     = require('./utils')
 module.exports.login  = signUp
 module.exports.logout = logout
 
-function signUp(name) {
+function signUp(name, race = 'HUMAN', class_ = 'BARD') {
 
-  const idTaken   = this.id in global.users
-  const nameTaken = Object.keys(global.users).find(u => u.name === name)
+  const nameTaken   = Object.values(global.users).find(u => u.name === name)
+  const idTaken     = this.id in global.users
+  const raceExists  = race    in global.races
+  const classExists = class_  in global.classes
 
-  if (idTaken || nameTaken) {
+  if (idTaken || !raceExists || !classExists) {
     return
   }
 
   const user = new User(
     this.id,
     name,
-    Object.values(global.races).find(r => r.name === 'HUMAN'),
-    Object.values(global.classes).find(c => c.name === 'BARD'),
+    Object.values(global.races).find(r => r.name === race),
+    Object.values(global.classes).find(c => c.name === class_),
   )
 
   global.users[user._id] = user
