@@ -10,6 +10,7 @@ module.exports.userWelcome = (user) => {
     mapSize: global.map.size,
     aliveNPCs: global.aliveNPCs,
     inventorySize :global.inventorySize,
+    env: process.env
   }
 
   this.io.to(user._id).emit('USER_WELCOME', { user, globals })
