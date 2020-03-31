@@ -4,12 +4,12 @@
   "physical_damage": [20, 40],
   "movement_speed": 1000,
   "attack_speed": 1000,
-  "fov": 20
+  "fov": 8
 }, {
   "name": "ZOMBIE",
   "HP": 400,
   "physical_damage": [20, 50],
   "movement_speed": 500,
   "attack_speed": 500,
-  "fov": 30
+  "fov": 16
 }]
