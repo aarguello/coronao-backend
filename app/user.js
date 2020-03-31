@@ -19,8 +19,8 @@ class User extends Actor {
     this.name        = name
     this.class       = class_.name
     this.race        = race.name
-    this.inventory   = { 'XD0VuskON97LFPG0kdct': 1 }
-    this.equipement  = ['XD0VuskON97LFPG0kdct']
+    this.inventory   = {}
+    this.equipement  = []
     this.spells      = Object.keys(global.spells)
 
     this.stats = {
@@ -102,17 +102,18 @@ class User extends Actor {
 
   rest() {
 
-    const covered = this.equipement.find(itemId =>
-      global.items[itemId].body_part === 'TORSO'
-    )
+    // TEMP: disable covered check
+    // const covered = this.equipement.find(itemId =>
+    //   global.items[itemId].body_part === 'TORSO'
+    // )
 
-    if (covered) {
+    if (this.hp > 0) {
       this.increaseStat('stamina', global.staminaIncrement)
     }
   }
 
   suffer(damage) {
-    // Until frontend implements meditation, this is the only way to recover mana
+    // TEMP: Until frontend implements meditation, this is the only way to recover mana
     this.increaseStat('mana', damage * 2)
     super.suffer(damage)
   }
@@ -120,10 +121,14 @@ class User extends Actor {
   kill() {
     super.kill()
     this.setStat('stamina', 0)
+    this.setStat('mana', 0)
     this.#stopMeditating()
     this.#makeVisible()
     this.equipement = []
     this.#events.emit('DIED')
+
+    // TEMP: Until frontend implements revival, this is the only way to recover revive
+    setTimeout(() => this.revive(), 5000)
   }
 
   revive() {
@@ -132,9 +137,9 @@ class User extends Actor {
       return
     }
 
-    this.setStat('hp', this.stats.hp.max * 0.2)
-    this.setStat('mana', this.stats.mana.max * 0.2)
-    this.setStat('stamina', this.stats.stamina.max * 0.2)
+    this.setStat('hp', this.stats.hp.max * 1)
+    this.setStat('mana', this.stats.mana.max * 1)
+    this.setStat('stamina', this.stats.stamina.max * 1)
 
     this.#events.emit('REVIVED')
   }
