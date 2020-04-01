@@ -50,8 +50,12 @@ class User extends Actor {
 
   move(direction) {
 
-    if (!Map.directions.includes(direction) || this.meditating) {
+    if (!Map.directions.includes(direction)) {
       return
+    }
+
+    if (this.meditating) {
+      this.#stopMeditating()
     }
 
     const [ moved, pivoted ] = super.move(direction)
