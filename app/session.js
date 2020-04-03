@@ -1,38 +1,86 @@
+const jwt       = require('jsonwebtoken')
 const User      = require('./user')
 const Map       = require('./map')
 const broadcast = require('./emitters')
 const combat    = require('./combat')
-const utils     = require('./utils')
 
-module.exports.login  = signUp
-module.exports.logout = logout
+module.exports.login      = login
+module.exports.connection = connection
 
-function signUp(name, race = 'HUMAN', class_ = 'BARD') {
+function login(request, response) {
 
-  const nameTaken   = Object.values(global.users).find(u => u.name === name)
-  const idTaken     = this.id in global.users
-  const raceExists  = race    in global.races
-  const classExists = class_  in global.classes
+  const name   = request.body.name
+  const race   = request.body.race  || 'HUMAN'
+  const class_ = request.body.class || 'BARD'
 
-  if (idTaken || !raceExists || !classExists) {
+  if (!name || name in global.users) {
+    response.status(400)
+    response.send({ error: 'USERNAME_TAKEN' })
     return
   }
 
-  const user = new User(
-    this.id,
-    name,
-    Object.values(global.races).find(r => r.name === race),
-    Object.values(global.classes).find(c => c.name === class_),
-  )
+  if (!global.races[race]) {
+    response.status(400)
+    response.send({ error: 'RACE_NOT_FOUND' })
+    return
+  }
 
-  global.users[user._id] = user
-  Map.updateActorPosition(user, Map.getRandomPosition())
+  if (!global.classes[class_]) {
+    response.status(400)
+    response.send({ error: 'CLASS_NOT_FOUND' })
+    return
+  }
 
-  registerSocketHandlers(this, user)
+  const payload = {
+    name:  name,
+    race:  race,
+    class: class_,
+  }
+
+  response.status(200)
+  response.send({
+    token:         jwt.sign(payload, process.env.JWT_SECRET),
+    items:         global.items,
+    spells:        global.spells,
+    mapSize:       global.map.size,
+    inventorySize: global.inventorySize,
+  })
+}
+
+function connection(socket) {
+
+  let user = global.users[socket.decoded_token.name]
+
+  if (!user) {
+
+    user = new User(
+      socket.decoded_token.name,
+      global.races[socket.decoded_token.race],
+      global.classes[socket.decoded_token.class]
+    )
+
+    global.users[user._id] = user
+    Map.updateActorPosition(user, Map.getRandomPosition())
+  }
+
+  registerSocketHandlers(socket, user)
   registerEventsBroadcast(user)
 
-  broadcast.userWelcome(user)
-  broadcast.userJoined(user, this)
+  socket.on('disconnect', disconnect)
+
+  broadcast.userWelcome(user, socket)
+  broadcast.userJoined(user, socket)
+}
+
+function disconnect() {
+
+  const user = global.users[this.decoded_token.name]
+
+  if (user) {
+    delete global.map.positions[user.position].USER
+    delete global.users[user._id]
+    broadcast.userLeft(user._id)
+  }
 }
 
 function registerSocketHandlers(socket, user) {
@@ -41,7 +89,7 @@ function registerSocketHandlers(socket, user) {
   socket.on('USER_MEDITATE',    ()          => user.meditate())
   socket.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
   socket.on('USER_ATTACK',      ()          => user.attack())
-  socket.on('USER_CAST_SPELL',  combat.handleSpell)
+  socket.on('USER_CAST_SPELL',  combat.handleSpell.bind(user))
 }
 
 function registerEventsBroadcast(user) {
@@ -58,15 +106,4 @@ function registerEventsBroadcast(user) {
   user.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)
   user.on('STARTED_MEDITATING', broadcast.userStartedMeditating)
   user.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
-}
-
-function logout() {
-
-  const user = global.users[this.id]
-
-  if (user) {
-    delete global.map.positions[user.position].USER
-    delete global.users[this.id]
-    broadcast.userLeft(this.id)
-  }
 }

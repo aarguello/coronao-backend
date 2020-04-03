@@ -20,7 +20,7 @@ module.exports.handleSpell = function (spellId, position) {
     return
   }
 
-  const caster   = global.users[this.id]
+  const caster   = this
   const hasSpell = caster.spells.includes(spell._id)
 
   if (!hasSpell || caster.hp === 0 || spell.mana > caster.mana || caster.meditating) {

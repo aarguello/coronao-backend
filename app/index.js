@@ -1,26 +1,25 @@
-const express  = require('express')
-const app      = express();
-const server   = require('http').createServer(app)
-const io       = require('socket.io')(server, {pingInterval: 3000})
-const session  = require('./session')
+const express     = require('express')
+const bodyParser  = require('body-parser')
+const cors        = require('cors')
+const socketIo    = require('socket.io')
+const socketIoJWT = require('socketio-jwt')
+const session     = require('./session')
+
+const app    = express()
+const server = require('http').createServer(app)
+const io     = socketIo(server, { pingInterval: 3000 })
 
 app.use(express.static('app/public'))
+app.use(cors())
+app.use(bodyParser.json())
+app.post('/login', session.login)
 
-server.listen(3000, () => {
-  console.log('Listening on port 3000')
-})
+server.listen(3000)
+
+io.origins((origin, callback) => { callback(null, true) })
+io.use(socketIoJWT.authorize({ secret: process.env.JWT_SECRET, handshake: true }))
+io.on('connection', session.connection)
 
 require('./emitters').setIO(io)
 require('./utils').initGlobals()
 require('./npc').init()
-
-io.on('connection', registerBaseHandlers)
-
-io.origins((origin, callback) => {
-  callback(null, true)
-})
-
-function registerBaseHandlers(socket) {
-  socket.on('USER_LOGIN', session.login)
-  socket.on('disconnect', session.logout)
-}

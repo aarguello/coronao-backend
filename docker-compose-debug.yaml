@@ -13,6 +13,7 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://coronao:coronao@postgres/coronao
+      JWT_SECRET: This is not the real secret
   postgres:
     image: postgres:9.6
     environment:

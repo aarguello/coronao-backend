@@ -1,19 +1,14 @@
 
 module.exports.setIO = (io) => this.io = io
 
-module.exports.userWelcome = (user) => {
+module.exports.userWelcome = (user, socket) => {
 
   const globals = {
     users: global.users,
-    items: global.items,
-    spells: global.spells,
-    mapSize: global.map.size,
     aliveNPCs: global.aliveNPCs,
-    inventorySize :global.inventorySize,
-    env: process.env
   }
 
-  this.io.to(user._id).emit('USER_WELCOME', { user, globals })
+  this.io.to(socket.id).emit('USER_WELCOME', { user, globals })
 }
 
 module.exports.userJoined = (user, socket) => {

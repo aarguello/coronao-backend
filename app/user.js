@@ -7,9 +7,9 @@ class User extends Actor {
 
   #events = new EventEmitter()
 
-  constructor(_id, name, race, class_) {
+  constructor(name, race, class_) {
 
-    super(_id)
+    super(name)
 
     const HP      = class_.hp + race.hp
     const MANA    = class_.mana + race.mana
