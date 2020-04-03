@@ -4,6 +4,8 @@ const Map       = require('./map')
 const broadcast = require('./emitters')
 const combat    = require('./combat')
 
+const { RateLimiterMemory } = require('rate-limiter-flexible')
+
 module.exports.login      = login
 module.exports.connection = connection
 
@@ -43,6 +45,7 @@ function login(request, response) {
     items:         global.items,
     spells:        global.spells,
     mapSize:       global.map.size,
+    intervals:     global.intervals,
     inventorySize: global.inventorySize,
   })
 }
@@ -63,8 +66,9 @@ function connection(socket) {
     Map.updateActorPosition(user, Map.getRandomPosition())
   }
 
-  registerSocketHandlers(socket, user)
-  registerEventsBroadcast(user)
+  injectRateLimiter(socket)
+  initHandlers(socket, user)
+  initBroadcast(user)
 
   socket.on('disconnect', disconnect)
 
@@ -83,16 +87,24 @@ function disconnect() {
   }
 }
 
-function registerSocketHandlers(socket, user) {
-  socket.on('USER_MOVE',        (direction) => user.move(direction))
-  socket.on('USER_SPEAK',       (message)   => user.speak(message))
-  socket.on('USER_MEDITATE',    ()          => user.meditate())
-  socket.on('USER_TOGGLE_ITEM', (itemId)    => user.toggleItem(itemId))
-  socket.on('USER_ATTACK',      ()          => user.attack())
-  socket.on('USER_CAST_SPELL',  combat.handleSpell.bind(user))
+function initHandlers(socket, user) {
+
+  const userMoveHandler     = (direction) => user.move(direction)
+  const userSpeakHandler    = (message)   => user.speak(message)
+  const userAttackHandler   = ()          => user.attack()
+  const userMeditateHandler = ()          => user.meditate()
+  const userToggleHandler   = (itemId)    => user.move(itemId)
+  const userCastHandler     = combat.handleSpell.bind(user)
+
+  socket.on('USER_MOVE',        userMoveHandler,     global.intervals.userMove)
+  socket.on('USER_SPEAK',       userSpeakHandler,    global.intervals.userSpeak)
+  socket.on('USER_ATTACK',      userAttackHandler,   global.intervals.userAttack)
+  socket.on('USER_MEDITATE',    userMeditateHandler, global.intervals.userMeditate)
+  socket.on('USER_TOGGLE_ITEM', userToggleHandler,   global.intervals.userToggleItem)
+  socket.on('USER_CAST_SPELL',  userCastHandler,     global.intervals.userCastSpell)
 }
 
-function registerEventsBroadcast(user) {
+function initBroadcast(user) {
   user.on('ATTACKED',           broadcast.userAttacked)
   user.on('SPOKE',              broadcast.userSpoke)
   user.on('DIED',               broadcast.userDied)
@@ -106,4 +118,35 @@ function registerEventsBroadcast(user) {
   user.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)
   user.on('STARTED_MEDITATING', broadcast.userStartedMeditating)
   user.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
+}
+
+function injectRateLimiter(socket) {
+
+  const on = socket.on
+  const PING_CORRECTION = 50
+
+  socket.on = (action, handler, interval) => {
+
+    if (interval) {
+
+      interval -= PING_CORRECTION
+
+      const originalHandler = handler
+      const rateLimiter = new RateLimiterMemory({
+        points: 1,
+        duration: interval / 1000,
+      })
+
+      handler = async (...args) => {
+        try {
+          await rateLimiter.consume(socket.id)
+          originalHandler(...args)
+        } catch (error) {
+          console.log(`Event ${action} blocked by rate limiter. Try again in ${error.msBeforeNext}ms`);
+        }
+      }
+    }
+
+    on.call(socket, action, handler)
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "userMove": 200,
+  "userSpeak": 500,
+  "userAttack": 500,
+  "userMeditate": 200,
+  "userToggleItem": 125,
+  "userCastSpell": 500,
+  "userRecoverMana": 1000,
+  "userRecoverStamina": 3000,
+  "npcMove": 500,
+  "npcAttack": 1000,
+  "npcActions": 250
+}

@@ -7,6 +7,8 @@ class User extends Actor {
 
   #events = new EventEmitter()
 
+  #staminaInterval
+
   constructor(name, race, class_) {
 
     super(name)
@@ -29,7 +31,7 @@ class User extends Actor {
       stamina: { current: STAMINA, max: STAMINA },
     }
 
-    setInterval(this.rest.bind(this), global.intervals.staminaRecover)
+    this.#staminaInterval = setInterval(this.rest.bind(this), global.intervals.userRecoverStamina)
   }
 
   /* Getters */
@@ -50,10 +52,6 @@ class User extends Actor {
 
   move(direction) {
 
-    if (!Map.directions.includes(direction)) {
-      return
-    }
-
     if (this.meditating) {
       this.#stopMeditating()
     }
@@ -67,6 +65,15 @@ class User extends Actor {
     if (moved) {
       this.#events.emit('POSITION_CHANGED', this.position)
     }
+  }
+
+  speak(message) {
+
+    if (message.length > global.messageMaxLength) {
+      message = message.slice(0, global.messageMaxLength) + '...'
+    }
+
+    this.#events.emit('SPOKE', message)
   }
 
   attack() {
@@ -87,20 +94,30 @@ class User extends Actor {
     this.decreaseStat('stamina', global.blowEffort)
   }
 
-  speak(message) {
-
-    if (message.length > global.messageMaxLength) {
-      message = message.slice(0, global.messageMaxLength) + '...'
-    }
-
-    this.#events.emit('SPOKE', message)
-  }
-
   meditate() {
     if (this.meditating) {
       this.#stopMeditating()
     } else if (this.mana < this.stats.mana.max) {
       this.#startMeditating()
+    }
+  }
+
+  toggleItem(itemId) {
+
+    const item = global.items[itemId]
+
+    if (!item || !this.inventory[itemId]) {
+      return
+    }
+
+    if (item.consumable) {
+        this.#consumeItem(item)
+    } else {
+      if (this.equipement.includes(itemId)) {
+        this.#unequipItem(item)
+      } else {
+        this.#equipItem(item)
+      }
     }
   }
 
@@ -159,25 +176,6 @@ class User extends Actor {
 
     if (duration) {
       this.invisibilityTimeout = setTimeout(this.#makeVisible.bind(this), duration)
-    }
-  }
-
-  toggleItem(itemId) {
-
-    const item = global.items[itemId]
-
-    if (!item || !this.inventory[itemId]) {
-      return
-    }
-
-    if (item.consumable) {
-        this.#consumeItem(item)
-    } else {
-      if (this.equipement.includes(itemId)) {
-        this.#unequipItem(item)
-      } else {
-        this.#equipItem(item)
-      }
     }
   }
 
@@ -252,7 +250,7 @@ class User extends Actor {
 
   #startMeditating() {
     this.meditating = true
-    this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.meditate)
+    this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.userRecoverMana)
     this.#events.emit('STARTED_MEDITATING')
   }
 
@@ -269,7 +267,7 @@ class User extends Actor {
 
   #meditation() {
 
-    this.increaseStat('mana', this.mana * global.meditateIncrement)
+    this.increaseStat('mana', this.stats.mana.max * global.meditateIncrement)
 
     if (this.mana === this.stats.mana.max) {
       this.#stopMeditating()
@@ -278,17 +276,11 @@ class User extends Actor {
 
   #consumeItem(item) {
 
-    if (Date.now() - this.itemUsedTimestamp < global.intervals.consumeItem) {
-      return
-    }
-
     let value = item.value
 
     if (item.consumable === 'mana') {
       value *= this.stats['mana'].max / 100
     }
-
-    this.itemUsedTimestamp = Date.now()
 
     this.increaseStat(item.consumable, value)
     this.#decreaseInventory(item._id, 1)

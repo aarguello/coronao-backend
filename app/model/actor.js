@@ -18,6 +18,10 @@ class Actor {
 
   move(direction) {
 
+    if (!Map.directions.includes(direction)) {
+      return []
+    }
+
     const position = Map.getNeighbourPosition(this.position, direction)
 
     const pivoted = this.pivot(direction)

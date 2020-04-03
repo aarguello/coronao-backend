@@ -17,6 +17,7 @@
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.2",
     "pathfinding": "^0.4.18",
+    "rate-limiter-flexible": "^2.1.3",
     "socket.io": "^2.3.0",
     "socketio-jwt": "^4.5.0"
   },

@@ -74,10 +74,6 @@ class Npc extends Actor {
 
   move(direction) {
 
-    if (!Map.directions.includes(direction)) {
-      return
-    }
-
     const [ moved, pivoted ] = super.move(direction)
 
     if (pivoted) {

@@ -22,12 +22,7 @@ function initGlobals() {
   global.inventorySize     = 9
   global.messageMaxLength  = 100
 
-  global.intervals = {
-    npcActions: 250,
-    staminaRecover: 3000,
-    meditate: 1000,
-    consumeItem: 125,
-  }
+  global.intervals = require('./assets/intervals.json')
 
   const selectedMap = 'map-1'
   global.map     = Map.load(`./assets/${selectedMap}.json`)
