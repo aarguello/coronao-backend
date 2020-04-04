@@ -16,7 +16,7 @@ class Npc extends Actor {
     super(_id)
 
     const hp = { current: npcClass.HP, max: npcClass.HP }
-    const isMutated = Math.random() >= 0.8
+    const isMutated = Math.random() >= 0.9
 
     this.name           = npcClass.name
     this.type           = 'NPC'
@@ -82,9 +82,8 @@ class Npc extends Actor {
 
     if (moved) {
       emitters.npcPositionChanged(this._id, this.position)
+      this.lastMove = Date.now()
     }
-
-    this.lastMove = Date.now()
   }
 
   getOrLookForPrey() {
@@ -183,7 +182,7 @@ class Npc extends Actor {
     const prey = this.getOrLookForPrey()
 
     if (prey) {
-      if (currentTime - this.lastAttack  >= this.attackSpeed) {
+      if (currentTime - this.lastAttack >= this.attackSpeed && currentTime - this.lastMove >= this.movementSpeed) {
         this.attack()
       }
       if (currentTime - this.lastMove >= this.movementSpeed) {
