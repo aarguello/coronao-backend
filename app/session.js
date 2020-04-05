@@ -128,6 +128,9 @@ function injectIntervals(socket) {
 
     if (interval) {
 
+      // Assume the packet took at least this time to arrive
+      let PING_CORRECTION = 15
+
       let last = Date.now()
       let original = handler
 
@@ -136,7 +139,7 @@ function injectIntervals(socket) {
         const now = Date.now()
         const elapsed = now - last
 
-        if (elapsed >= interval) {
+        if (elapsed >= interval - PING_CORRECTION) {
           original(...args)
           last = now
         } else {
