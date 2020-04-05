@@ -63,6 +63,7 @@ class Npc extends Actor {
     if (!this.isHunting()) return
     let isClose = this.isCloseToAttack(this.currentTarget)
     if (isClose) {
+      this.speak('attack')
       super.attack(this.currentTarget)
       this.lastAttack = Date.now()
     }
@@ -99,6 +100,7 @@ class Npc extends Actor {
   }
 
   wander() {
+    this.speak('wander')
     switch(utils.getRandomInt(0, 10)) {
       case 0:
         this.move('UP')
@@ -118,6 +120,7 @@ class Npc extends Actor {
   }
 
   follow(target){
+    this.speak('follow')
 
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
@@ -154,6 +157,11 @@ class Npc extends Actor {
     super.kill()
     this.emitter.emit('DIED')
     emitters.npcDied(this._id)
+  }
+
+  speak(functionName) {
+    console.log(functionName)
+
   }
 
   getEvasion() {

@@ -6,9 +6,9 @@
   "attack_speed": 1000,
   "fov": 8,
   "messages": {
-    "hunting": ["COME HEEERE!", "DON'T RUUUUN!"],
-    "wandering": ["Grrr...", "..."],
-    "attacking": ["Graahh!", "Iaah!"]
+    "follow": ["COME HEEERE!", "DON'T RUUUUN!"],
+    "wander": ["Grrr...", "..."],
+    "attack": ["Graahh!", "Iaah!"]
   }
 }, {
   "name": "BADASS SKELETON",
@@ -18,9 +18,9 @@
   "attack_speed": 1000,
   "fov": 16,
   "messages": {
-    "hunting": ["COME HEEERE!", "DON'T RUUUUN!"],
-    "wandering": ["Grrr...", "..."],
-    "attacking": ["Graahh!", "Iaah!"]
+    "follow": ["COME HEEERE!", "DON'T RUUUUN!"],
+    "wander": ["Grrr...", "..."],
+    "attack": ["Graahh!", "Iaah!"]
   }
 }, {
   "name": "BEHEMOTH SKELETON",
@@ -30,9 +30,9 @@
   "attack_speed": 2000,
   "fov": 20,
   "messages": {
-    "hunting": ["COME HEEERE!", "DON'T RUUUUN!", "YOU CAN'T HIDE FROM ME!"],
-    "wandering": ["Grrr...", "..."],
-    "attacking": ["Graahh!", "Iaah!"]
+    "follow": ["COME HEEERE!", "DON'T RUUUUN!", "YOU CAN'T HIDE FROM ME!"],
+    "wander": ["Grrr...", "..."],
+    "attack": ["Graahh!", "Iaah!"]
   }
 }, {
   "name": "SMALL CRAB",
@@ -42,9 +42,9 @@
   "attack_speed": 1000,
   "fov": 5,
   "messages": {
-    "hunting": [],
-    "wandering": [],
-    "attacking": []
+    "follow": [],
+    "wander": [],
+    "attack": []
   }
 }, {
   "name": "BIG CRAB",
@@ -54,8 +54,8 @@
   "attack_speed": 500,
   "fov": 10,
   "messages": {
-    "hunting": [],
-    "wandering": [],
-    "attacking": []
+    "follow": [],
+    "wander": [],
+    "attack": []
   }
 }]

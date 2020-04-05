@@ -2,7 +2,7 @@
     "map": "map-1",
     "amount": [1, 5],
     "spawnProbabilities":{
-        "ZOMBIE": 0.8,
-        "BADASS ZOMBIE": 0.2
+        "SKELETON": 0.8,
+        "BADASS SKELETON": 0.2
     }
 }]
