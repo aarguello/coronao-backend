@@ -126,6 +126,50 @@ describe('Actor', () => {
     })
   })
 
+  describe('hurt', () => {
+
+    it('should inflict positive damage', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.hurt(25)
+
+      // Assert
+      expect(actor.hp).toBe(25)
+    })
+
+    it('should not inflict negative damage', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.hurt(-25)
+
+      // Assert
+      expect(actor.hp).toBe(50)
+    })
+
+    it('should unfreeze actor when killed', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+      actor.unfreeze = jest.fn()
+
+      // Act
+      actor.hurt(9999)
+
+      // Assert
+      expect(actor.hp).toBe(0)
+      expect(actor.unfreeze).toHaveBeenCalled()
+    })
+  })
+
   describe('decrease stat', () => {
 
     it('should not accept negative values', () => {
@@ -167,4 +211,5 @@ describe('Actor', () => {
       expect(actor.hp).toBe(0)
     })
   })
+
 })

@@ -31,6 +31,15 @@ class Actor {
     }
   }
 
+  hurt(damage) {
+
+    this.decreaseStat('hp', damage)
+
+    if (this.hp === 0) {
+      this.unfreeze()
+    }
+  }
+
   increaseStat(stat, value) {
 
     if (value < 0) {
