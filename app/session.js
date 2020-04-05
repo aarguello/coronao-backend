@@ -125,13 +125,10 @@ function initBroadcast(user) {
 function injectRateLimiter(socket) {
 
   const on = socket.on
-  const PING_CORRECTION = 50
 
   socket.on = (action, handler, interval) => {
 
     if (interval) {
-
-      interval -= PING_CORRECTION
 
       const originalHandler = handler
       const rateLimiter = new RateLimiterMemory({
