@@ -1,15 +1,61 @@
 [{
-  "name": "ZOMBIE",
+  "name": "SKELETON",
   "HP": 250,
   "physical_damage": [20, 40],
   "movement_speed": 500,
   "attack_speed": 1000,
-  "fov": 8
+  "fov": 8,
+  "messages": {
+    "hunting": ["COME HEEERE!", "DON'T RUUUUN!"],
+    "wandering": ["Grrr...", "..."],
+    "attacking": ["Graahh!", "Iaah!"]
+  }
 }, {
-  "name": "BADASS ZOMBIE",
+  "name": "BADASS SKELETON",
   "HP": 400,
   "physical_damage": [40, 80],
   "movement_speed": 500,
   "attack_speed": 1000,
-  "fov": 16
+  "fov": 16,
+  "messages": {
+    "hunting": ["COME HEEERE!", "DON'T RUUUUN!"],
+    "wandering": ["Grrr...", "..."],
+    "attacking": ["Graahh!", "Iaah!"]
+  }
+}, {
+  "name": "BEHEMOTH SKELETON",
+  "HP": 1000,
+  "physical_damage": [250, 500],
+  "movement_speed": 1000,
+  "attack_speed": 2000,
+  "fov": 20,
+  "messages": {
+    "hunting": ["COME HEEERE!", "DON'T RUUUUN!", "YOU CAN'T HIDE FROM ME!"],
+    "wandering": ["Grrr...", "..."],
+    "attacking": ["Graahh!", "Iaah!"]
+  }
+}, {
+  "name": "SMALL CRAB",
+  "HP": 50,
+  "physical_damage": [2, 5],
+  "movement_speed": 1000,
+  "attack_speed": 1000,
+  "fov": 5,
+  "messages": {
+    "hunting": [],
+    "wandering": [],
+    "attacking": []
+  }
+}, {
+  "name": "BIG CRAB",
+  "HP": 100,
+  "physical_damage": [10, 30],
+  "movement_speed": 1000,
+  "attack_speed": 500,
+  "fov": 10,
+  "messages": {
+    "hunting": [],
+    "wandering": [],
+    "attacking": []
+  }
 }]
