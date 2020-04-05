@@ -89,11 +89,13 @@ function disconnect() {
 
 function initHandlers(socket, user) {
 
-  const userMoveHandler     = (direction) => user.move(direction)
-  const userSpeakHandler    = (message)   => user.speak(message)
-  const userAttackHandler   = ()          => user.attack()
-  const userMeditateHandler = ()          => user.meditate()
-  const userToggleHandler   = (itemId)    => user.move(itemId)
+  const directionValidator = (direction) => ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(direction)
+
+  const userMoveHandler     = (dir) => directionValidator(dir) && user.move(dir)
+  const userSpeakHandler    = (msg) => user.speak(msg)
+  const userAttackHandler   = ()    => user.attack()
+  const userMeditateHandler = ()    => user.meditate()
+  const userToggleHandler   = (_id) => user.toggleItem(_id)
   const userCastHandler     = combat.handleSpell.bind(user)
 
   socket.on('USER_MOVE',        userMoveHandler,     global.intervals.userMove)
