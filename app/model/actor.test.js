@@ -201,6 +201,40 @@ describe('Actor', () => {
       jest.advanceTimersByTime(500)
       expect(actor.frozen).toBe(false)
     })
+
+    it('it should reset frozen duration', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.frozen = false
+
+      // Act
+      actor.freeze(500)
+      jest.advanceTimersByTime(250)
+      actor.freeze(500)
+
+      // Assert
+      jest.advanceTimersByTime(250)
+      expect(actor.frozen).toBe(true)
+      jest.advanceTimersByTime(250)
+      expect(actor.frozen).toBe(false)
+    })
+  })
+
+  describe('unfreeze', () => {
+
+    it('should unfreeze actor', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.frozen = true
+
+      // Act
+      actor.unfreeze()
+
+      // Assert
+      expect(actor.frozen).toBe(false)
+    })
   })
 
   describe('decrease stat', () => {
