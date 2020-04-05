@@ -27,6 +27,7 @@ class Npc extends Actor {
     this.attackSpeed    = npcClass.attack_speed
     this.movementSpeed  = npcClass.movement_speed
     this.mutated        = isMutated
+    this.messages       = npcClass.messages
 
     this.lastMove   = 0
     this.lastAttack = 0
@@ -160,8 +161,12 @@ class Npc extends Actor {
   }
 
   speak(functionName) {
-    console.log(functionName)
-
+    if (Math.random() >= 0.75) {
+      let possibleMessages = this.messages[functionName]
+      if (possibleMessages.length < 1) return
+      const messageIndex = utils.getRandomInt(0, possibleMessages.length)
+      emitters.npcSpeak(this._id, possibleMessages[messageIndex])
+    }
   }
 
   getEvasion() {

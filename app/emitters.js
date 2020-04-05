@@ -83,6 +83,10 @@ module.exports.npcSpawned = (npc) => {
   this.io.emit('NPC_SPAWNED', npc)
 }
 
+module.exports.npcSpeak = (_id, message) => {
+  this.io.emit('NPC_SPOKE', { npc: { _id }, message})
+}
+
 module.exports.npcDied = (_id) => {
   this.io.emit('NPC_DIED', { _id })
 }
