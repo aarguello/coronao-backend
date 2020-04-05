@@ -121,7 +121,6 @@ class Npc extends Actor {
   }
 
   follow(target){
-    this.speak('follow')
 
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
@@ -142,6 +141,7 @@ class Npc extends Actor {
       if (path[0][1] - path[1][1] == -1)  direction = 'DOWN'
       if (path[0][1] - path[1][1] == 1)   direction = 'UP'
       this.move(direction)
+      this.speak('follow')
     }
   }
 
@@ -161,7 +161,7 @@ class Npc extends Actor {
   }
 
   speak(functionName) {
-    if (Math.random() >= 0.75) {
+    if (Math.random() >= 0.9) {
       let possibleMessages = this.messages[functionName]
       if (possibleMessages.length < 1) return
       const messageIndex = utils.getRandomInt(0, possibleMessages.length)
