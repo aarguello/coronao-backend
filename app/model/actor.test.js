@@ -85,48 +85,6 @@ describe('Actor', () => {
     })
   })
 
-  describe('increase stat', () => {
-
-    it('should not accept negative values', () => {
-
-      // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-
-      // Act
-      actor.increaseStat('hp', -15)
-
-      // Assert
-      expect(actor.hp).toBe(50)
-    })
-
-    it('shoud increase stat when value is positive', () => {
-
-      // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-
-      // Act
-      actor.increaseStat('hp', 15)
-
-      // Assert
-      expect(actor.hp).toBe(65)
-    })
-
-    it('should not increase over maximum', () => {
-
-      // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-
-      // Act
-      actor.increaseStat('hp', 85)
-
-      // Assert
-      expect(actor.hp).toBe(100)
-    })
-  })
-
   describe('hurt', () => {
 
     it('should inflict positive damage', () => {
@@ -234,6 +192,48 @@ describe('Actor', () => {
 
       // Assert
       expect(actor.frozen).toBe(false)
+    })
+  })
+
+  describe('increase stat', () => {
+
+    it('should not accept negative values', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.increaseStat('hp', -15)
+
+      // Assert
+      expect(actor.hp).toBe(50)
+    })
+
+    it('shoud increase stat when value is positive', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.increaseStat('hp', 15)
+
+      // Assert
+      expect(actor.hp).toBe(65)
+    })
+
+    it('should not increase over maximum', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.increaseStat('hp', 85)
+
+      // Assert
+      expect(actor.hp).toBe(100)
     })
   })
 
