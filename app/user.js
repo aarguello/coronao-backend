@@ -50,7 +50,7 @@ class User extends Actor {
     this.#events.on(action, handler.bind(null, this._id))
   }
 
-  move(direction) {
+  move(direction, clientIndex) {
 
     if (this.meditating) {
       this.#stopMeditating()
@@ -63,7 +63,7 @@ class User extends Actor {
     }
 
     if (moved) {
-      this.#events.emit('POSITION_CHANGED', this.position)
+      this.#events.emit('POSITION_CHANGED', this.position, clientIndex)
     }
   }
 

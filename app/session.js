@@ -62,11 +62,12 @@ function connection(socket) {
 
     global.users[user._id] = user
     Map.updateActorPosition(user, Map.getRandomPosition())
+
+    initHandlers(user, socket)
+    initBroadcasts(user, socket)
   }
 
   injectIntervals(socket)
-  initHandlers(socket, user)
-  initBroadcast(user)
 
   socket.on('disconnect', disconnect)
 
@@ -85,15 +86,15 @@ function disconnect() {
   }
 }
 
-function initHandlers(socket, user) {
+function initHandlers(user, socket) {
 
   const directionValidator = (direction) => ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(direction)
 
-  const userMoveHandler     = (dir) => directionValidator(dir) && user.move(dir)
-  const userSpeakHandler    = (msg) => user.speak(msg)
-  const userAttackHandler   = ()    => user.attack()
-  const userMeditateHandler = ()    => user.meditate()
-  const userToggleHandler   = (_id) => user.toggleItem(_id)
+  const userMoveHandler     = (dir, i) => directionValidator(dir) && user.move(dir, i)
+  const userSpeakHandler    = (msg)    => user.speak(msg)
+  const userAttackHandler   = ()       => user.attack()
+  const userMeditateHandler = ()       => user.meditate()
+  const userToggleHandler   = (_id)    => user.toggleItem(_id)
   const userCastHandler     = combat.handleSpell.bind(user)
 
   socket.on('USER_MOVE',        userMoveHandler,     global.intervals.userMove)
@@ -104,13 +105,13 @@ function initHandlers(socket, user) {
   socket.on('USER_CAST_SPELL',  userCastHandler,     global.intervals.userCastSpell)
 }
 
-function initBroadcast(user) {
+function initBroadcasts(user, socket) {
   user.on('ATTACKED',           broadcast.userAttacked)
   user.on('SPOKE',              broadcast.userSpoke)
   user.on('DIED',               broadcast.userDied)
   user.on('REVIVED',            broadcast.userRevived)
   user.on('DIRECTION_CHANGED',  broadcast.userDirectionChanged)
-  user.on('POSITION_CHANGED',   broadcast.userPositionChanged)
+  user.on('POSITION_CHANGED',   broadcast.userPositionChanged.bind(null, socket))
   user.on('VISIBILITY_CHANGED', broadcast.userVisibilityChanged)
   user.on('INVENTORY_CHANGED',  broadcast.userInventoryChanged)
   user.on('STAT_CHANGED',       broadcast.userStatChanged)
@@ -129,7 +130,7 @@ function injectIntervals(socket) {
     if (interval) {
 
       // Assume the packet took at least this time to arrive
-      let PING_CORRECTION = 15
+      let PING_CORRECTION = 40
 
       let last = Date.now()
       let original = handler

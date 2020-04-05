@@ -19,8 +19,9 @@ module.exports.userLeft = (_id) => {
   this.io.emit('USER_LEFT', { _id })
 }
 
-module.exports.userPositionChanged = (_id, position) => {
-  this.io.emit('USER_POSITION_CHANGED', { _id, position })
+module.exports.userPositionChanged = (socket, _id, position, index) => {
+  this.io.to(socket.id).emit('USER_POSITION_CHANGED', { _id, position, index })
+  socket.broadcast.emit('USER_POSITION_CHANGED', { _id, position })
 }
 
 module.exports.userDirectionChanged = (_id, direction) => {
