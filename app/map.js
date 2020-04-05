@@ -55,7 +55,7 @@ function getNearestUser(position, fov) {
   Object.entries(global.map.positions).forEach(([pos, tile]) => {
     if (type in tile) {
       user = global.users[tile[type]]
-      if (user.hp > 0) {
+      if (user.hp > 0 && !user.invisible) {
         pos = pos.split(',').map(Number)
         distanceBetween = getDistance(position, pos)
         if (distanceBetween <= fov && (distanceBetween < getDistance(position, closest.position) || !closest.id)) {
