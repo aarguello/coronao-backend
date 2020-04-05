@@ -30,6 +30,36 @@ class Actor {
       this.position = to
     }
   }
+
+  increaseStat(stat, value) {
+
+    if (value < 0) {
+      return
+    }
+
+    value = this[stat] + value
+
+    if (value > this.stats[stat].max) {
+      value = this.stats[stat].max
+    }
+
+    this.stats[stat].current = value
+  }
+
+  decreaseStat(stat, value) {
+
+    if (value < 0) {
+      return
+    }
+
+    value = this[stat] - value
+
+    if (value < 0) {
+      value = 0
+    }
+
+    this.stats[stat].current = value
+  }
 }
 
 module.exports = Actor
