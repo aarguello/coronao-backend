@@ -26,10 +26,14 @@ class Map {
 
     const data = this.coordinates[position]
 
+    const horizontalBounds = 0 <= position[0] && position[0] < this.size
+    const verticalBounds   = 0 <= position[1] && position[1] < this.size
+
+    const outOfMap       = !horizontalBounds || !verticalBounds
     const actorCollision = data && data.actor
     const tileCollision  = data && data.tile && data.tile.collides
 
-    return !!(actorCollision || tileCollision)
+    return !!(outOfMap || actorCollision || tileCollision)
   }
 
   load(path) {
@@ -55,6 +59,13 @@ class Map {
     }
 
     return coordinates
+  }
+
+  static neighbour(position, direction) {
+    if (direction === 'LEFT')  return [position[0] - 1, position[1]]
+    if (direction === 'RIGHT') return [position[0] + 1, position[1]]
+    if (direction === 'UP')    return [position[0], position[1] - 1]
+    if (direction === 'DOWN')  return [position[0], position[1] + 1]
   }
 }
 

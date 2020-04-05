@@ -108,5 +108,49 @@ describe('Map', () => {
       // Assert
       expect(collides).toBe(true)
     })
+
+    it('should collide with position out of bounds', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      const leftCollision   = map.collides([-1, 0])
+      const rightCollision  = map.collides([2, 0])
+      const upperCollision  = map.collides([0, -1])
+      const bottomCollision = map.collides([0, 2])
+
+      // Assert
+      expect(leftCollision).toBe(true)
+      expect(rightCollision).toBe(true)
+      expect(upperCollision).toBe(true)
+      expect(bottomCollision).toBe(true)
+    })
   })
+
+  describe('neighbour', () => {
+
+    const position = [1, 1]
+
+    it('should return left neighbour', () => {
+      const neighbour = Map.neighbour(position, 'LEFT')
+      expect(neighbour).toEqual([0, 1])
+    })
+
+    it('should return right neighbour', () => {
+      const neighbour = Map.neighbour(position, 'RIGHT')
+      expect(neighbour).toEqual([2, 1])
+    })
+
+    it('should return upper neighbour', () => {
+      const neighbour = Map.neighbour(position, 'UP')
+      expect(neighbour).toEqual([1, 0])
+    })
+
+    it('should return bottom neighbour', () => {
+      const neighbour = Map.neighbour(position, 'DOWN')
+      expect(neighbour).toEqual([1, 2])
+    })
+  })
+
 })
