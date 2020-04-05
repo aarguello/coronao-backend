@@ -2,6 +2,7 @@ const Actor = require('./actor-new')
 const Map = require('./map')
 
 jest.mock('./map')
+jest.useFakeTimers()
 
 describe('Actor', () => {
 
@@ -167,6 +168,38 @@ describe('Actor', () => {
       // Assert
       expect(actor.hp).toBe(0)
       expect(actor.unfreeze).toHaveBeenCalled()
+    })
+  })
+
+  describe('freeze', () => {
+
+    it('should freeze actor', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.frozen = false
+
+      // Act
+      actor.freeze()
+
+      // Assert
+      expect(actor.frozen).toBe(true)
+    })
+
+    it('should stay frozen for elapsed duration', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.frozen = false
+
+      // Act
+      actor.freeze(1000)
+
+      // Assert
+      jest.advanceTimersByTime(500)
+      expect(actor.frozen).toBe(true)
+      jest.advanceTimersByTime(500)
+      expect(actor.frozen).toBe(false)
     })
   })
 

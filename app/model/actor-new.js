@@ -40,6 +40,11 @@ class Actor {
     }
   }
 
+  freeze(duration) {
+    this.frozen = true
+    setTimeout(() => this.frozen = false, duration)
+  }
+
   increaseStat(stat, value) {
 
     if (value < 0) {
