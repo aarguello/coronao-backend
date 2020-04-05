@@ -1,73 +1,86 @@
-const Actor = require('./actor')
+const Actor = require('./actor-new')
+const Map = require('./map')
 
-beforeEach(() => {
-  global.map = { positions: {}, size: 2 }
-})
+jest.mock('./map')
 
-test('Create actor', () => {
+describe('Actor', () => {
 
-  // Arrange
-  const actor = new Actor('some random id')
+  beforeEach(() => {
+    global.map = new Map('some map id')
+    Map.mockClear()
+  })
 
-  // Assert
-  expect(actor._id).toBe('some random id')
-  expect(actor.hp).toBe(0)
-  expect(actor.stats.hp.max).toBe(0)
-})
+  describe('constructor', () => {
 
-test('it should pivot actor when moving to different direction', () => {
+    it('should set _id', () => {
+      const actor = new Actor('some random id')
+      expect(actor._id).toBe('some random id')
+    })
 
-  // Arrange
-  const actor     = new Actor('')
-  actor.direction = 'DOWN'
-  actor.position  = [0, 0]
+    it('should initialize HP', () => {
+      const actor = new Actor('some random id')
+      expect(actor.hp).toBe(0)
+      expect(actor.stats.hp.max).toBe(0)
+    })
+  })
 
-  // Act
-  const [ moved, pivoted ] = actor.move('RIGHT')
+  describe('move', () => {
 
-  // Assert
-  expect(pivoted).toBe('RIGHT')
-  expect(actor.direction).toBe('RIGHT')
-})
+    it('should set actor\'s direction', () => {
 
-test('it should not pivot actor when moving to same direction', () => {
+      // Arrange
+      const actor = new Actor('some actor id')
 
-  // Arrange
-  const actor     = new Actor('')
-  actor.direction = 'DOWN'
-  actor.position  = [0, 0]
+      // Act
+      actor.move('RIGHT')
 
-  // Act
-  const [ moved, pivoted ] = actor.move('DOWN')
+      // Assert
+      expect(actor.direction).toBe('RIGHT')
+    })
 
-  // Assert
-  expect(pivoted).toBe(false)
-  expect(actor.direction).toBe('DOWN')
-})
+    it('should move actor when position is free', () => {
 
-test('it should move actor when neighbour position is free', () => {
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.position = [0, 0]
+      Map.neighbour = jest.fn(() => [1, 0])
 
-  // Arrange
-  const actor = new Actor('')
-  actor.position = [0, 0]
+      // Act
+      actor.move('RIGHT')
 
-  // Act
-  actor.move('RIGHT')
+      // Assert
+      expect(actor.position).toEqual([1, 0])
+      expect(global.map.moveActor).toHaveBeenCalledWith(actor, [0, 0], [1, 0])
+    })
 
-  // Assert
-  expect(actor.position).toEqual([1, 0])
-})
+    it('should not move actor when position collides', () => {
 
-test('it should not move actor when neighbour position is taken', () => {
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.position = [0, 0]
+      global.map.collides = jest.fn(() => true)
 
-  // Arrange
-  const actor = new Actor('')
-  actor.position = [0, 0]
-  global.map.positions = { '1,0': { USER: 'some other user'} }
+      // Act
+      actor.move('RIGHT')
 
-  // Act
-  actor.move('RIGHT')
+      // Assert
+      expect(actor.position).toEqual([0, 0])
+      expect(global.map.moveActor).not.toHaveBeenCalled()
+    })
 
-  // Assert
-  expect(actor.position).toEqual([0, 0])
+    it('should not move actor when frozen', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.position = [0, 0]
+      actor.frozen = true
+
+      // Act
+      actor.move('RIGHT')
+
+      // Assert
+      expect(actor.position).toEqual([0, 0])
+      expect(global.map.moveActor).not.toHaveBeenCalled()
+    })
+  })
 })
