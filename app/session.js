@@ -4,8 +4,6 @@ const Map       = require('./map')
 const broadcast = require('./emitters')
 const combat    = require('./combat')
 
-const { RateLimiterMemory } = require('rate-limiter-flexible')
-
 module.exports.login      = login
 module.exports.connection = connection
 
@@ -66,7 +64,7 @@ function connection(socket) {
     Map.updateActorPosition(user, Map.getRandomPosition())
   }
 
-  injectRateLimiter(socket)
+  injectIntervals(socket)
   initHandlers(socket, user)
   initBroadcast(user)
 
@@ -122,7 +120,7 @@ function initBroadcast(user) {
   user.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
 }
 
-function injectRateLimiter(socket) {
+function injectIntervals(socket) {
 
   const on = socket.on
 
@@ -130,18 +128,19 @@ function injectRateLimiter(socket) {
 
     if (interval) {
 
-      const originalHandler = handler
-      const rateLimiter = new RateLimiterMemory({
-        points: 1,
-        duration: interval / 1000,
-      })
+      let last = Date.now()
+      let original = handler
 
-      handler = async (...args) => {
-        try {
-          await rateLimiter.consume(socket.id)
-          originalHandler(...args)
-        } catch (error) {
-          console.log(`Event ${action} blocked by rate limiter. Try again in ${error.msBeforeNext}ms`);
+      handler = (...args) => {
+
+        const now = Date.now()
+        const elapsed = now - last
+
+        if (elapsed >= interval) {
+          original(...args)
+          last = now
+        } else {
+          console.log(`${action} blocked. Try again in ${interval - elapsed}ms`);
         }
       }
     }
