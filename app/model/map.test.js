@@ -36,6 +36,35 @@ describe('Map', () => {
     })
   })
 
+  describe('getActor', () => {
+
+    it('should return actor in position', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+      const user = { _id: 'some user id', type: 'USER' }
+      map.moveActor(user, null, [1, 1])
+
+      // Act
+      const actor = map.getActor([1, 1])
+
+      // Assert
+      expect(actor).toEqual(user) // Check with toBe
+    })
+
+    it('should return undefined if no actor was found', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      const actor = map.getActor([0, 0])
+
+      // Assert
+      expect(actor).toBeUndefined() // Check with toBe
+    })
+  })
+
   describe('moveActor', () => {
 
     it('should move actor to new position', () => {

@@ -6,6 +6,10 @@ class Map {
     this.coordinates = this.load(`../assets/${name}.json`)
   }
 
+  getActor(position) {
+    return this.coordinates[position] && this.coordinates[position].actor
+  }
+
   moveActor(actor, from, to) {
 
     if (this.coordinates[from]) {
