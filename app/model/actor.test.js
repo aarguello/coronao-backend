@@ -112,6 +112,20 @@ describe('Actor', () => {
       expect(target.hp).toBe(25)
     })
 
+    it('should not attack if dead', () => {
+
+      // Arrange
+      user.stats.hp.current = 0
+      user.getPhysicalDamage = jest.fn(() => 100)
+      target.getPhysicalDefense = jest.fn(() => 50)
+
+      // Act
+      user.attack(target)
+
+      // Assert
+      expect(target.hp).toBe(75)
+    })
+
     it('should not apply negative damage', () => {
 
       // Arrange

@@ -33,7 +33,7 @@ class Actor {
 
   attack(target) {
 
-    if (target.dodge()) {
+    if (this.hp === 0 || target.dodge()) {
       return
     }
 
