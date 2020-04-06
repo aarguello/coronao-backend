@@ -33,10 +33,10 @@ describe('Actor', () => {
       const actor = new Actor('some actor id')
 
       // Act
-      actor.move('RIGHT')
+      actor.move('UP')
 
       // Assert
-      expect(actor.direction).toBe('RIGHT')
+      expect(actor.direction).toBe('UP')
     })
 
     it('should move actor when position is free', () => {
@@ -62,7 +62,7 @@ describe('Actor', () => {
       global.map.collides = jest.fn(() => true)
 
       // Act
-      actor.move('RIGHT')
+      actor.move('DOWN')
 
       // Assert
       expect(actor.position).toEqual([0, 0])
@@ -77,7 +77,7 @@ describe('Actor', () => {
       actor.frozen = true
 
       // Act
-      actor.move('RIGHT')
+      actor.move('LEFT')
 
       // Assert
       expect(actor.position).toEqual([0, 0])
