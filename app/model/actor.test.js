@@ -85,6 +85,62 @@ describe('Actor', () => {
     })
   })
 
+  describe('attack', () => {
+
+    let user, target
+
+    beforeEach(() => {
+
+      user = new Actor('some actor id')
+      user.stats.hp = { current: 100, max: 100 }
+
+      target = new Actor('some target id')
+      target.stats.hp = { current: 75, max: 100 }
+      target.dodge = jest.fn(() => false)
+    })
+
+    it('should apply damage based on attack and defense attributes', () => {
+
+      // Arrange
+      user.getPhysicalDamage = jest.fn(() => 100)
+      target.getPhysicalDefense = jest.fn(() => 50)
+
+      // Act
+      user.attack(target)
+
+      // Assert
+      expect(target.hp).toBe(25)
+    })
+
+    it('should not apply negative damage', () => {
+
+      // Arrange
+      user.getPhysicalDamage = jest.fn(() => 100)
+      target.getPhysicalDefense = jest.fn(() => 125)
+
+      // Act
+      user.attack(target)
+
+      // Assert
+      expect(target.hp).toBe(75)
+    })
+
+    it('should not apply damage when target dodges', () => {
+
+      // Arrange
+      user.getPhysicalDamage = jest.fn(() => 100)
+      target.getPhysicalDefense = jest.fn(() => 50)
+      target.dodge = jest.fn(() => true)
+
+      // Act
+      user.attack(target)
+
+      // Assert
+      expect(target.hp).toBe(75)
+    })
+
+  })
+
   describe('hurt', () => {
 
     it('should inflict positive damage', () => {

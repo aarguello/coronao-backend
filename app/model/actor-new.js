@@ -31,6 +31,20 @@ class Actor {
     }
   }
 
+  attack(target) {
+
+    if (target.dodge()) {
+      return
+    }
+
+    const damage = this.getPhysicalDamage() - target.getPhysicalDefense()
+    target.hurt(damage)
+  }
+
+  dodge() {
+    return Math.random() <= this.getEvasion()
+  }
+
   hurt(damage) {
 
     this.decreaseStat('hp', damage)
@@ -78,6 +92,10 @@ class Actor {
     }
 
     this.stats[stat].current = value
+  }
+
+  getEvasion() {
+    return 0
   }
 }
 
