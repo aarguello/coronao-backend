@@ -97,7 +97,7 @@ class User extends Actor {
   meditate() {
     if (this.meditating) {
       this.#stopMeditating()
-    } else if (this.mana < this.stats.mana.max) {
+    } else if (this.mana < this.stats.mana.max && this.hp > 0) {
       this.#startMeditating()
     }
   }
