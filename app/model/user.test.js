@@ -43,6 +43,10 @@ describe('User', () => {
       expect(user.stats.mana.max).toBe(250)
       expect(user.stats.stamina.max).toBe(250)
     })
+
+    it('should set base physical damage')
+    it('should recover stamina when body is covered')
+    it('should not recover stamina when body is uncovered')
   })
 
   describe('move', () => {
@@ -60,7 +64,7 @@ describe('User', () => {
       expect(Actor.prototype.move).toHaveBeenCalledWith('RIGHT')
     })
 
-    it('should stop medidating', () => {
+    it('should stop meditating', () => {
 
       // Arrange
       const user = new User('Legolas', stats, race, class_)
@@ -212,5 +216,87 @@ describe('User', () => {
       // Assert
       expect(user.meditating).toBe(false)
     })
+  })
+
+  describe('useItem', () => {
+
+    it('should not use item if it\'s not in inventory')
+
+    describe('equipables', () => {
+      it('should unequip item if it\'s already equiped')
+      it('should unequip item in same body part before equipping')
+      it('should equip item if it\'s not equiped')
+    })
+
+    describe('consumables', () => {
+
+      it('should sustract one from item\'s quantity in inventory')
+      it('should remove item from inventory if it was the last one')
+
+      describe('hp', () => {
+        it('should restore hp by fixed value')
+      })
+
+      describe('mana', () => {
+        it('should restore mana by percentage of maximum value')
+      })
+    })
+  })
+
+  describe('grabItem', () => {
+    it('should not grab item when inventory is full')
+    it('should not grab if tile is empty')
+    it('should grab item on current position')
+    it('should increase item quantity in inventory')
+    it('should not increase quantity over stacking limit')
+    it('should sustract item quantity on tile')
+    it('should remove item from tile if actor grabbed all of it')
+  })
+
+  describe('dropItem', () => {
+    it('should not drop item if it\'s not in inventory')
+    it('should not drop if there\'s another item on tile')
+    it('should drop item on current position')
+    it('should increase item quantity on tile')
+    it('should not increase quantity over stacking limit')
+    it('should sustract item quantity in inventory')
+    it('should remove item from inventory if actor dropped all of it')
+    it('should remove item from equipement if actor dropped all of it')
+  })
+
+  describe('revive', () => {
+    it('should not revive living user')
+    it('should revive dead user')
+    it('should restore stats to their max value')
+  })
+
+  describe('makeInvisible', () => {
+    it('should make user invisible for defined duration')
+    it('should not reset invisibility duration')
+  })
+
+  describe('getPhysicalDamage', () => {
+    it('should add base damage')
+    it('should add items physical damage')
+    it('should multiply race bonus')
+    it('should multyply class bonus')
+  })
+
+  describe('getPhysicalDefense', () => {
+    it('should add items physical defense')
+    it('should multiply race bonus')
+    it('should multiply class bonus')
+  })
+
+  describe('getMagicalDamage', () => {
+    it('should multiply items magical damage')
+    it('should multiply race bonus')
+    it('should multiply class bonus')
+  })
+
+  describe('getMagicalDefense', () => {
+    it('should multiply items magical defense')
+    it('should multiply race bonus')
+    it('should multiply class bonus')
   })
 })
