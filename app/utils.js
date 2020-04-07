@@ -3,8 +3,6 @@ const Map = require('./map')
 module.exports.initGlobals         = initGlobals
 module.exports.getRandomInt        = getRandomInt
 module.exports.getRandomBool       = getRandomBool
-module.exports.getRandomClass      = getRandomClass
-module.exports.getRandomRace       = getRandomRace
 module.exports.getRandomNPC        = getRandomNPC
 module.exports.getEquipementBonus  = getEquipementBonus
 module.exports.arraysMatch         = arraysMatch
@@ -40,20 +38,6 @@ function getRandomInt(min, max) {
 
 function getRandomBool(falseProbability) {
   return Math.random() >= falseProbability
-}
-
-function getRandomClass() {
-  const classNames = Object.keys(global.classes)
-  const classNameIndex = getRandomInt(0, classNames.length)
-  const randomClassName = classNames[classNameIndex]
-  return global.classes[randomClassName]
-}
-
-function getRandomRace() {
-  const raceNames = Object.keys(global.races)
-  const raceNameIndex = getRandomInt(0, raceNames.length)
-  const randomRaceName = raceNames[raceNameIndex]
-  return global.races[randomRaceName]
 }
 
 function getRandomNPC() {
