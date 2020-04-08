@@ -1,46 +1,48 @@
 
 class Map {
 
+  #coordinates
+
   constructor(name) {
     this.name = name
-    this.coordinates = this.load(`../assets/${name}.json`)
+    this.#coordinates = this.load(`../assets/${name}.json`)
   }
 
   getActor(position) {
-    return this.coordinates[position] && this.coordinates[position].actor
+    return this.#coordinates[position] && this.#coordinates[position].actor
   }
 
   moveActor(actor, from, to) {
 
-    if (this.coordinates[from]) {
-      delete this.coordinates[from].actor
+    if (this.#coordinates[from]) {
+      delete this.#coordinates[from].actor
     }
 
-    if (!this.coordinates[to]) {
-      this.coordinates[to] = {}
+    if (!this.#coordinates[to]) {
+      this.#coordinates[to] = {}
     }
 
-    this.coordinates[to].actor = {
+    this.#coordinates[to].actor = {
       _id: actor._id,
       type: actor.type
     }
   }
 
   getItem(position) {
-    return this.coordinates[position] && this.coordinates[position].item
+    return this.#coordinates[position] && this.#coordinates[position].item
   }
 
   addItem(position, _id, quantity) {
 
-    if (!this.coordinates[position]) {
-      this.coordinates[position] = {}
+    if (!this.#coordinates[position]) {
+      this.#coordinates[position] = {}
     }
 
-    if (!this.coordinates[position].item) {
-      this.coordinates[position].item = { quantity: 0 }
+    if (!this.#coordinates[position].item) {
+      this.#coordinates[position].item = { quantity: 0 }
     }
 
-    const currentItem = this.coordinates[position].item
+    const currentItem = this.#coordinates[position].item
 
     if (currentItem._id === _id) {
       quantity += currentItem.quantity
@@ -56,20 +58,20 @@ class Map {
 
   removeItem(position, quantity) {
 
-    if (!this.coordinates[position] || !this.coordinates[position].item) {
+    if (!this.#coordinates[position] || !this.#coordinates[position].item) {
       return
     }
 
-    if (this.coordinates[position].item.quantity - quantity > 0) {
-      this.coordinates[position].item.quantity -= quantity
+    if (this.#coordinates[position].item.quantity - quantity > 0) {
+      this.#coordinates[position].item.quantity -= quantity
     } else {
-      delete this.coordinates[position].item
+      delete this.#coordinates[position].item
     }
   }
 
   collides(position) {
 
-    const data = this.coordinates[position]
+    const data = this.#coordinates[position]
 
     const horizontalBounds = 0 <= position[0] && position[0] < this.size
     const verticalBounds   = 0 <= position[1] && position[1] < this.size

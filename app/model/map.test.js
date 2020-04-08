@@ -78,8 +78,7 @@ describe('Map', () => {
       map.moveActor(user, null, to)
 
       // Arrange
-      expect(map.coordinates[to].actor._id).toBe(user._id)
-      expect(map.coordinates[to].actor.type).toBe(user.type)
+      expect(map.getActor(to)).toEqual({ _id: 'some user id', type: 'USER' })
     })
 
     it('should remove actor from previous position', () => {
@@ -95,7 +94,7 @@ describe('Map', () => {
       map.moveActor(user, from, to)
 
       // Arrange
-      expect(map.coordinates[from].actor).toBeUndefined()
+      expect(map.getActor(from)).toBeUndefined()
     })
   })
 
