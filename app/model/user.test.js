@@ -256,25 +256,179 @@ describe('User', () => {
 
   describe('useItem', () => {
 
-    it('should not use item if it\'s not in inventory')
-
     describe('equipables', () => {
-      it('should unequip item if it\'s already equiped')
-      it('should unequip item in same body part before equipping')
-      it('should equip item if it\'s not equiped')
+
+      it('should not equip items when dead', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const helmet  = { 'some helmet id': 1}
+        user.stats.hp.current = 0
+        user.inventory = { [helmet._id]: 1 }
+
+        // Act
+        user.useItem(helmet)
+
+        // Assert
+        expect(user.equipement).toEqual([])
+      })
+
+      it('should not equip item if it\'s not in inventory', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const helmet  = { 'some helmet id': 1}
+
+        // Act
+        user.useItem(helmet)
+
+        // Assert
+        expect(user.equipement).toEqual([])
+      })
+
+      it('should equip item if it\'s not equiped', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const helmet  = { 'some helmet id': 1}
+        user.inventory = { [helmet._id]: 1 }
+
+        // Act
+        user.useItem(helmet)
+
+        // Assert
+        expect(user.equipement).toEqual([helmet])
+      })
+
+      it('should unequip item if it\'s already equiped', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const item = { _id: 'some item id', bodyPart: 'HEAD' }
+        user.inventory = { [item._id]: 1 }
+        user.equipement = [ item ]
+
+        // Act
+        user.useItem(item)
+
+        // Assert
+        expect(user.equipement).toEqual([])
+      })
+
+      it('should unequip item in same body part before equipping', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const armor = { _id: 'some armor id', bodyPart: 'TORSO' }
+        const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
+        const hammer = { _id: 'some hammer id', bodyPart: 'RIGHT_HAND' }
+        user.inventory = { [armor._id]: 1, [sword._id] : 1, [hammer._id]: 1 }
+        user.equipement = [ armor, sword ]
+
+        // Act
+        user.useItem(hammer)
+
+        // Assert
+        expect(user.equipement).toContain(hammer)
+        expect(user.equipement).not.toContain(sword)
+        expect(user.equipement).toContain(armor)
+      })
+
+      it('should not modify inventory', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
+        const hammer = { _id: 'some hammer id', bodyPart: 'RIGHT_HAND' }
+        user.inventory = { [sword._id] : 1, [hammer._id]: 1 }
+        user.equipement = [ sword ]
+
+        // Act
+        user.useItem(hammer)
+
+        // Assert
+        expect(user.inventory[sword._id]).toBe(1)
+        expect(user.inventory[hammer._id]).toBe(1)
+      })
     })
 
     describe('consumables', () => {
 
-      it('should sustract one from item\'s quantity in inventory')
-      it('should remove item from inventory if it was the last one')
+      it('should not consume items when dead', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const potion = { _id: 'some potion id', consumable: 'hp' }
+        user.inventory = { [potion._id]: 5 }
+        user.stats.hp.current = 0
+
+        // Act
+        user.useItem(potion)
+
+        // Assert
+        expect(user.inventory[potion._id]).toBe(5)
+      })
+
+      it('should sustract one from item\'s quantity in inventory', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const potion = { _id: 'some potion id', consumable: 'hp' }
+        user.inventory = { [potion._id]: 5 }
+
+        // Act
+        user.useItem(potion)
+
+        // Assert
+        expect(user.inventory[potion._id]).toBe(4)
+      })
+
+      it('should remove item from inventory if it was the last one', () => {
+
+        // Arrange
+        const user = createTestUser()
+        const potion = { _id: 'some potion id', consumable: 'hp' }
+        user.inventory = { [potion._id]: 1 }
+
+        // Act
+        user.useItem(potion)
+
+        // Assert
+        expect(user.inventory[potion._id]).toBeUndefined()
+      })
 
       describe('hp', () => {
-        it('should restore hp by fixed value')
+        it('should increase stat by fixed value', () => {
+
+          // Arrange
+          const user = createTestUser()
+          const healthPotion = { _id: 'some health potion id', consumable: 'hp', value: 5 }
+          user.inventory = { [healthPotion._id]: 1 }
+          user.stats.hp.current = 5
+
+          // Act
+          user.useItem(healthPotion)
+
+          // Assert
+          expect(user.hp).toBe(10)
+        })
       })
 
       describe('mana', () => {
-        it('should restore mana by percentage of maximum value')
+        it('should increase stat by perentage of maximum value', () => {
+
+          // Arrange
+          const user = createTestUser()
+          const manaPotion = { _id: 'some mana potion id', consumable: 'mana', value: 0.1 }
+          user.inventory = { [manaPotion._id]: 1 }
+          user.stats.mana.current = 0
+
+          // Act
+          user.useItem(manaPotion)
+
+          // Assert
+          expect(user.mana).toBe(50)
+        })
       })
     })
   })

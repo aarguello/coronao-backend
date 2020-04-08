@@ -55,6 +55,60 @@ class User extends Actor {
     }
   }
 
+  useItem(item) {
+
+    if (this.hp === 0 || !this.inventory[item._id]) {
+      return
+    }
+
+    if (item.consumable) {
+      this.#consumeItem(item)
+    } else {
+      if (this.equipement.includes(item)) {
+        this.#unequipItem(item)
+      } else {
+        this.#equipItem(item)
+      }
+    }
+  }
+
+  #consumeItem(item) {
+
+    if (item.consumable === 'hp') {
+      this.increaseStat('hp', item.value)
+    }
+
+    if (item.consumable === 'mana') {
+      this.increaseStat('mana', this.stats.mana.max * item.value)
+    }
+
+    this.#removeFromInventory(item._id, 1)
+  }
+
+  #equipItem(item) {
+
+    const itemInSameBodyPart = this.equipement.find(e => e.bodyPart === item.bodyPart)
+
+    if (itemInSameBodyPart) {
+      this.#unequipItem(itemInSameBodyPart)
+    }
+
+    this.equipement.push(item)
+  }
+
+  #unequipItem(item) {
+    const index = this.equipement.indexOf(item)
+    this.equipement.splice(index, 1)
+  }
+
+  #removeFromInventory(itemId, amount) {
+    if (this.inventory[itemId] - amount > 0) {
+      this.inventory[itemId] -= amount
+    } else {
+      delete this.inventory[itemId]
+    }
+  }
+
   #startMeditating() {
     this.meditating = true
     this.meditateInterval = setInterval(this.#meditation.bind(this), this.intervals.meditate)
