@@ -39,21 +39,13 @@ class Map {
     }
 
     if (!this.#coordinates[position].item) {
-      this.#coordinates[position].item = { quantity: 0 }
+      this.#coordinates[position].item = { _id, quantity: 0 }
     }
 
-    const currentItem = this.#coordinates[position].item
-
-    if (currentItem._id === _id) {
-      quantity += currentItem.quantity
+    if (this.#coordinates[position].item._id === _id) {
+      quantity += this.#coordinates[position].item.quantity
+      this.#coordinates[position].item.quantity = Math.min(quantity, global.itemStackLimit)
     }
-
-    if (quantity > global.itemStackLimit) {
-      quantity = global.itemStackLimit
-    }
-
-    currentItem._id = _id
-    currentItem.quantity = quantity
   }
 
   removeItem(position, quantity) {

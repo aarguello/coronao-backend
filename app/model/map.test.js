@@ -100,6 +100,10 @@ describe('Map', () => {
 
   describe('getItem', () => {
 
+    beforeAll(() => {
+      global.itemStackLimit = 10000
+    })
+
     it('should return item in position', () => {
 
       // Arrange
@@ -172,7 +176,7 @@ describe('Map', () => {
       expect(map.getItem([1, 1])).toEqual({ _id: 'another item id', quantity: 10000 })
     })
 
-    it('should replace item if another one lies on tile', () => {
+    it('should do nothing if there\'s another item on tile', () => {
 
       // Arrange
       const map = new Map('map-1-test')
@@ -182,7 +186,7 @@ describe('Map', () => {
       map.addItem([0, 0], 'another item id', 7)
 
       // Assert
-      expect(map.getItem([0, 0])).toEqual({ _id: 'another item id', quantity: 7 })
+      expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 5 })
     })
   })
 
