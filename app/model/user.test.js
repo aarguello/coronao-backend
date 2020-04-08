@@ -7,46 +7,91 @@ jest.useFakeTimers()
 
 describe('User', () => {
 
-  const stats = { hp: 500, mana: 500, stamina: 500 }
-  const race = { name: 'HUMAN', hp: 2, mana: 1, stamina: 0.5 }
-  const class_ = { name: 'MAGE', hp: 2, mana: 0.5, stamina: 1 }
-
   beforeAll(() => {
+
+    global.races   = [ { name: 'HUMAN', hp: 2, mana: 1,   stamina: 0.5 } ]
+    global.classes = [ { name: 'MAGE',  hp: 2, mana: 0.5, stamina: 1   } ]
+
+    global.config = {
+      user: {
+        "hp": 400,
+        "mana": 1000,
+        "stamina": 500,
+        "physicalDamage": 50,
+        "attackEffort": 75,
+        "inventorySize": 25,
+        "intervals": {
+          "move": 200,
+          "speak": 500,
+          "attack": 500,
+          "cast": 500,
+          "meditate": 100,
+          "rest": 3000,
+          "use": 125
+        }
+      }
+    }
+
     global.map = new Map('some map name')
   })
 
   describe('constructor', () => {
 
-    it('should set type, _id, name, race and class', () => {
+    it('should set _id, name and type', () => {
 
       // Act
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser('Legolas')
 
       // Assert
-      expect(user.type).toBe('USER')
       expect(user._id).toBe('Legolas')
       expect(user.name).toBe('Legolas')
-      expect(user.race).toBe('HUMAN')
-      expect(user.class).toBe('MAGE')
+      expect(user.type).toBe('USER')
+    })
+
+    it('should set race and class by reference', () => {
+
+      // Act
+      const user = createTestUser()
+
+      // Assert
+      expect(user.race).toBe(global.races[0])
+      expect(user.class).toBe(global.classes[0])
+    })
+
+    it('should set intervals by value', () => {
+
+      // Act
+      const user = createTestUser()
+
+      // Assert
+      expect(user.intervals).toEqual(global.config.user.intervals)
+      expect(user.intervals).not.toBe(global.config.user.intervals)
+    })
+
+    it('should set base damage, attack effort and inventory size', () => {
+
+      // Act
+      const user = createTestUser()
+
+      // Assert
+      expect(user.physicalDamage).toBe(50)
+      expect(user.attackEffort).toBe(75)
+      expect(user.inventorySize).toBe(25)
     })
 
     it('should set stats based on race and class', () => {
 
       // Act
-      const user = new User('Legolas', stats, class_, race)
+      const user = createTestUser()
 
       // Assert
-      expect(user.hp).toBe(2000)
-      expect(user.mana).toBe(250)
+      expect(user.hp).toBe(1600)
+      expect(user.mana).toBe(500)
       expect(user.stamina).toBe(250)
-      expect(user.stats.hp.max).toBe(2000)
-      expect(user.stats.mana.max).toBe(250)
+      expect(user.stats.hp.max).toBe(1600)
+      expect(user.stats.mana.max).toBe(500)
       expect(user.stats.stamina.max).toBe(250)
     })
-
-    it('should set base physical damage')
-    it('should recover stamina when body is covered')
-    it('should not recover stamina when body is uncovered')
   })
 
   describe('move', () => {
@@ -54,7 +99,7 @@ describe('User', () => {
     it('should move actor', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser()
       Actor.prototype.move = jest.fn()
 
       // Act
@@ -67,7 +112,7 @@ describe('User', () => {
     it('should stop meditating', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser()
       user.meditating = true
 
       // Act
@@ -85,18 +130,17 @@ describe('User', () => {
     beforeEach(() => {
 
       // Arrange
-      user = new User('Sherlock', stats, race, class_)
+      user = createTestUser()
       user.position = [0, 0]
       user.direction = 'RIGHT'
 
-      target = new User('Moriarty', stats, race, class_)
+      target = createTestUser()
       target.position = [1, 0]
       target.direction = 'DOWN'
 
       Actor.prototype.attack = jest.fn()
       Map.neighbour = jest.fn(() => [1, 0])
       global.map.getActor = jest.fn(() => target)
-      global.blowEffort = 20
     })
 
     it('should attack neighbour', () => {
@@ -116,7 +160,7 @@ describe('User', () => {
       user.attack()
 
       // Assert
-      expect(user.stamina).toBe(230)
+      expect(user.stamina).toBe(175)
     })
 
     it('should not attack with insufficient stamina', () => {
@@ -153,7 +197,7 @@ describe('User', () => {
 
       // Assert
       expect(Actor.prototype.attack).not.toHaveBeenCalled()
-      expect(user.stamina).toBe(230)
+      expect(user.stamina).toBe(175)
     })
   })
 
@@ -162,10 +206,8 @@ describe('User', () => {
     it('should meditate until mana is full', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
-      user.stats.mana.current = 0
-      global.meditateIncrement = 0.5
-      global.intervals = { userRecoverMana: 100 }
+      const user = createTestUser()
+      user.stats.mana.current = 450
 
       // Act
       user.meditate()
@@ -181,7 +223,7 @@ describe('User', () => {
     it('should not meditate if dead', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser()
       user.hurt(user.hp)
 
       // Act
@@ -194,7 +236,7 @@ describe('User', () => {
     it('should not meditate if mana is full', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser()
 
       // Act
       user.meditate()
@@ -206,7 +248,7 @@ describe('User', () => {
     it('should stop meditating if user was meditating', () => {
 
       // Arrange
-      const user = new User('Legolas', stats, race, class_)
+      const user = createTestUser()
       user.stats.mana.current = 200
 
       // Act
@@ -300,3 +342,7 @@ describe('User', () => {
     it('should multiply class bonus')
   })
 })
+
+function createTestUser(name) {
+  return new User(name, global.races[0], global.classes[0], global.config.user)
+}

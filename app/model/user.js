@@ -3,15 +3,21 @@ const Map = require('./map')
 
 class User extends Actor {
 
-  constructor(name, stats, race, class_) {
+  constructor(name, race, class_, defaults) {
 
     super(name)
 
     this.type = 'USER'
     this.name = name
-    this.race = race.name
-    this.class = class_.name
-    this.stats = this.#buildStats(stats, race, class_)
+    this.race = race
+    this.class = class_
+
+    this.stats = this.#buildStats(defaults, race, class_)
+
+    this.physicalDamage = defaults.physicalDamage
+    this.inventorySize = defaults.inventorySize
+    this.attackEffort = defaults.attackEffort
+    this.intervals = { ...defaults.intervals }
   }
 
   get hp() { return this.stats.hp.current }
@@ -25,7 +31,7 @@ class User extends Actor {
 
   attack() {
 
-    if (this.meditating || this.stamina < global.blowEffort) {
+    if (this.meditating || this.stamina < this.attackEffort) {
       return
     }
 
@@ -36,7 +42,7 @@ class User extends Actor {
       super.attack(target)
     }
 
-    this.decreaseStat('stamina', global.blowEffort)
+    this.decreaseStat('stamina', this.attackEffort)
   }
 
   meditate() {
@@ -49,7 +55,7 @@ class User extends Actor {
 
   #startMeditating() {
     this.meditating = true
-    this.meditateInterval = setInterval(this.#meditation.bind(this), global.intervals.userRecoverMana)
+    this.meditateInterval = setInterval(this.#meditation.bind(this), this.intervals.meditate)
   }
 
   #stopMeditating() {
@@ -60,7 +66,7 @@ class User extends Actor {
 
   #meditation() {
 
-    this.increaseStat('mana', this.stats.mana.max * global.meditateIncrement)
+    this.increaseStat('mana', this.stats.mana.max * 0.05)
 
     if (this.mana === this.stats.mana.max) {
       this.#stopMeditating()
