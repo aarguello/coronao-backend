@@ -26,6 +26,47 @@ class Map {
     }
   }
 
+  getItem(position) {
+    return this.coordinates[position] && this.coordinates[position].item
+  }
+
+  addItem(position, _id, quantity) {
+
+    if (!this.coordinates[position]) {
+      this.coordinates[position] = {}
+    }
+
+    if (!this.coordinates[position].item) {
+      this.coordinates[position].item = { quantity: 0 }
+    }
+
+    const currentItem = this.coordinates[position].item
+
+    if (currentItem._id === _id) {
+      quantity += currentItem.quantity
+    }
+
+    if (quantity > global.itemStackLimit) {
+      quantity = global.itemStackLimit
+    }
+
+    currentItem._id = _id
+    currentItem.quantity = quantity
+  }
+
+  removeItem(position, quantity) {
+
+    if (!this.coordinates[position] || !this.coordinates[position].item) {
+      return
+    }
+
+    if (this.coordinates[position].item.quantity - quantity > 0) {
+      this.coordinates[position].item.quantity -= quantity
+    } else {
+      delete this.coordinates[position].item
+    }
+  }
+
   collides(position) {
 
     const data = this.coordinates[position]

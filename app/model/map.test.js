@@ -99,6 +99,126 @@ describe('Map', () => {
     })
   })
 
+  describe('getItem', () => {
+
+    it('should return item in position', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+      map.addItem([1, 1], 'some item id', 14)
+
+      // Act
+      const item = map.getItem([1, 1])
+
+      // Assert
+      expect(item).toEqual({ _id: 'some item id', quantity: 14 })
+    })
+
+    it('should return undefined if no item was found', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      const item = map.getItem([1, 1])
+
+      // Assert
+      expect(item).toBeUndefined()
+    })
+  })
+
+  describe('addItem', () => {
+
+    beforeAll(() => {
+      global.itemStackLimit = 10000
+    })
+
+    it('should add item when tile is empty', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      map.addItem([0, 0], 'some item id', 5)
+
+      // Assert
+      expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 5 })
+    })
+
+    it('should increase quantity if same item lies on tile', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      map.addItem([0, 0], 'some item id', 5)
+      map.addItem([0, 0], 'some item id', 7)
+
+      // Assert
+      expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 12 })
+    })
+
+    it('should not increase quantity over item stacking limit', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+      map.addItem([0, 0], 'some item id', 7000)
+
+      // Act
+      map.addItem([0, 0], 'some item id', 4000)
+      map.addItem([1, 1], 'another item id', 12000)
+
+      // Assert
+      expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 10000 })
+      expect(map.getItem([1, 1])).toEqual({ _id: 'another item id', quantity: 10000 })
+    })
+
+    it('should replace item if another one lies on tile', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      map.addItem([0, 0], 'some item id', 5)
+      map.addItem([0, 0], 'another item id', 7)
+
+      // Assert
+      expect(map.getItem([0, 0])).toEqual({ _id: 'another item id', quantity: 7 })
+    })
+  })
+
+  describe('remove item', () => {
+
+    it('should decrease item quantity in tile', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+      map.addItem([0, 0], 'some item id', 14)
+
+      // Act
+      map.removeItem([0, 0], 10)
+
+      // Assert
+      expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 4 })
+    })
+
+    it('should remove item from tile when quatity exceeds total', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+      map.addItem([0, 0], 'some item id', 8)
+      map.addItem([1, 1], 'another item id', 13)
+
+      // Act
+      map.removeItem([0, 0], 8)
+      map.removeItem([1, 1], 24)
+
+      // Assert
+      expect(map.getItem([0, 0])).toBeUndefined()
+      expect(map.getItem([1, 1])).toBeUndefined()
+    })
+  })
+
   describe('collides', () => {
 
     it('should not collide with emptiness', () => {
