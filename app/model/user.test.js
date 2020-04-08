@@ -432,16 +432,6 @@ describe('User', () => {
     })
   })
 
-  xdescribe('grabItem', () => {
-    it('should not grab item when inventory is full')
-    it('should not grab if tile is empty')
-    it('should grab item on current position')
-    it('should increase item quantity in inventory')
-    it('should not increase quantity over stacking limit')
-    it('should sustract item quantity on tile')
-    it('should remove item from tile if actor grabbed all of it')
-  })
-
   xdescribe('dropItem', () => {
     it('should not drop item if it\'s not in inventory')
     it('should not drop if there\'s another item on tile')

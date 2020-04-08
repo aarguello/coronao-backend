@@ -267,6 +267,101 @@ describe('Actor', () => {
     })
   })
 
+  describe('grabItem', () => {
+
+    beforeAll(() => {
+      global.itemStackLimit = 10000
+    })
+
+    it('should not grab item when inventory is full', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventorySize = 1
+      actor.inventory = { 'some item id': 1 }
+      map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 1 })
+    })
+
+    it('should grab item on current position', () => {
+
+      // Arrage
+      const actor = new Actor()
+      actor.position = [1, 1]
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(map.getItem).toHaveBeenCalledWith([1, 1])
+      expect(actor.inventory).toEqual({ 'some item id': 2 })
+    })
+
+    it('should not grab if tile is empty', () => {
+
+      // Arrage
+      const actor = new Actor()
+      actor.position = [1, 1]
+      map.getItem = jest.fn()
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(actor.inventory).toEqual({})
+    })
+
+    it('should increase item quantity in inventory', () => {
+
+      // Arrage
+      const actor = new Actor()
+      this.inventorySize = 1
+      actor.inventory = { 'some item id': 1 }
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 7 })
+    })
+
+    it('should not increase quantity over stacking limit', () => {
+
+      // Arrage
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 45 }
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 10000 })
+    })
+
+    it('should sustract item quantity on tile', () => {
+
+      // Arrage
+      const actor = new Actor()
+      actor.position = [1, 0]
+      actor.inventory = { 'some item id': 7000 }
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(map.removeItem).toHaveBeenCalledWith([1, 0], 3000)
+    })
+  })
+
   describe('increase stat', () => {
 
     it('should not accept negative values', () => {

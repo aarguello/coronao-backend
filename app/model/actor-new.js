@@ -66,6 +66,32 @@ class Actor {
     this.frozen = false
   }
 
+  grabItem() {
+
+    const item = global.map.getItem(this.position)
+    const itemCount = Object.keys(this.inventory).length
+
+    if (!item) {
+      return
+    }
+
+    if (itemCount < this.inventorySize || item._id in this.inventory) {
+
+      if (!this.inventory[item._id]) {
+        this.inventory[item._id] = 0
+      }
+
+      let quantity = item.quantity
+
+      if (this.inventory[item._id] + quantity > global.itemStackLimit) {
+        quantity = global.itemStackLimit - this.inventory[item._id]
+      }
+
+      this.inventory[item._id] += quantity
+      global.map.removeItem(this.position, quantity)
+    }
+  }
+
   increaseStat(stat, value) {
 
     if (value < 0) {
