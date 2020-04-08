@@ -92,6 +92,32 @@ class Actor {
     }
   }
 
+  dropItem(itemId, quantity = 0) {
+
+    const currentItem = global.map.getItem(this.position)
+
+    if (!this.inventory[itemId] || quantity <= 0 || currentItem && currentItem._id !== itemId) {
+      return
+    }
+
+    quantity = Math.min(quantity, this.inventory[itemId])
+
+    if (currentItem) {
+      quantity = Math.min(quantity, global.itemStackLimit - currentItem.quantity)
+    }
+
+    global.map.addItem(this.position, itemId, quantity)
+    this.removeFromInventory(itemId, quantity)
+  }
+
+  removeFromInventory(itemId, amount) {
+    if (this.inventory[itemId] - amount > 0) {
+      this.inventory[itemId] -= amount
+    } else {
+      delete this.inventory[itemId]
+    }
+  }
+
   increaseStat(stat, value) {
 
     if (value < 0) {

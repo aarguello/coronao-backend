@@ -432,15 +432,20 @@ describe('User', () => {
     })
   })
 
-  xdescribe('dropItem', () => {
-    it('should not drop item if it\'s not in inventory')
-    it('should not drop if there\'s another item on tile')
-    it('should drop item on current position')
-    it('should increase item quantity on tile')
-    it('should not increase quantity over stacking limit')
-    it('should sustract item quantity in inventory')
-    it('should remove item from inventory if actor dropped all of it')
-    it('should remove item from equipement if actor dropped all of it')
+  describe('removeFromInventory', () => {
+    it('should remove item from equipement when removing from inventory', () =>{
+
+      // Arrange
+      const user = createTestUser()
+      user.inventory = { 'some item id': 14, 'another item id': 5 }
+      user.equipement = ['some item id', 'another item id']
+
+      // Act
+      user.removeFromInventory('some item id', 20)
+
+      // Assert
+      expect(user.equipement).toEqual(['another item id'])
+    })
   })
 
   xdescribe('revive', () => {

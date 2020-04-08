@@ -71,6 +71,15 @@ class User extends Actor {
     }
   }
 
+  removeFromInventory(itemId, amount) {
+
+    super.removeFromInventory(itemId, amount)
+
+    if (!this.inventory[itemId]) {
+      this.#unequipItem(itemId)
+    }
+  }
+
   #consumeItem(item) {
 
     if (item.consumable === 'hp') {
@@ -81,7 +90,7 @@ class User extends Actor {
       this.increaseStat('mana', this.stats.mana.max * item.value)
     }
 
-    this.#removeFromInventory(item._id, 1)
+    this.removeFromInventory(item._id, 1)
   }
 
   #equipItem(item) {
@@ -98,14 +107,6 @@ class User extends Actor {
   #unequipItem(item) {
     const index = this.equipement.indexOf(item)
     this.equipement.splice(index, 1)
-  }
-
-  #removeFromInventory(itemId, amount) {
-    if (this.inventory[itemId] - amount > 0) {
-      this.inventory[itemId] -= amount
-    } else {
-      delete this.inventory[itemId]
-    }
   }
 
   #startMeditating() {

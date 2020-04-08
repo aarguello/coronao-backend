@@ -279,7 +279,7 @@ describe('Actor', () => {
       const actor = new Actor()
       actor.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
-      map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+      global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
 
       // Act
       actor.grabItem()
@@ -293,13 +293,13 @@ describe('Actor', () => {
       // Arrage
       const actor = new Actor()
       actor.position = [1, 1]
-      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
+      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
 
       // Act
       actor.grabItem()
 
       // Assert
-      expect(map.getItem).toHaveBeenCalledWith([1, 1])
+      expect(global.map.getItem).toHaveBeenCalledWith([1, 1])
       expect(actor.inventory).toEqual({ 'some item id': 2 })
     })
 
@@ -308,7 +308,7 @@ describe('Actor', () => {
       // Arrage
       const actor = new Actor()
       actor.position = [1, 1]
-      map.getItem = jest.fn()
+      global.map.getItem = jest.fn()
 
       // Act
       actor.grabItem()
@@ -323,7 +323,7 @@ describe('Actor', () => {
       const actor = new Actor()
       this.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
-      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
+      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
 
       // Act
       actor.grabItem()
@@ -337,7 +337,7 @@ describe('Actor', () => {
       // Arrage
       const actor = new Actor()
       actor.inventory = { 'some item id': 45 }
-      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
+      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
 
       // Act
       actor.grabItem()
@@ -352,13 +352,149 @@ describe('Actor', () => {
       const actor = new Actor()
       actor.position = [1, 0]
       actor.inventory = { 'some item id': 7000 }
-      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
+      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
 
       // Act
       actor.grabItem()
 
       // Assert
       expect(map.removeItem).toHaveBeenCalledWith([1, 0], 3000)
+    })
+  })
+
+  describe('dropItem', () => {
+
+    beforeAll(() => {
+      global.itemStackLimit = 10000
+    })
+
+    it('should drop item on current position', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.position = [0, 1]
+      actor.inventory = { 'some item id': 5 }
+
+      // Act
+      actor.dropItem('some item id', 3)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 2 })
+      expect(map.addItem).toHaveBeenCalledWith([0, 1], 'some item id', 3)
+    })
+
+    it('should not drop more items than actor has', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.position = [0, 1]
+      actor.inventory = { 'some item id': 5 }
+
+      // Act
+      actor.dropItem('some item id', 7)
+
+      // Assert
+      expect(actor.inventory).toEqual({})
+      expect(map.addItem).toHaveBeenCalledWith([0, 1], 'some item id', 5)
+    })
+
+    it('should not drop item if it\'s not in inventory', () => {
+
+      // Arrange
+      const actor = new Actor()
+
+      // Act
+      actor.dropItem('some item id')
+
+      // Assert
+      expect(map.addItem).not.toHaveBeenCalled()
+    })
+
+    it('should not drop null or negative quantity', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 5 }
+
+      // Act
+      actor.dropItem('some item id')
+      actor.dropItem('some item id', -7)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 5 })
+      expect(map.addItem).not.toHaveBeenCalled()
+    })
+
+    it('should not drop if there\'s another item on tile', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 1 }
+      global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+
+      // Act
+      actor.dropItem('some item id', 1)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 1 })
+    })
+
+    it('should not drop more that tile allows', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.position = [1, 0]
+      actor.inventory = { 'some item id': 3000 }
+      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9000 }))
+
+      // Act
+      actor.dropItem('some item id', 1500)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 2000 })
+      expect(map.addItem).toHaveBeenCalledWith([1, 0], 'some item id', 1000)
+    })
+  })
+
+  describe('removeFromInventory', () => {
+
+    it('should sustract quantity from inventory', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 14 }
+
+      // Act
+      actor.removeFromInventory('some item id', 10)
+
+      // Assert
+      expect(actor.inventory['some item id']).toEqual(4)
+    })
+
+    it('should remove item from inventory if quantity equals total', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 14 }
+
+      // Act
+      actor.removeFromInventory('some item id', 14)
+
+      // Assert
+      expect(actor.inventory).toEqual({})
+    })
+
+    it('should remove item from inventory if quantity exceeds total', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 14 }
+
+      // Act
+      actor.removeFromInventory('some item id', 20)
+
+      // Assert
+      expect(actor.inventory).toEqual({})
     })
   })
 
