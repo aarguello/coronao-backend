@@ -37,7 +37,7 @@ describe('User', () => {
 
   describe('constructor', () => {
 
-    it('should set _id, name and type', () => {
+    it('should set initial values', () => {
 
       // Act
       const user = createTestUser('Legolas')
@@ -46,19 +46,27 @@ describe('User', () => {
       expect(user._id).toBe('Legolas')
       expect(user.name).toBe('Legolas')
       expect(user.type).toBe('USER')
+      expect(user.race).toBe(global.races[0])
+      expect(user.class).toBe(global.classes[0])
+      expect(user.inventory).toEqual({})
+      expect(user.equipement).toEqual([])
     })
 
-    it('should set race and class by reference', () => {
+    it('should set stats based on defaults, race and class', () => {
 
       // Act
       const user = createTestUser()
 
       // Assert
-      expect(user.race).toBe(global.races[0])
-      expect(user.class).toBe(global.classes[0])
+      expect(user.hp).toBe(1600)
+      expect(user.mana).toBe(500)
+      expect(user.stamina).toBe(250)
+      expect(user.stats.hp.max).toBe(1600)
+      expect(user.stats.mana.max).toBe(500)
+      expect(user.stats.stamina.max).toBe(250)
     })
 
-    it('should set intervals by value', () => {
+    it('should copy intervals from defaults', () => {
 
       // Act
       const user = createTestUser()
@@ -77,20 +85,6 @@ describe('User', () => {
       expect(user.physicalDamage).toBe(50)
       expect(user.attackEffort).toBe(75)
       expect(user.inventorySize).toBe(25)
-    })
-
-    it('should set stats based on race and class', () => {
-
-      // Act
-      const user = createTestUser()
-
-      // Assert
-      expect(user.hp).toBe(1600)
-      expect(user.mana).toBe(500)
-      expect(user.stamina).toBe(250)
-      expect(user.stats.hp.max).toBe(1600)
-      expect(user.stats.mana.max).toBe(500)
-      expect(user.stats.stamina.max).toBe(250)
     })
   })
 

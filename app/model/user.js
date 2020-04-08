@@ -11,6 +11,8 @@ class User extends Actor {
     this.name = name
     this.race = race
     this.class = class_
+    this.inventory = {}
+    this.equipement = []
 
     this.stats = this.#buildStats(defaults, race, class_)
 
