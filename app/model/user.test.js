@@ -433,7 +433,7 @@ describe('User', () => {
     })
   })
 
-  describe('grabItem', () => {
+  xdescribe('grabItem', () => {
     it('should not grab item when inventory is full')
     it('should not grab if tile is empty')
     it('should grab item on current position')
@@ -443,7 +443,7 @@ describe('User', () => {
     it('should remove item from tile if actor grabbed all of it')
   })
 
-  describe('dropItem', () => {
+  xdescribe('dropItem', () => {
     it('should not drop item if it\'s not in inventory')
     it('should not drop if there\'s another item on tile')
     it('should drop item on current position')
@@ -454,37 +454,37 @@ describe('User', () => {
     it('should remove item from equipement if actor dropped all of it')
   })
 
-  describe('revive', () => {
+  xdescribe('revive', () => {
     it('should not revive living user')
     it('should revive dead user')
     it('should restore stats to their max value')
   })
 
-  describe('makeInvisible', () => {
+  xdescribe('makeInvisible', () => {
     it('should make user invisible for defined duration')
     it('should not reset invisibility duration')
   })
 
-  describe('getPhysicalDamage', () => {
+  xdescribe('getPhysicalDamage', () => {
     it('should add base damage')
     it('should add items physical damage')
     it('should multiply race bonus')
     it('should multyply class bonus')
   })
 
-  describe('getPhysicalDefense', () => {
+  xdescribe('getPhysicalDefense', () => {
     it('should add items physical defense')
     it('should multiply race bonus')
     it('should multiply class bonus')
   })
 
-  describe('getMagicalDamage', () => {
+  xdescribe('getMagicalDamage', () => {
     it('should multiply items magical damage')
     it('should multiply race bonus')
     it('should multiply class bonus')
   })
 
-  describe('getMagicalDefense', () => {
+  xdescribe('getMagicalDefense', () => {
     it('should multiply items magical defense')
     it('should multiply race bonus')
     it('should multiply class bonus')
