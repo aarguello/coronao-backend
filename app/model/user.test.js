@@ -48,7 +48,6 @@ describe('User', () => {
       expect(user.type).toBe('USER')
       expect(user.race).toBe(global.races[0])
       expect(user.class).toBe(global.classes[0])
-      expect(user.inventory).toEqual({})
       expect(user.equipement).toEqual([])
     })
 

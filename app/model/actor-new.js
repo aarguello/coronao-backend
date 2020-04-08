@@ -8,6 +8,8 @@ class Actor {
   constructor(_id) {
     this._id = _id
     this.stats = { hp: { current: 0, max: 0 } }
+    this.inventory = {}
+    this.inventorySize = 5
   }
 
   get hp() {

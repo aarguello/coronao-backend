@@ -18,10 +18,12 @@ describe('Actor', () => {
       expect(actor._id).toBe('some random id')
     })
 
-    it('should initialize HP', () => {
+    it('should initialize HP and inventory', () => {
       const actor = new Actor('some random id')
       expect(actor.hp).toBe(0)
       expect(actor.stats.hp.max).toBe(0)
+      expect(actor.inventory).toEqual({})
+      expect(actor.inventorySize).toBe(5)
     })
   })
 
