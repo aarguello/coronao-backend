@@ -13,6 +13,7 @@ class User extends Actor {
     this.race = race
     this.class = class_
     this.equipement = []
+    this.spells = Object.keys(global.spells)
 
     this.stats = this.#buildStats(defaults, race, class_)
 

@@ -9,6 +9,7 @@ describe('User', () => {
 
   beforeAll(() => {
 
+    global.spells  = { 'some spell id': {} }
     global.races   = [ { name: 'HUMAN', hp: 2, mana: 1,   stamina: 0.5 } ]
     global.classes = [ { name: 'MAGE',  hp: 2, mana: 0.5, stamina: 1   } ]
 
@@ -49,6 +50,7 @@ describe('User', () => {
       expect(user.race).toBe(global.races[0])
       expect(user.class).toBe(global.classes[0])
       expect(user.equipement).toEqual([])
+      expect(user.spells).toEqual(['some spell id'])
     })
 
     it('should set stats based on defaults, race and class', () => {
