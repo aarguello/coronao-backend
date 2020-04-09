@@ -48,12 +48,16 @@ class Actor {
   }
 
   hurt(damage) {
-
-    this.decreaseStat('hp', damage)
-
-    if (this.hp === 0) {
-      this.unfreeze()
+    if (this.hp - damage > 0) {
+      this.decreaseStat('hp', damage)
+    } else {
+      this.kill()
     }
+  }
+
+  kill() {
+    this.decreaseStat('hp', this.hp)
+    this.unfreeze()
   }
 
   freeze(duration) {

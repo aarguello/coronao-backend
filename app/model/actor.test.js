@@ -185,19 +185,51 @@ describe('Actor', () => {
       expect(actor.hp).toBe(50)
     })
 
-    it('should unfreeze actor when killed', () => {
+    it('should kill user when damage exceeds hp', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      const kill = jest.spyOn(actor, 'kill')
+      actor.stats.hp = { current: 50, max: 100 }
+
+      // Act
+      actor.hurt(50)
+
+      // Assert
+      expect(kill).toHaveBeenCalled()
+    })
+
+    it('should drop items when killed', () => {
+
+    })
+  })
+
+  describe('kill', () => {
+
+    it('should set hp to zero', () => {
 
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      actor.unfreeze = jest.fn()
 
       // Act
-      actor.hurt(9999)
+      actor.kill()
 
       // Assert
       expect(actor.hp).toBe(0)
-      expect(actor.unfreeze).toHaveBeenCalled()
+    })
+
+    it('should unfreeze actor', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      actor.frozen = true
+
+      // Act
+      actor.kill()
+
+      // Assert
+      expect(actor.frozen).toBe(false)
     })
   })
 
