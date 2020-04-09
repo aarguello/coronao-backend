@@ -49,7 +49,7 @@ describe('Map', () => {
       const actor = map.getActor([1, 1])
 
       // Assert
-      expect(actor).toEqual(user) // Check with toBe
+      expect(actor).toBe(user)
     })
 
     it('should return undefined if no actor was found', () => {
@@ -78,7 +78,7 @@ describe('Map', () => {
       map.moveActor(user, null, to)
 
       // Arrange
-      expect(map.getActor(to)).toEqual({ _id: 'some user id', type: 'USER' })
+      expect(map.getActor(to)).toBe(user)
     })
 
     it('should remove actor from previous position', () => {

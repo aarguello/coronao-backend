@@ -9,23 +9,20 @@ class Map {
   }
 
   getActor(position) {
-    return this.#coordinates[position] && this.#coordinates[position].actor
+    if (position in this.#coordinates) {
+      return this.#coordinates[position].actor
+    }
   }
 
   moveActor(actor, from, to) {
 
-    if (this.#coordinates[from]) {
-      delete this.#coordinates[from].actor
-    }
+    this.removeActor(from)
 
     if (!this.#coordinates[to]) {
       this.#coordinates[to] = {}
     }
 
-    this.#coordinates[to].actor = {
-      _id: actor._id,
-      type: actor.type
-    }
+    this.#coordinates[to].actor = actor
   }
 
   removeActor(position) {
