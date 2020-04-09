@@ -257,12 +257,14 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.mana.current = 450
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.meditate()
 
       // Assert
       expect(user.meditating).toBe(true)
+      expect(user.events.emit).toHaveBeenCalledWith('STARTED_MEDITATING')
       jest.advanceTimersByTime(100)
       expect(user.meditating).toBe(true)
       jest.advanceTimersByTime(100)
@@ -274,24 +276,28 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.hurt(user.hp)
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.meditate()
 
       // Assert
       expect(user.meditating).toBeFalsy()
+      expect(user.events.emit).not.toHaveBeenCalled()
     })
 
     it('should not meditate if mana is full', () => {
 
       // Arrange
       const user = createTestUser()
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.meditate()
 
       // Assert
       expect(user.meditating).toBeFalsy()
+      expect(user.events.emit).not.toHaveBeenCalled()
     })
 
     it('should stop meditating if user was meditating', () => {
@@ -299,6 +305,7 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.mana.current = 200
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.meditate()
@@ -306,6 +313,7 @@ describe('User', () => {
 
       // Assert
       expect(user.meditating).toBe(false)
+      expect(user.events.emit).toHaveBeenCalledWith('STOPPED_MEDITATING')
     })
   })
 
@@ -316,12 +324,14 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.hp.current = 0
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.revive()
 
       // Assert
       expect(user.hp).toBeGreaterThan(0)
+      expect(user.events.emit).toHaveBeenCalledWith('REVIVED')
     })
 
     it('should restore stats to their max value', () => {
@@ -350,6 +360,7 @@ describe('User', () => {
       user.stats.hp.current = 25
       user.stats.mana.current = 15
       user.stats.stamina.current = 10
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.revive()
@@ -358,6 +369,7 @@ describe('User', () => {
       expect(user.hp).toBe(25)
       expect(user.mana).toBe(15)
       expect(user.stamina).toBe(10)
+      expect(user.events.emit).not.toHaveBeenCalled()
     })
   })
 
@@ -367,18 +379,21 @@ describe('User', () => {
 
       // Arrange
       const user = createTestUser()
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.makeInvisible()
 
       // Assert
       expect(user.invisible).toBe(true)
+      expect(user.events.emit).toHaveBeenCalledWith('VISIBILITY_CHANGED', true)
     })
 
     it('should remain invisible for defined duration', () => {
 
       // Arrange
       const user = createTestUser()
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.makeInvisible(100)
@@ -388,6 +403,7 @@ describe('User', () => {
       expect(user.invisible).toBe(true)
       jest.advanceTimersByTime(50)
       expect(user.invisible).toBe(false)
+      expect(user.events.emit).toHaveBeenCalledWith('VISIBILITY_CHANGED', false)
     })
 
     it('should not affect dead user', () => {
@@ -395,12 +411,14 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.hp.current = 0
+      jest.spyOn(user.events, 'emit')
 
       // Act
       user.makeInvisible()
 
       // Assert
       expect(user.invisible).toBeFalsy()
+      expect(user.events.emit).not.toHaveBeenCalled()
     })
 
     it('should not affect invisible user', () => {

@@ -27,7 +27,7 @@ class User extends Actor {
   get stamina() { return this.stats.stamina.current }
 
   move(direction) {
-    this.meditating = false
+    this.#stopMeditating()
     super.move(direction)
   }
 
@@ -73,6 +73,8 @@ class User extends Actor {
     this.increaseStat('hp', this.stats.hp.max)
     this.increaseStat('mana', this.stats.mana.max)
     this.increaseStat('stamina', this.stats.stamina.max)
+
+    this.events.emit('REVIVED')
   }
 
   makeInvisible(duration) {
@@ -83,12 +85,14 @@ class User extends Actor {
 
     this.invisible = true
     this.invisibilityTimeout = setTimeout(() => this.#makeVisible(), duration)
+    this.events.emit('VISIBILITY_CHANGED', true)
   }
 
   #makeVisible() {
     clearTimeout(this.invisibilityTimeout)
     delete this.invisibilityTimeout
     this.invisible = false
+    this.events.emit('VISIBILITY_CHANGED', false)
   }
 
   useItem(item) {
@@ -168,12 +172,14 @@ class User extends Actor {
   #startMeditating() {
     this.meditating = true
     this.meditateInterval = setInterval(this.#meditation.bind(this), this.intervals.meditate)
+    this.events.emit('STARTED_MEDITATING')
   }
 
   #stopMeditating() {
     clearInterval(this.meditateInterval)
     delete this.meditateInterval
     this.meditating = false
+    this.events.emit('STOPPED_MEDITATING')
   }
 
   #meditation() {
