@@ -54,6 +54,17 @@ class User extends Actor {
     }
   }
 
+  revive() {
+
+    if (this.hp > 0) {
+      return
+    }
+
+    this.increaseStat('hp', this.stats.hp.max)
+    this.increaseStat('mana', this.stats.mana.max)
+    this.increaseStat('stamina', this.stats.stamina.max)
+  }
+
   useItem(item) {
 
     if (this.hp === 0 || !this.inventory[item._id]) {

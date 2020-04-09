@@ -253,6 +253,58 @@ describe('User', () => {
     })
   })
 
+  describe('revive', () => {
+
+    it('should revive dead user', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.stats.hp.current = 0
+
+      // Act
+      user.revive()
+
+      // Assert
+      expect(user.hp).toBeGreaterThan(0)
+    })
+
+    it('should restore stats to their max value', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.stats = {
+        hp: { current: 0, max: 100 },
+        mana: { current: 70, max: 200 },
+        stamina: { current: 0, max: 150 },
+      }
+
+      // Act
+      user.revive()
+
+      // Assert
+      expect(user.hp).toBe(100)
+      expect(user.mana).toBe(200)
+      expect(user.stamina).toBe(150)
+    })
+
+    it('should not revive living user', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.stats.hp.current = 25
+      user.stats.mana.current = 15
+      user.stats.stamina.current = 10
+
+      // Act
+      user.revive()
+
+      // Assert
+      expect(user.hp).toBe(25)
+      expect(user.mana).toBe(15)
+      expect(user.stamina).toBe(10)
+    })
+  })
+
   describe('useItem', () => {
 
     describe('equipables', () => {
@@ -460,12 +512,6 @@ describe('User', () => {
       // Assert
       expect(user.equipement).toEqual(['another item id'])
     })
-  })
-
-  xdescribe('revive', () => {
-    it('should not revive living user')
-    it('should revive dead user')
-    it('should restore stats to their max value')
   })
 
   xdescribe('makeInvisible', () => {
