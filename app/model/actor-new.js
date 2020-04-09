@@ -3,26 +3,35 @@ const EventEmitter = require('events')
 
 class Actor {
 
-  #events = new EventEmitter()
+  events = new EventEmitter()
 
   constructor(_id) {
     this._id = _id
     this.stats = { hp: { current: 0, max: 0 } }
     this.inventory = {}
     this.inventorySize = 5
+    this.#initEventEmitter()
   }
 
   get hp() {
     return this.stats.hp.current
   }
 
-  on(action, handler) {
-    this.#events.on(action, handler.bind(null, this._id))
+  #initEventEmitter() {
+
+    const emitter = this.events.emit
+
+    this.events.emit = (...args) => {
+      emitter.call(this.events, this._id, ...args)
+    }
   }
 
   move(direction) {
 
-    this.direction = direction
+    if (direction != this.direction) {
+      this.direction = direction
+      this.events.emit('DIRECTION_CHANGED', direction)
+    }
 
     const from = this.position
     const to = Map.neighbour(from, direction)
@@ -30,17 +39,24 @@ class Actor {
     if (!this.frozen && !global.map.collides(to)) {
       global.map.moveActor(this, from, to)
       this.position = to
+      this.events.emit('POSITION_CHANGED', to)
     }
   }
 
   attack(target) {
 
-    if (this.hp === 0 || target.dodge()) {
+    if (this.hp === 0) {
       return
     }
 
-    const damage = this.getPhysicalDamage() - target.getPhysicalDefense()
-    target.hurt(damage)
+    let damage = 0
+
+    if (!target.dodge()) {
+      damage = Math.max(this.getPhysicalDamage() - target.getPhysicalDefense(), 0)
+      target.hurt(damage)
+    }
+
+    this.events.emit('ATTACKED', damage)
   }
 
   dodge() {
@@ -58,6 +74,7 @@ class Actor {
   kill() {
     this.decreaseStat('hp', this.hp)
     this.unfreeze()
+    this.events.emit('DIED')
   }
 
   freeze(duration) {
@@ -128,13 +145,8 @@ class Actor {
       return
     }
 
-    value = this[stat] + value
-
-    if (value > this.stats[stat].max) {
-      value = this.stats[stat].max
-    }
-
-    this.stats[stat].current = value
+    value = Math.min(this[stat] + value, this.stats[stat].max)
+    this.#setStat(stat, value)
   }
 
   decreaseStat(stat, value) {
@@ -143,13 +155,18 @@ class Actor {
       return
     }
 
-    value = this[stat] - value
+    value = Math.max(0, this[stat] - value)
+    this.#setStat(stat, value)
+  }
 
-    if (value < 0) {
-      value = 0
+  #setStat(stat, value) {
+
+    if (value === this[stat]) {
+      return
     }
 
     this.stats[stat].current = value
+    this.events.emit('STAT_CHANGED', stat, value)
   }
 
   getEvasion() {
