@@ -98,6 +98,23 @@ describe('Map', () => {
     })
   })
 
+  describe('removeActor', () => {
+
+    it('should remove actor from position', () => {
+
+      // Arrange
+      const map  = new Map('map-1-test')
+      const user = { _id: 'some user id', type: 'USER' }
+      map.moveActor(user, null, [1, 0])
+
+      // Act
+      map.removeActor([1, 0])
+
+      // Assert
+      expect(map.getActor([1, 0])).toBeUndefined()
+    })
+  })
+
   describe('getItem', () => {
 
     beforeAll(() => {
@@ -277,6 +294,33 @@ describe('Map', () => {
       expect(rightCollision).toBe(true)
       expect(upperCollision).toBe(true)
       expect(bottomCollision).toBe(true)
+    })
+  })
+
+  describe('randomPosition', () => {
+
+    it('should return free position in map', () => {
+
+      // Act
+      const map = new Map('map-1-test')
+
+      // Act
+      const position = map.randomPosition()
+
+      // Assert
+      expect([ [0, 0], [1, 0] ]).toContainEqual(position)
+    })
+
+    it('should not return colliding positions', () => {
+
+      // Act
+      const map = new Map('map-1-test')
+
+      // Act
+      const position = map.randomPosition()
+
+      // Assert
+      expect([ [0, 1], [1, 1] ]).not.toContainEqual(position)
     })
   })
 

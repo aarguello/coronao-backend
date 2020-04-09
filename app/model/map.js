@@ -28,6 +28,12 @@ class Map {
     }
   }
 
+  removeActor(position) {
+    if (position in this.#coordinates) {
+      delete this.#coordinates[position].actor
+    }
+  }
+
   getItem(position) {
     return this.#coordinates[position] && this.#coordinates[position].item
   }
@@ -75,6 +81,20 @@ class Map {
     return !!(outOfMap || actorCollision || tileCollision)
   }
 
+  randomPosition() {
+
+    const position = [
+      Map.getRandomInt(0, this.size),
+      Map.getRandomInt(0, this.size),
+    ]
+
+    if (this.collides(position)) {
+      return this.randomPosition()
+    }
+
+    return position
+  }
+
   load(path) {
 
     const map = require(path)
@@ -105,6 +125,10 @@ class Map {
     if (direction === 'RIGHT') return [position[0] + 1, position[1]]
     if (direction === 'UP')    return [position[0], position[1] - 1]
     if (direction === 'DOWN')  return [position[0], position[1] + 1]
+  }
+
+  static getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min
   }
 }
 
