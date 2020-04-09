@@ -573,31 +573,6 @@ describe('User', () => {
       expect(user.equipement).toEqual(['another item id'])
     })
   })
-
-  xdescribe('getPhysicalDamage', () => {
-    it('should add base damage')
-    it('should add items physical damage')
-    it('should multiply race bonus')
-    it('should multyply class bonus')
-  })
-
-  xdescribe('getPhysicalDefense', () => {
-    it('should add items physical defense')
-    it('should multiply race bonus')
-    it('should multiply class bonus')
-  })
-
-  xdescribe('getMagicalDamage', () => {
-    it('should multiply items magical damage')
-    it('should multiply race bonus')
-    it('should multiply class bonus')
-  })
-
-  xdescribe('getMagicalDefense', () => {
-    it('should multiply items magical defense')
-    it('should multiply race bonus')
-    it('should multiply class bonus')
-  })
 })
 
 function createTestUser(name) {

@@ -1,5 +1,6 @@
 const Actor = require('./actor-new')
 const Map = require('./map')
+const utils = require('../utils')
 
 class User extends Actor {
 
@@ -99,6 +100,25 @@ class User extends Actor {
     if (!this.inventory[itemId]) {
       this.#unequipItem(itemId)
     }
+  }
+
+  getPhysicalDamage() {
+    const itemsDamage = utils.getEquipementBonus(this.equipement, 'physicalDamage')
+    return (this.physicalDamage + itemsDamage) * this.class.physicalDamage
+  }
+
+  getPhysicalDefense() {
+    const itemsDefense = utils.getEquipementBonus(this.equipement, 'physicalDefense')
+    return itemsDefense * this.class.getPhysicalDefense
+  }
+
+  getMagicalDamage() {
+    const itemsDamage = utils.getEquipementBonus(this.equipement, 'magicalDamage')
+    return itemsDamage * this.class.magicalDamage
+  }
+
+  getMagicalDefense() {
+    return utils.getEquipementBonus(this.equipement, 'magicalDefense')
   }
 
   #consumeItem(item) {
