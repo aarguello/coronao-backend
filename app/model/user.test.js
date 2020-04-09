@@ -433,6 +433,20 @@ describe('User', () => {
   })
 
   describe('removeFromInventory', () => {
+
+    it('should remove item from inventory', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.inventory = { 'some item id': 5 }
+
+      // Act
+      user.removeFromInventory('some item id', 3)
+
+      // Assert
+      expect(user.inventory['some item id']).toEqual(2)
+    })
+
     it('should remove item from equipement when removing from inventory', () =>{
 
       // Arrange
