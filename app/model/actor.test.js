@@ -107,6 +107,36 @@ describe('Actor', () => {
     })
   })
 
+  describe('speak', () => {
+
+    it('should emit "SPOKE" event with message', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      jest.spyOn(actor.events, 'emit')
+
+      // Act
+      actor.speak('hey there!')
+
+      // Assert
+      expect(actor.events.emit).toHaveBeenCalledWith('SPOKE', 'hey there!')
+    })
+
+    it('should not exceed maximum length', () => {
+
+      // Arrange
+      const actor = new Actor('some actor id')
+      jest.spyOn(actor.events, 'emit')
+      global.messageMaxLength = 3
+
+      // Act
+      actor.speak('hey there!')
+
+      // Assert
+      expect(actor.events.emit).toHaveBeenCalledWith('SPOKE', 'hey...')
+    })
+  })
+
   describe('attack', () => {
 
     let user, target

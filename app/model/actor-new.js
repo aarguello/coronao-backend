@@ -43,6 +43,15 @@ class Actor {
     }
   }
 
+  speak(message) {
+
+    if (message.length > global.messageMaxLength) {
+      message = message.slice(0, global.messageMaxLength) + '...'
+    }
+
+    this.events.emit('SPOKE', message)
+  }
+
   attack(target) {
 
     if (this.hp === 0) {
