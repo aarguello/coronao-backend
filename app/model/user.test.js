@@ -305,6 +305,66 @@ describe('User', () => {
     })
   })
 
+  describe('makeInvisible', () => {
+
+    it('should make user invisible', () => {
+
+      // Arrange
+      const user = createTestUser()
+
+      // Act
+      user.makeInvisible()
+
+      // Assert
+      expect(user.invisible).toBe(true)
+    })
+
+    it('should remain invisible for defined duration', () => {
+
+      // Arrange
+      const user = createTestUser()
+
+      // Act
+      user.makeInvisible(100)
+
+      // Assert
+      jest.advanceTimersByTime(50)
+      expect(user.invisible).toBe(true)
+      jest.advanceTimersByTime(50)
+      expect(user.invisible).toBe(false)
+    })
+
+    it('should not affect dead user', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.stats.hp.current = 0
+
+      // Act
+      user.makeInvisible()
+
+      // Assert
+      expect(user.invisible).toBeFalsy()
+    })
+
+    it('should not affect invisible user', () => {
+
+      // Arrange
+      const user = createTestUser()
+
+      // Act
+      user.makeInvisible(100) // Valid call
+      jest.advanceTimersByTime(50)
+      user.makeInvisible(100) // This one should do nothing
+      jest.advanceTimersByTime(50)
+      user.makeInvisible(100) // Valid call
+
+      // Assert
+      jest.advanceTimersByTime(50)
+      expect(user.invisible).toBe(true)
+    })
+  })
+
   describe('useItem', () => {
 
     describe('equipables', () => {
@@ -512,11 +572,6 @@ describe('User', () => {
       // Assert
       expect(user.equipement).toEqual(['another item id'])
     })
-  })
-
-  xdescribe('makeInvisible', () => {
-    it('should make user invisible for defined duration')
-    it('should not reset invisibility duration')
   })
 
   xdescribe('getPhysicalDamage', () => {

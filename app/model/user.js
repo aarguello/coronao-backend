@@ -65,6 +65,16 @@ class User extends Actor {
     this.increaseStat('stamina', this.stats.stamina.max)
   }
 
+  makeInvisible(duration) {
+
+    if (this.invisible || this.hp === 0) {
+      return
+    }
+
+    this.invisible = true
+    setTimeout(() => this.invisible = false, duration)
+  }
+
   useItem(item) {
 
     if (this.hp === 0 || !this.inventory[item._id]) {
