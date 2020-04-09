@@ -194,6 +194,62 @@ describe('User', () => {
     })
   })
 
+  describe('kill', () => {
+
+    it('should set stats to zero', () => {
+
+      // Arrange
+      const user = createTestUser()
+
+      // Act
+      user.kill()
+
+      // Assert
+      expect(user.hp).toBe(0)
+      expect(user.mana).toBe(0)
+      expect(user.stamina).toBe(0)
+    })
+
+    it('should make user visible', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.invisible = true
+
+      // Act
+      user.kill()
+
+      // Assert
+      expect(user.invisible).toBe(false)
+    })
+
+    it('should stop meditating', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.meditating = true
+
+      // Act
+      user.kill()
+
+      // Assert
+      expect(user.meditating).toBe(false)
+    })
+
+    it('should remove equipement', () => {
+
+      // Arrange
+      const user = createTestUser()
+      user.equipement = ['some sword id']
+
+      // Act
+      user.kill()
+
+      // Assert
+      expect(user.equipement).toEqual([])
+    })
+  })
+
   describe('meditate', () => {
 
     it('should meditate until mana is full', () => {

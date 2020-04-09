@@ -47,6 +47,15 @@ class User extends Actor {
     this.decreaseStat('stamina', this.attackEffort)
   }
 
+  kill() {
+    super.kill()
+    this.decreaseStat('mana', this.mana)
+    this.decreaseStat('stamina', this.stamina)
+    this.#makeVisible()
+    this.#stopMeditating()
+    this.equipement = []
+  }
+
   meditate() {
     if (this.meditating) {
       this.#stopMeditating()
@@ -73,7 +82,13 @@ class User extends Actor {
     }
 
     this.invisible = true
-    setTimeout(() => this.invisible = false, duration)
+    this.invisibilityTimeout = setTimeout(() => this.#makeVisible(), duration)
+  }
+
+  #makeVisible() {
+    clearTimeout(this.invisibilityTimeout)
+    delete this.invisibilityTimeout
+    this.invisible = false
   }
 
   useItem(item) {
