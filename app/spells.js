@@ -1,7 +1,7 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
-module.exports.handleSpell = function (spellId, position) {
+module.exports.cast = function (spellId, position) {
 
   const spellHandler = {
     'DAMAGE':       damage,

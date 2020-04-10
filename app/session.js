@@ -1,7 +1,7 @@
 const jwt       = require('jsonwebtoken')
 const User      = require('./model/user')
 const broadcast = require('./emitters')
-const combat    = require('./combat')
+const spells    = require('./spells')
 
 module.exports.login      = login
 module.exports.connection = connection
@@ -105,7 +105,7 @@ function initHandlers(user, socket) {
   const userAttackHandler   = ()       => user.attack()
   const userMeditateHandler = ()       => user.meditate()
   const userToggleHandler   = (_id)    => user.toggleItem(_id)
-  const userCastHandler     = combat.handleSpell.bind(user)
+  const userCastHandler     = spells.cast.bind(user)
 
   socket.on('USER_MOVE',        userMoveHandler,     global.intervals.userMove)
   socket.on('USER_SPEAK',       userSpeakHandler,    global.intervals.userSpeak)
