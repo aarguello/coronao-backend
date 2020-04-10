@@ -62,7 +62,7 @@ function connection(socket) {
 
   socket.on('disconnect', disconnect)
 
-  broadcast.userWelcome(user, socket)
+  broadcast.userWelcome(user._id, socket)
   broadcast.userJoined(user, socket)
 }
 

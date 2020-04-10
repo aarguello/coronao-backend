@@ -1,29 +1,20 @@
 
 module.exports.setIO = (io) => this.io = io
 
-module.exports.userWelcome = (user, socket) => {
+module.exports.userWelcome = (_id, socket) => {
 
   const users = {}
   const aliveNPCs = global.aliveNPCs
 
-  for (const [_id, u] of Object.entries(global.users)) {
-    users[_id] = {
-      _id: u._id,
-      name: u.name,
-      race: u.race.name,
-      class: u.class.name,
-      stats: u.stats,
-      position: u.position,
-      intervals: u.intervals,
-      spells: u.spells,
-    }
+  for (const [userId, u] of Object.entries(global.users)) {
+    users[userId] = parseUser(u)
   }
 
-  this.io.to(socket.id).emit('USER_WELCOME', { user, globals: { users, aliveNPCs } })
+  this.io.to(socket.id).emit('USER_WELCOME', { user: users[_id], globals: { users, aliveNPCs } })
 }
 
 module.exports.userJoined = (user, socket) => {
-  socket.broadcast.emit('USER_JOINED', user)
+  socket.broadcast.emit('USER_JOINED', parseUser(user))
 }
 
 module.exports.userLeft = (_id) => {
@@ -117,4 +108,22 @@ module.exports.npcStatChanged = (_id, stat, value) => {
 
 module.exports.npcReceivedSpell = (_id, spellId) => {
   this.io.emit('NPC_RECEIVED_SPELL', { npc: { _id }, spellId })
+}
+
+function parseUser(u) {
+
+  const user = {
+    _id: u._id,
+    name: u.name,
+    race: u.race.name,
+    class: u.class.name,
+    stats: u.stats,
+    position: u.position,
+    intervals: u.intervals,
+    spells: u.spells,
+    inventory: u.inventory,
+    equipement: u.equipement,
+  }
+
+  return user
 }
