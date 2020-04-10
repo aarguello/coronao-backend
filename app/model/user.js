@@ -138,17 +138,20 @@ class User extends Actor {
 
   getPhysicalDamage() {
     const itemsDamage = utils.getEquipementBonus(this.equipement, 'physicalDamage')
-    return (this.physicalDamage + itemsDamage) * this.class.physicalDamage
+    const classDamage = this.class.physicalDamage || 1
+    return (this.physicalDamage + itemsDamage) * classDamage
   }
 
   getPhysicalDefense() {
     const itemsDefense = utils.getEquipementBonus(this.equipement, 'physicalDefense')
-    return itemsDefense * this.class.getPhysicalDefense
+    const classDefense = this.class.physicalDefense || 1
+    return itemsDefense * classDefense
   }
 
   getMagicalDamage() {
-    const itemsDamage = utils.getEquipementBonus(this.equipement, 'magicalDamage')
-    return itemsDamage * this.class.magicalDamage
+    const itemsDamage = utils.getEquipementBonus(this.equipement, 'magicalDamage') || 1
+    const classDamage = this.class.magicalDamage || 1
+    return itemsDamage * classDamage
   }
 
   getMagicalDefense() {
