@@ -22,4 +22,4 @@ io.on('connection', session.connection)
 
 require('./emitters').setIO(io)
 require('./utils').initGlobals()
-// require('./npc').init()
+require('./npc').init()

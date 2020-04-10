@@ -1,8 +1,7 @@
 const Actor    = require('./model/actor')
-const Map      = require('./map')
+const Map      = require('./model/map')
 const utils    = require('./utils')
 const PF       = require('pathfinding')
-const user     = require('./user')
 const emitters = require('./emitters')
 
 class Npc extends Actor {
@@ -20,7 +19,6 @@ class Npc extends Actor {
 
     this.name           = npcClass.name
     this.type           = 'NPC'
-    this.position       = Map.getRandomPosition()
     this.fov            = npcClass.fov
     this.stats          = { hp }
     this._damage        = npcClass.physical_damage
@@ -52,8 +50,11 @@ class Npc extends Actor {
   }
 
   isCloseToAttack(target) {
-    const neighbour = Map.getNeighbourPosition(this.position, this.direction)
-    if (target == Map.getActorInTile(neighbour)) {
+
+    const neighbour = Map.neighbour(this.position, this.direction)
+    const actor = global.map.getActor(neighbour)
+
+    if (actor && actor.type === 'USER' && actor._id === target._id) {
       return true
     }
 
@@ -76,20 +77,16 @@ class Npc extends Actor {
 
   move(direction) {
 
-    const [ moved, pivoted ] = super.move(direction)
+    const newPosition = super.move(direction)
 
-    if (pivoted) {
-      emitters.npcDirectionChanged(this._id, this.direction)
-    }
-
-    if (moved) {
-      emitters.npcPositionChanged(this._id, this.position)
+    if (newPosition) {
+      emitters.npcPositionChanged(this._id, newPosition)
       this.lastMove = Date.now()
     }
   }
 
   getOrLookForPrey() {
-    this.currentTarget = Map.getNearestUser(this.position, this.fov)
+    this.currentTarget = global.map.getNearestUser(this.position, this.fov)
     return this.currentTarget
   }
 
@@ -125,9 +122,12 @@ class Npc extends Actor {
     let grid = new PF.Grid(global.map.size, global.map.size)
     let finder = new PF.AStarFinder()
 
-    Object.keys(global.map.positions).forEach((positionStr) => {
-      const position = positionStr.split(',').map(Number)
-      if (Map.checkCollision(position) && !utils.arraysMatch(target.position, position)) grid.setWalkableAt(...position, false)
+    const collisions = global.map.collisions()
+
+    collisions.forEach(position => {
+      if (!Map.equals(position, target.position)) {
+        grid.setWalkableAt(...position, false)
+      }
     })
 
     let path = finder.findPath(this.position[0], this.position[1], target.position[0], target.position[1], grid)
@@ -143,21 +143,6 @@ class Npc extends Actor {
       this.move(direction)
       this.speak('follow')
     }
-  }
-
-  setStat(stat, value) {
-
-    const valueChanged = super.setStat(stat, value)
-
-    if (valueChanged) {
-      emitters.npcStatChanged(this._id, stat, this.stats[stat])
-    }
-  }
-
-  kill() {
-    super.kill()
-    this.emitter.emit('DIED')
-    emitters.npcDied(this._id)
   }
 
   speak(functionName) {
@@ -219,17 +204,22 @@ function makeNPCsPerformActions () {
 function spawnNPC() {
 
   const npc = new Npc(utils.getRandomNPC())
+  const position = global.map.randomPosition()
 
   global.aliveNPCs[npc._id] = npc
-  Map.updateActorPosition(npc, Map.getRandomPosition())
+  global.map.moveActor(npc, null, position)
 
-  npc.emitter.on('DIED', () => haveFuneral(npc))
+  npc.position = position
+  npc.events.on('DIRECTION_CHANGED', emitters.npcDirectionChanged)
+  npc.events.on('STAT_CHANGED', emitters.npcStatChanged)
+  npc.events.on('DIED', () => haveFuneral(npc))
 
   emitters.npcSpawned(npc)
 }
 
 function haveFuneral(npc) {
-  delete global.map.positions[npc.position].NPC
+  emitters.npcDied(npc._id)
+  global.map.removeActor(npc.position)
   delete global.aliveNPCs[npc._id]
   spawnNPC()
 }
