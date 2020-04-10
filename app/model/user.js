@@ -24,7 +24,9 @@ class User extends Actor {
 
     // Rest
     setInterval(() => {
-      this.increaseStat('stamina', this.attackEffort)
+      if (this.hp > 0) {
+        this.increaseStat('stamina', this.attackEffort)
+      }
     }, this.intervals.rest)
   }
 
