@@ -694,7 +694,7 @@ describe('User', () => {
     })
   })
 
-  describe('removeFromInventory', () => {
+  describe('decreaseInventoryItem', () => {
 
     it('should remove item from inventory', () => {
 
@@ -703,7 +703,7 @@ describe('User', () => {
       user.inventory = { 'some item id': 5 }
 
       // Act
-      user.removeFromInventory('some item id', 3)
+      user.decreaseInventoryItem('some item id', 3)
 
       // Assert
       expect(user.inventory['some item id']).toEqual(2)
@@ -717,7 +717,7 @@ describe('User', () => {
       user.equipement = ['some item id', 'another item id']
 
       // Act
-      user.removeFromInventory('some item id', 20)
+      user.decreaseInventoryItem('some item id', 20)
 
       // Assert
       expect(user.equipement).toEqual(['another item id'])

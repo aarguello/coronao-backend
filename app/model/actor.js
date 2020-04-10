@@ -108,41 +108,51 @@ class Actor {
         this.inventory[item._id] = 0
       }
 
-      let quantity = item.quantity
-
-      if (this.inventory[item._id] + quantity > global.itemStackLimit) {
-        quantity = global.itemStackLimit - this.inventory[item._id]
-      }
+      const quantity = Math.min(
+        item.quantity,
+        global.config.itemStackLimit - this.inventory[item._id],
+      )
 
       this.inventory[item._id] += quantity
+      this.emit('INVENTORY_CHANGED', item._id, this.inventory[item._id])
       global.map.removeItem(this.position, quantity)
     }
   }
 
   dropItem(itemId, quantity = 0) {
 
-    const currentItem = global.map.getItem(this.position)
+    const itemOnTile = global.map.getItem(this.position)
 
-    if (!this.inventory[itemId] || quantity <= 0 || currentItem && currentItem._id !== itemId) {
+    if (itemOnTile && itemOnTile._id !== itemId) {
       return
     }
 
-    quantity = Math.min(quantity, this.inventory[itemId])
+    if (0 < quantity && quantity <= this.inventory[itemId]) {
 
-    if (currentItem) {
-      quantity = Math.min(quantity, global.itemStackLimit - currentItem.quantity)
+      if (itemOnTile) {
+        quantity = Math.min(quantity, global.config.itemStackLimit - itemOnTile.quantity)
+      }
+
+      global.map.addItem(this.position, itemId, quantity)
+      this.decreaseInventoryItem(itemId, quantity)
     }
-
-    global.map.addItem(this.position, itemId, quantity)
-    this.removeFromInventory(itemId, quantity)
   }
 
-  removeFromInventory(itemId, amount) {
-    if (this.inventory[itemId] - amount > 0) {
-      this.inventory[itemId] -= amount
+  decreaseInventoryItem(itemId, amount) {
+
+    if (amount <= 0) {
+      return
+    }
+
+    amount = Math.max(this.inventory[itemId] - amount, 0)
+
+    if (amount > 0) {
+      this.inventory[itemId] = amount
     } else {
       delete this.inventory[itemId]
     }
+
+    this.emit('INVENTORY_CHANGED', itemId, amount)
   }
 
   increaseStat(stat, value) {

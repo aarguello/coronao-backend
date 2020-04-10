@@ -47,7 +47,7 @@ class Map {
 
     if (this.#coordinates[position].item._id === _id) {
       quantity += this.#coordinates[position].item.quantity
-      this.#coordinates[position].item.quantity = Math.min(quantity, global.itemStackLimit)
+      this.#coordinates[position].item.quantity = Math.min(quantity, global.config.itemStackLimit)
     }
   }
 

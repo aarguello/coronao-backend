@@ -36,12 +36,17 @@ class User extends Actor {
 
   move(direction, clientPredictionIndex) {
 
-    const newPosition = super.move(direction)
+    const position = super.move(direction)
 
-    if (newPosition) {
-      this.#stopMeditating()
-      this.emit('POSITION_CHANGED', newPosition, clientPredictionIndex)
+    if (!position) {
+      return
     }
+
+    if (this.meditating) {
+      this.#stopMeditating()
+    }
+
+    this.emit('POSITION_CHANGED', position, clientPredictionIndex)
   }
 
   attack() {
@@ -129,9 +134,9 @@ class User extends Actor {
     }
   }
 
-  removeFromInventory(itemId, amount) {
+  decreaseInventoryItem(itemId, amount) {
 
-    super.removeFromInventory(itemId, amount)
+    super.decreaseInventoryItem(itemId, amount)
 
     if (!this.inventory[itemId]) {
       this.#unequipItem(itemId)
@@ -170,7 +175,7 @@ class User extends Actor {
       this.increaseStat('mana', this.stats.mana.max * item.value)
     }
 
-    this.removeFromInventory(item._id, 1)
+    this.decreaseInventoryItem(item._id, 1)
   }
 
   #equipItem(item) {

@@ -5,6 +5,8 @@ describe('Map', () => {
 
   beforeAll(() => {
 
+    global.config = { itemStackLimit: 10000 }
+
     const map = {
       width: 2,
       layers: [
@@ -117,10 +119,6 @@ describe('Map', () => {
 
   describe('getItem', () => {
 
-    beforeAll(() => {
-      global.itemStackLimit = 10000
-    })
-
     it('should return item in position', () => {
 
       // Arrange
@@ -148,10 +146,6 @@ describe('Map', () => {
   })
 
   describe('addItem', () => {
-
-    beforeAll(() => {
-      global.itemStackLimit = 10000
-    })
 
     it('should add item when tile is empty', () => {
 

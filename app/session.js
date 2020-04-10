@@ -104,15 +104,19 @@ function initHandlers(user, socket) {
   const userSpeakHandler    = (msg)    => user.speak(msg)
   const userAttackHandler   = ()       => user.attack()
   const userMeditateHandler = ()       => user.meditate()
-  const userToggleHandler   = (_id)    => user.toggleItem(_id)
+  const userUseItemHandler  = (_id)    => user.userItem(_id)
+  const userGrabItemHandler = (_id)    => user.grabItem(_id)
+  const userDropItemHandler = (_id, qty) => user.dropItem(_id, qty)
   const userCastHandler     = spells.cast.bind(user)
 
-  socket.on('USER_MOVE',        userMoveHandler,     global.intervals.userMove)
-  socket.on('USER_SPEAK',       userSpeakHandler,    global.intervals.userSpeak)
-  socket.on('USER_ATTACK',      userAttackHandler,   global.intervals.userAttack)
-  socket.on('USER_MEDITATE',    userMeditateHandler, global.intervals.userMeditate)
-  socket.on('USER_TOGGLE_ITEM', userToggleHandler,   global.intervals.userToggleItem)
-  socket.on('USER_CAST_SPELL',  userCastHandler,     global.intervals.userCastSpell)
+  socket.on('USER_MOVE',       userMoveHandler,     global.intervals.userMove)
+  socket.on('USER_SPEAK',      userSpeakHandler,    global.intervals.userSpeak)
+  socket.on('USER_ATTACK',     userAttackHandler,   global.intervals.userAttack)
+  socket.on('USER_MEDITATE',   userMeditateHandler, global.intervals.userMeditate)
+  socket.on('USER_USE_ITEM',   userUseItemHandler,  global.intervals.userToggleItem)
+  socket.on('USER_GRAB_ITEM',  userGrabItemHandler, global.intervals.userToggleItem)
+  socket.on('USER_DROP_ITEM',  userDropItemHandler, global.intervals.userToggleItem)
+  socket.on('USER_CAST_SPELL', userCastHandler,     global.intervals.userCastSpell)
 }
 
 function initBroadcasts(user, socket) {

@@ -7,7 +7,7 @@ jest.useFakeTimers()
 describe('Actor', () => {
 
   beforeEach(() => {
-    global.config = {}
+    global.config = { itemStackLimit: 10000 }
     global.map = new Map('some map id')
     Map.mockClear()
   })
@@ -374,10 +374,6 @@ describe('Actor', () => {
 
   describe('grabItem', () => {
 
-    beforeAll(() => {
-      global.itemStackLimit = 10000
-    })
-
     it('should not grab item when inventory is full', () => {
 
       // Arrange
@@ -385,12 +381,14 @@ describe('Actor', () => {
       actor.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
       global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.grabItem()
 
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 1 })
+      expect(actor.emit).not.toHaveBeenCalled()
     })
 
     it('should grab item on current position', () => {
@@ -399,6 +397,7 @@ describe('Actor', () => {
       const actor = new Actor()
       actor.position = [1, 1]
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.grabItem()
@@ -406,6 +405,7 @@ describe('Actor', () => {
       // Assert
       expect(global.map.getItem).toHaveBeenCalledWith([1, 1])
       expect(actor.inventory).toEqual({ 'some item id': 2 })
+      expect(actor.emit).toHaveBeenCalledWith('INVENTORY_CHANGED','some item id', 2)
     })
 
     it('should not grab if tile is empty', () => {
@@ -469,10 +469,6 @@ describe('Actor', () => {
 
   describe('dropItem', () => {
 
-    beforeAll(() => {
-      global.itemStackLimit = 10000
-    })
-
     it('should drop item on current position', () => {
 
       // Arrange
@@ -486,21 +482,6 @@ describe('Actor', () => {
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 2 })
       expect(map.addItem).toHaveBeenCalledWith([0, 1], 'some item id', 3)
-    })
-
-    it('should not drop more items than actor has', () => {
-
-      // Arrange
-      const actor = new Actor()
-      actor.position = [0, 1]
-      actor.inventory = { 'some item id': 5 }
-
-      // Act
-      actor.dropItem('some item id', 7)
-
-      // Assert
-      expect(actor.inventory).toEqual({})
-      expect(map.addItem).toHaveBeenCalledWith([0, 1], 'some item id', 5)
     })
 
     it('should not drop item if it\'s not in inventory', () => {
@@ -524,6 +505,21 @@ describe('Actor', () => {
       // Act
       actor.dropItem('some item id')
       actor.dropItem('some item id', -7)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 5 })
+      expect(map.addItem).not.toHaveBeenCalled()
+    })
+
+    it('should not drop more that item quantity on inventory', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.position = [0, 1]
+      actor.inventory = { 'some item id': 5 }
+
+      // Act
+      actor.dropItem('some item id', 7)
 
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 5 })
@@ -561,45 +557,67 @@ describe('Actor', () => {
     })
   })
 
-  describe('removeFromInventory', () => {
+  describe('decreaseInventoryItem', () => {
 
-    it('should sustract quantity from inventory', () => {
+    it('should decrease item amount', () => {
 
       // Arrange
       const actor = new Actor()
       actor.inventory = { 'some item id': 14 }
+      jest.spyOn(actor, 'emit')
 
       // Act
-      actor.removeFromInventory('some item id', 10)
+      actor.decreaseInventoryItem('some item id', 10)
 
       // Assert
       expect(actor.inventory['some item id']).toEqual(4)
+      expect(actor.emit).toHaveBeenCalledWith('INVENTORY_CHANGED', 'some item id', 4)
     })
 
-    it('should remove item from inventory if quantity equals total', () => {
+    it('should remove item from inventory if amount equals total', () => {
 
       // Arrange
       const actor = new Actor()
       actor.inventory = { 'some item id': 14 }
+      jest.spyOn(actor, 'emit')
 
       // Act
-      actor.removeFromInventory('some item id', 14)
+      actor.decreaseInventoryItem('some item id', 14)
 
       // Assert
       expect(actor.inventory).toEqual({})
+      expect(actor.emit).toHaveBeenCalledWith('INVENTORY_CHANGED', 'some item id', 0)
     })
 
-    it('should remove item from inventory if quantity exceeds total', () => {
+    it('should remove item from inventory if amount exceeds total', () => {
 
       // Arrange
       const actor = new Actor()
       actor.inventory = { 'some item id': 14 }
+      jest.spyOn(actor, 'emit')
 
       // Act
-      actor.removeFromInventory('some item id', 20)
+      actor.decreaseInventoryItem('some item id', 20)
 
       // Assert
       expect(actor.inventory).toEqual({})
+      expect(actor.emit).toHaveBeenCalledWith('INVENTORY_CHANGED', 'some item id', 0)
+    })
+
+    it('should not decrease item amount by negative or null value', () => {
+
+      // Arrange
+      const actor = new Actor()
+      actor.inventory = { 'some item id': 14 }
+      jest.spyOn(actor, 'emit')
+
+      // Act
+      actor.decreaseInventoryItem('some item id', 0)
+      actor.decreaseInventoryItem('some item id', -20)
+
+      // Assert
+      expect(actor.inventory).toEqual({ 'some item id': 14 })
+      expect(actor.emit).not.toHaveBeenCalled()
     })
   })
 
