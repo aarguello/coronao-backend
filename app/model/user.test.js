@@ -88,6 +88,19 @@ describe('User', () => {
       expect(user.attackEffort).toBe(75)
       expect(user.inventorySize).toBe(25)
     })
+
+    it('should start resting', () => {
+
+      // Act
+      const user = createTestUser()
+      user.stats.stamina.current = 0
+
+      // Assert
+      jest.advanceTimersByTime(2999)
+      expect(user.stamina).toBe(0)
+      jest.advanceTimersByTime(1)
+      expect(user.stamina).toBe(75)
+    })
   })
 
   describe('move', () => {

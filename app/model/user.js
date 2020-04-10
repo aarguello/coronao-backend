@@ -21,6 +21,11 @@ class User extends Actor {
     this.inventorySize = defaults.inventorySize
     this.attackEffort = defaults.attackEffort
     this.intervals = { ...defaults.intervals }
+
+    // Rest
+    setInterval(() => {
+      this.increaseStat('stamina', this.attackEffort)
+    }, this.intervals.rest)
   }
 
   get hp() { return this.stats.hp.current }
