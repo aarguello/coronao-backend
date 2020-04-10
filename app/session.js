@@ -43,7 +43,7 @@ function login(request, response) {
     spells:        global.spells,
     mapSize:       global.map.size,
     intervals:     global.intervals,
-    inventorySize: global.inventorySize,
+    inventorySize: global.config.user.inventorySize,
   })
 }
 

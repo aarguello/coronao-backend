@@ -7,6 +7,7 @@ jest.useFakeTimers()
 describe('Actor', () => {
 
   beforeEach(() => {
+    global.config = {}
     global.map = new Map('some map id')
     Map.mockClear()
   })
@@ -132,7 +133,7 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       jest.spyOn(actor, 'emit')
-      global.messageMaxLength = 3
+      global.config.messageMaxLength = 3
 
       // Act
       actor.speak('hey there!')

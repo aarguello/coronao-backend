@@ -10,16 +10,7 @@ function initGlobals() {
 
   global.users     = {}
   global.aliveNPCs = {}
-
-  global.baseDamage        = 100
-  global.blowEffort        = 20
-  global.meditateIncrement = 0.04
-  global.staminaIncrement  = 40
-  global.inventorySize     = 9
-  global.messageMaxLength  = 100
-
-  global.config = require('./assets/config.json')
-
+  global.config    = require('./assets/config.json')
   global.intervals = require('./assets/intervals.json')
 
   const selectedMap = 'map-1'

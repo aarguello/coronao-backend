@@ -42,8 +42,8 @@ class Actor {
 
   speak(message) {
 
-    if (message.length > global.messageMaxLength) {
-      message = message.slice(0, global.messageMaxLength) + '...'
+    if (message.length > global.config.messageMaxLength) {
+      message = message.slice(0, global.config.messageMaxLength) + '...'
     }
 
     this.emit('SPOKE', message)

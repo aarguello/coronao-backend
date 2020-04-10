@@ -1,4 +1,3 @@
-const Map      = require('./map')
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
