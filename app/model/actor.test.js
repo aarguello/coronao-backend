@@ -33,14 +33,14 @@ describe('Actor', () => {
 
       // Arrange
       const actor = new Actor('some actor id')
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.move('UP')
 
       // Assert
       expect(actor.direction).toBe('UP')
-      expect(actor.events.emit).toHaveBeenCalledWith('DIRECTION_CHANGED', 'UP')
+      expect(actor.emit).toHaveBeenCalledWith('DIRECTION_CHANGED', 'UP')
     })
 
     it('should not emit actor\'s direction if it does not change', () => {
@@ -48,13 +48,13 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some random id')
       actor.direction = 'DOWN'
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.move('DOWN')
 
       // Assert
-      expect(actor.events.emit).not.toHaveBeenCalledWith('DIRECTION_CHANGED', 'DOWN')
+      expect(actor.emit).not.toHaveBeenCalled()
     })
 
     it('should move actor when position is free', () => {
@@ -63,15 +63,15 @@ describe('Actor', () => {
       const actor = new Actor('some actor id')
       actor.position = [0, 0]
       Map.neighbour = jest.fn(() => [1, 0])
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
-      actor.move('RIGHT')
+      const position = actor.move('RIGHT')
 
       // Assert
       expect(global.map.moveActor).toHaveBeenCalledWith(actor, [0, 0], [1, 0])
       expect(actor.position).toEqual([1, 0])
-      expect(actor.events.emit).toHaveBeenCalledWith('POSITION_CHANGED', [1, 0])
+      expect(position).toEqual([1, 0])
     })
 
     it('should not move actor when position collides', () => {
@@ -80,15 +80,15 @@ describe('Actor', () => {
       const actor = new Actor('some actor id')
       actor.position = [0, 0]
       global.map.collides = jest.fn(() => true)
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
-      actor.move('DOWN')
+      const position = actor.move('DOWN')
 
       // Assert
       expect(actor.position).toEqual([0, 0])
       expect(global.map.moveActor).not.toHaveBeenCalled()
-      expect(actor.events.emit).not.toHaveBeenCalledWith()
+      expect(position).toBeUndefined()
     })
 
     it('should not move actor when frozen', () => {
@@ -113,27 +113,27 @@ describe('Actor', () => {
 
       // Arrange
       const actor = new Actor('some actor id')
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.speak('hey there!')
 
       // Assert
-      expect(actor.events.emit).toHaveBeenCalledWith('SPOKE', 'hey there!')
+      expect(actor.emit).toHaveBeenCalledWith('SPOKE', 'hey there!')
     })
 
     it('should not exceed maximum length', () => {
 
       // Arrange
       const actor = new Actor('some actor id')
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
       global.messageMaxLength = 3
 
       // Act
       actor.speak('hey there!')
 
       // Assert
-      expect(actor.events.emit).toHaveBeenCalledWith('SPOKE', 'hey...')
+      expect(actor.emit).toHaveBeenCalledWith('SPOKE', 'hey...')
     })
   })
 
@@ -145,7 +145,7 @@ describe('Actor', () => {
 
       user = new Actor('some actor id')
       user.stats.hp = { current: 100, max: 100 }
-      jest.spyOn(user.events, 'emit')
+      jest.spyOn(user, 'emit')
 
       target = new Actor('some target id')
       target.stats.hp = { current: 75, max: 100 }
@@ -163,7 +163,7 @@ describe('Actor', () => {
 
       // Assert
       expect(target.hp).toBe(25)
-      expect(user.events.emit).toHaveBeenCalledWith('ATTACKED', 50)
+      expect(user.emit).toHaveBeenCalledWith('ATTACKED', 50)
     })
 
     it('should not attack if dead', () => {
@@ -178,7 +178,7 @@ describe('Actor', () => {
 
       // Assert
       expect(target.hp).toBe(75)
-      expect(user.events.emit).not.toHaveBeenCalled()
+      expect(user.emit).not.toHaveBeenCalled()
     })
 
     it('should not apply negative damage', () => {
@@ -192,7 +192,7 @@ describe('Actor', () => {
 
       // Assert
       expect(target.hp).toBe(75)
-      expect(user.events.emit).toHaveBeenCalledWith('ATTACKED', 0)
+      expect(user.emit).toHaveBeenCalledWith('ATTACKED', 0)
     })
 
     it('should not apply damage when target dodges', () => {
@@ -207,7 +207,7 @@ describe('Actor', () => {
 
       // Assert
       expect(target.hp).toBe(75)
-      expect(user.events.emit).toHaveBeenCalledWith('ATTACKED', 0)
+      expect(user.emit).toHaveBeenCalledWith('ATTACKED', 0)
     })
   })
 
@@ -264,13 +264,13 @@ describe('Actor', () => {
 
       // Arrange
       const actor = new Actor('some actor id')
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.kill()
 
       // Assert
-      expect(actor.events.emit).toHaveBeenCalledWith('DIED')
+      expect(actor.emit).toHaveBeenCalledWith('DIED')
     })
 
     it('should set hp to zero', () => {
@@ -604,14 +604,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.increaseStat('hp', -15)
 
       // Assert
       expect(actor.hp).toBe(50)
-      expect(actor.events.emit).not.toHaveBeenCalled()
+      expect(actor.emit).not.toHaveBeenCalled()
     })
 
     it('shoud increase stat when value is positive', () => {
@@ -619,14 +619,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.increaseStat('hp', 15)
 
       // Assert
       expect(actor.hp).toBe(65)
-      expect(actor.events.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 65)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 65)
     })
 
     it('should not increase over maximum', () => {
@@ -634,14 +634,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.increaseStat('hp', 85)
 
       // Assert
       expect(actor.hp).toBe(100)
-      expect(actor.events.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 100)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 100)
     })
 
     it('should not emit event if stat did not change', () => {
@@ -649,13 +649,13 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 100, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.increaseStat('hp', 9999)
 
       // Assert
-      expect(actor.events.emit).not.toHaveBeenCalled()
+      expect(actor.emit).not.toHaveBeenCalled()
     })
   })
 
@@ -666,14 +666,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseStat('hp', -15)
 
       // Assert
       expect(actor.hp).toBe(50)
-      expect(actor.events.emit).not.toHaveBeenCalled()
+      expect(actor.emit).not.toHaveBeenCalled()
     })
 
     it('should descrease stat when value is positive', () => {
@@ -681,14 +681,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseStat('hp', 15)
 
       // Assert
       expect(actor.hp).toBe(35)
-      expect(actor.events.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 35)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 35)
     })
 
     it('should not decrease below zero', () => {
@@ -696,14 +696,14 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseStat('hp', 85)
 
       // Assert
       expect(actor.hp).toBe(0)
-      expect(actor.events.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 0)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 0)
     })
 
     it('should not emit event if stat did not change', () => {
@@ -711,13 +711,13 @@ describe('Actor', () => {
       // Arrange
       const actor = new Actor('some actor id')
       actor.stats.hp = { current: 0, max: 100 }
-      jest.spyOn(actor.events, 'emit')
+      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseStat('hp', 9999)
 
       // Assert
-      expect(actor.events.emit).not.toHaveBeenCalled()
+      expect(actor.emit).not.toHaveBeenCalled()
     })
   })
 

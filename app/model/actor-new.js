@@ -10,27 +10,23 @@ class Actor {
     this.stats = { hp: { current: 0, max: 0 } }
     this.inventory = {}
     this.inventorySize = 5
-    this.#initEventEmitter()
   }
 
   get hp() {
     return this.stats.hp.current
   }
 
-  #initEventEmitter() {
-
-    const emitter = this.events.emit
-
-    this.events.emit = (...args) => {
-      emitter.call(this.events, this._id, ...args)
-    }
+  emit(...args) {
+    const action = args[0]
+    const params = args.slice(1)
+    this.events.emit(action, this._id, ...params)
   }
 
   move(direction) {
 
     if (direction != this.direction) {
       this.direction = direction
-      this.events.emit('DIRECTION_CHANGED', direction)
+      this.emit('DIRECTION_CHANGED', direction)
     }
 
     const from = this.position
@@ -39,7 +35,7 @@ class Actor {
     if (!this.frozen && !global.map.collides(to)) {
       global.map.moveActor(this, from, to)
       this.position = to
-      this.events.emit('POSITION_CHANGED', to)
+      return to
     }
   }
 
@@ -49,7 +45,7 @@ class Actor {
       message = message.slice(0, global.messageMaxLength) + '...'
     }
 
-    this.events.emit('SPOKE', message)
+    this.emit('SPOKE', message)
   }
 
   attack(target) {
@@ -65,7 +61,7 @@ class Actor {
       target.hurt(damage)
     }
 
-    this.events.emit('ATTACKED', damage)
+    this.emit('ATTACKED', damage)
   }
 
   dodge() {
@@ -83,7 +79,7 @@ class Actor {
   kill() {
     this.decreaseStat('hp', this.hp)
     this.unfreeze()
-    this.events.emit('DIED')
+    this.emit('DIED')
   }
 
   freeze(duration) {
@@ -175,7 +171,7 @@ class Actor {
     }
 
     this.stats[stat].current = value
-    this.events.emit('STAT_CHANGED', stat, value)
+    this.emit('STAT_CHANGED', stat, value)
   }
 
   getEvasion() {
