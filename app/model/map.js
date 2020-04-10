@@ -124,11 +124,52 @@ class Map {
     return coordinates
   }
 
+  // TODO: rewrite this
+  getNearestUser(position, fov) {
+
+    const closest = { position: [] }
+
+    Object.entries(this.#coordinates).forEach(([pos, tile]) => {
+      const actor = tile.actor
+      if (actor && actor.type === 'USER' && actor.hp > 0 && !actor.invisible) {
+        pos = pos.split(',').map(Number)
+        const distanceBetween = Map.distance(position, pos)
+        if (distanceBetween <= fov && (distanceBetween < Map.distance(position, closest.position) || !closest.id)) {
+          closest.id = actor
+          closest.position = pos
+        }
+      }
+    })
+
+    return closest.id
+  }
+
   static neighbour(position, direction) {
     if (direction === 'LEFT')  return [position[0] - 1, position[1]]
     if (direction === 'RIGHT') return [position[0] + 1, position[1]]
     if (direction === 'UP')    return [position[0], position[1] - 1]
     if (direction === 'DOWN')  return [position[0], position[1] + 1]
+  }
+
+  // TODO: test this
+  static equals(P, Q) {
+    return P[0] === Q[0] && P[1] === Q[1]
+  }
+
+  // TODO: test this
+  static distance(P, Q) {
+
+    const R = [
+      P[0] - Q[0],
+      P[1] - Q[1],
+    ]
+
+    return Map.norm(R)
+  }
+
+  // TODO: test this
+  static norm(V) {
+    return Math.sqrt(V[0] * V[0] + V[1] * V[1])
   }
 
   static getRandomInt(min, max) {
