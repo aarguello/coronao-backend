@@ -8,6 +8,7 @@ class Actor {
   constructor(_id) {
     this._id = _id
     this.stats = { hp: { current: 0, max: 0 } }
+    this.direction = 'DOWN'
     this.inventory = {}
     this.inventorySize = 5
   }
@@ -171,7 +172,7 @@ class Actor {
     }
 
     this.stats[stat].current = value
-    this.emit('STAT_CHANGED', stat, value)
+    this.emit('STAT_CHANGED', stat, this.stats[stat])
   }
 
   getEvasion() {

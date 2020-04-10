@@ -18,6 +18,11 @@ describe('Actor', () => {
       expect(actor._id).toBe('some random id')
     })
 
+    it('should start looking down', () => {
+      const actor = new Actor('some random id')
+      expect(actor.direction).toBe('DOWN')
+    })
+
     it('should initialize HP and inventory', () => {
       const actor = new Actor('some random id')
       expect(actor.hp).toBe(0)
@@ -626,7 +631,7 @@ describe('Actor', () => {
 
       // Assert
       expect(actor.hp).toBe(65)
-      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 65)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', { current: 65, max: 100 })
     })
 
     it('should not increase over maximum', () => {
@@ -641,7 +646,7 @@ describe('Actor', () => {
 
       // Assert
       expect(actor.hp).toBe(100)
-      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 100)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', { current: 100, max: 100 })
     })
 
     it('should not emit event if stat did not change', () => {
@@ -688,7 +693,7 @@ describe('Actor', () => {
 
       // Assert
       expect(actor.hp).toBe(35)
-      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 35)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', { current: 35, max: 100 })
     })
 
     it('should not decrease below zero', () => {
@@ -703,7 +708,7 @@ describe('Actor', () => {
 
       // Assert
       expect(actor.hp).toBe(0)
-      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', 0)
+      expect(actor.emit).toHaveBeenCalledWith('STAT_CHANGED', 'hp', { current: 0, max: 100 })
     })
 
     it('should not emit event if stat did not change', () => {
