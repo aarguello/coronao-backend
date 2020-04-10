@@ -1,0 +1,31 @@
+{
+  "itemStackLimit": 10000,
+  "messageMaxLength": 100,
+  "user": {
+    "hp": 400,
+    "mana": 1000,
+    "stamina": 500,
+    "physicalDamage": 50,
+    "attackEffort": 75,
+    "inventorySize": 25,
+    "intervals": {
+      "move": 200,
+      "speak": 500,
+      "attack": 500,
+      "cast": 500,
+      "meditate": 1000,
+      "rest": 1500,
+      "use": 125,
+      "revive": 5000
+    }
+  },
+  "npc": {
+    "intervals": {
+      "move": 500,
+      "attack": 1000,
+      "think": 250
+    },
+    "inventorySize": 5
+  }
+}
+

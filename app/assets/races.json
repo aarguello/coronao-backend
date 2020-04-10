@@ -1,16 +1,19 @@
 [{
   "_id": "",
   "name": "HUMAN",
-  "hp": 50,
-  "mana": 50
+  "hp": 1,
+  "mana": 1,
+  "stamina": 1
 }, {
   "_id": "",
   "name": "ELF",
-  "hp": 25,
-  "mana": 100
+  "hp": 0.9,
+  "mana": 1.1,
+  "stamina": 1
 }, {
   "_id": "",
   "name": "DWARF",
-  "hp": 75,
-  "mana": 0
+  "hp": 1.1,
+  "mana": 0.9,
+  "stamina": 1.1
 }]
