@@ -2,10 +2,8 @@ const Map = require('./model/map')
 
 module.exports.initGlobals         = initGlobals
 module.exports.getRandomInt        = getRandomInt
-module.exports.getRandomBool       = getRandomBool
 module.exports.getRandomNPC        = getRandomNPC
 module.exports.getEquipementBonus  = getEquipementBonus
-module.exports.arraysMatch         = arraysMatch
 module.exports.weightedRandom      = weightedRandom
 
 function initGlobals() {
@@ -36,10 +34,6 @@ function initGlobals() {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
-}
-
-function getRandomBool(falseProbability) {
-  return Math.random() >= falseProbability
 }
 
 function getRandomNPC() {
@@ -86,15 +80,4 @@ function importJSONArrayAsDictionary(path, key) {
   }, {})
 
   return dict
-}
-
-function arraysMatch(arr1, arr2) {
-
-  if (arr1.length !== arr2.length) return false
-
-  for (var i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) return false
-  }
-
-  return true
 }
