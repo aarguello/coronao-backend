@@ -28,7 +28,8 @@ describe('User', () => {
           "cast": 500,
           "meditate": 100,
           "rest": 3000,
-          "use": 125
+          "use": 125,
+          "revive": 5000
         }
       }
     }
@@ -281,6 +282,19 @@ describe('User', () => {
       // Assert
       expect(user.equipement).toEqual([])
     })
+
+    it('should revive user after five reconds', () => {
+
+      // Arrange
+      const user = createTestUser()
+
+      // Act
+      user.kill()
+
+      // Assert
+      jest.advanceTimersByTime(5000)
+      expect(user.hp).toEqual(user.stats.hp.max)
+    })
   })
 
   describe('meditate', () => {
@@ -403,6 +417,22 @@ describe('User', () => {
       expect(user.mana).toBe(15)
       expect(user.stamina).toBe(10)
       expect(user.emit).not.toHaveBeenCalled()
+    })
+
+    it('should cancel pending revive', () => {
+
+      // Arrange (triggers a 'revive' in 5 seconds)
+      const user = createTestUser()
+      user.kill()
+      jest.advanceTimersByTime(4000)
+
+      // Act (cancels previous trigger)
+      user.revive()
+      user.kill()
+      jest.advanceTimersByTime(1000)
+
+      // Assert
+      expect(user.hp).toBe(0)
     })
   })
 

@@ -60,6 +60,7 @@ class User extends Actor {
     this.#makeVisible()
     this.#stopMeditating()
     this.equipement = []
+    this.reviveTimeout = setTimeout(() => this.revive(), this.intervals.revive)
   }
 
   meditate() {
@@ -75,6 +76,9 @@ class User extends Actor {
     if (this.hp > 0) {
       return
     }
+
+    clearTimeout(this.reviveTimeout)
+    delete this.reviveTimeout
 
     this.increaseStat('hp', this.stats.hp.max)
     this.increaseStat('mana', this.stats.mana.max)
@@ -208,6 +212,10 @@ class User extends Actor {
       mana: { current: mana, max: mana },
       stamina: { current: stamina, max: stamina },
     }
+  }
+
+  affectedBy() {
+    return true
   }
 }
 
