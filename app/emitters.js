@@ -3,12 +3,23 @@ module.exports.setIO = (io) => this.io = io
 
 module.exports.userWelcome = (user, socket) => {
 
-  const globals = {
-    users: global.users,
-    aliveNPCs: global.aliveNPCs,
+  const users = {}
+  const aliveNPCs = global.aliveNPCs
+
+  for (const [_id, u] of Object.entries(global.users)) {
+    users[_id] = {
+      _id: u._id,
+      name: u.name,
+      race: u.race.name,
+      class: u.class.name,
+      stats: u.stats,
+      position: u.position,
+      intervals: u.intervals,
+      spells: u.spells,
+    }
   }
 
-  this.io.to(socket.id).emit('USER_WELCOME', { user, globals })
+  this.io.to(socket.id).emit('USER_WELCOME', { user, globals: { users, aliveNPCs } })
 }
 
 module.exports.userJoined = (user, socket) => {

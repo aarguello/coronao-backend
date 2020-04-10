@@ -14,7 +14,7 @@ module.exports.handleSpell = function (spellId, position) {
   }
 
   const spell  = global.spells[spellId]
-  const target = Map.getActorInTile(position)
+  const target = global.map.getActor(position)
 
   if (!spell || !target || !target.affectedBy(spell)) {
     return
@@ -47,7 +47,7 @@ function damage(target, spell, caster) {
   const targetDefense = target.getMagicalDefense()
 
   const damage = spellDamage * casterDamage - targetDefense
-  target.suffer(damage)
+  target.hurt(damage)
 
   return true
 }
@@ -104,7 +104,7 @@ function unfreeze(target) {
 
 function invisibility(target, spell) {
 
-  if (target.HP === 0) {
+  if (target.hp === 0) {
     return
   }
 

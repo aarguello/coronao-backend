@@ -1,116 +1,185 @@
-const Map   = require('../map')
-const utils = require('../utils')
+const Map = require('./map')
+const EventEmitter = require('events')
 
 class Actor {
+
+  events = new EventEmitter()
 
   constructor(_id) {
     this._id = _id
     this.stats = { hp: { current: 0, max: 0 } }
+    this.direction = 'DOWN'
+    this.inventory = {}
+    this.inventorySize = 5
   }
-
-  /* Getters */
 
   get hp() {
     return this.stats.hp.current
   }
 
-  /* Public  */
+  emit(...args) {
+    const action = args[0]
+    const params = args.slice(1)
+    this.events.emit(action, this._id, ...params)
+  }
 
   move(direction) {
 
-    if (!Map.directions.includes(direction)) {
-      return []
+    if (direction != this.direction) {
+      this.direction = direction
+      this.emit('DIRECTION_CHANGED', direction)
     }
 
-    const position = Map.getNeighbourPosition(this.position, direction)
+    const from = this.position
+    const to = Map.neighbour(from, direction)
 
-    const pivoted = this.pivot(direction)
-    const moved = !this.frozen && Map.updateActorPosition(this, position)
-
-    return [ moved, pivoted ]
+    if (!this.frozen && !global.map.collides(to)) {
+      global.map.moveActor(this, from, to)
+      this.position = to
+      return to
+    }
   }
 
-  pivot(direction) {
-    return (this.direction !== direction) && (this.direction = direction)
+  speak(message) {
+
+    if (message.length > global.messageMaxLength) {
+      message = message.slice(0, global.messageMaxLength) + '...'
+    }
+
+    this.emit('SPOKE', message)
   }
 
   attack(target) {
 
-    let damage     = 0
-    let missChance = target.getEvasion()
-    let blowLands  = utils.getRandomBool(missChance)
-
-    if (blowLands) {
-
-      damage = this.getPhysicalDamage() - target.getPhysicalDefense()
-
-      if (damage < 0) {
-        damage = 0
-      }
-
-      target.suffer(damage)
+    if (this.hp === 0) {
+      return
     }
 
-    return damage
+    let damage = 0
+
+    if (!target.dodge()) {
+      damage = Math.max(this.getPhysicalDamage() - target.getPhysicalDefense(), 0)
+      target.hurt(damage)
+    }
+
+    this.emit('ATTACKED', damage)
   }
 
-  suffer(damage) {
+  dodge() {
+    return Math.random() <= this.getEvasion()
+  }
 
-    this.decreaseStat('hp', damage)
-
-    if (this.hp === 0) {
+  hurt(damage) {
+    if (this.hp - damage > 0) {
+      this.decreaseStat('hp', damage)
+    } else {
       this.kill()
     }
   }
 
   kill() {
-    this.setStat('hp', 0)
+    this.decreaseStat('hp', this.hp)
     this.unfreeze()
+    this.emit('DIED')
   }
 
   freeze(duration) {
+    clearTimeout(this.frozenTimeout)
     this.frozen = true
-    this.frozenTimeout = setTimeout(() => this.frozen = false, duration)
+    this.frozenTimeout = setTimeout(() => this.unfreeze(), duration)
   }
 
   unfreeze() {
     this.frozen = false
-    clearTimeout(this.frozenTimeout)
-    delete this.frozenTimeout
+  }
+
+  grabItem() {
+
+    const item = global.map.getItem(this.position)
+    const itemCount = Object.keys(this.inventory).length
+
+    if (!item) {
+      return
+    }
+
+    if (itemCount < this.inventorySize || item._id in this.inventory) {
+
+      if (!this.inventory[item._id]) {
+        this.inventory[item._id] = 0
+      }
+
+      let quantity = item.quantity
+
+      if (this.inventory[item._id] + quantity > global.itemStackLimit) {
+        quantity = global.itemStackLimit - this.inventory[item._id]
+      }
+
+      this.inventory[item._id] += quantity
+      global.map.removeItem(this.position, quantity)
+    }
+  }
+
+  dropItem(itemId, quantity = 0) {
+
+    const currentItem = global.map.getItem(this.position)
+
+    if (!this.inventory[itemId] || quantity <= 0 || currentItem && currentItem._id !== itemId) {
+      return
+    }
+
+    quantity = Math.min(quantity, this.inventory[itemId])
+
+    if (currentItem) {
+      quantity = Math.min(quantity, global.itemStackLimit - currentItem.quantity)
+    }
+
+    global.map.addItem(this.position, itemId, quantity)
+    this.removeFromInventory(itemId, quantity)
+  }
+
+  removeFromInventory(itemId, amount) {
+    if (this.inventory[itemId] - amount > 0) {
+      this.inventory[itemId] -= amount
+    } else {
+      delete this.inventory[itemId]
+    }
   }
 
   increaseStat(stat, value) {
-    if (this.stats[stat]) {
-      return this.setStat(stat, this[stat] + value)
+
+    if (value < 0) {
+      return
     }
+
+    value = Math.min(this[stat] + value, this.stats[stat].max)
+    this.#setStat(stat, value)
   }
 
   decreaseStat(stat, value) {
-    if (this.stats[stat]) {
-      return this.setStat(stat, this[stat] - value)
+
+    if (value < 0) {
+      return
     }
+
+    value = Math.max(0, this[stat] - value)
+    this.#setStat(stat, value)
   }
 
-  // This method should be private, but it needs to be called from child classes
-  // and JS does not support 'protected' methods
-  // Use increaseStat / decreaseStat as a public alternative
-  setStat(stat, value) {
+  #setStat(stat, value) {
 
+    // TODO: test this
     value = Math.round(value)
 
-    const min = 0
-    const max = this.stats[stat].max
-
-    if (value < min) {
-      value = min
-    } else if (value > max) {
-      value = max
+    if (value === this[stat]) {
+      return
     }
 
-    if (this[stat] != value) {
-      this.stats[stat].current = value
-      return true
-    }
+    this.stats[stat].current = value
+    this.emit('STAT_CHANGED', stat, this.stats[stat])
+  }
+
+  getEvasion() {
+    return 0
   }
 }
 

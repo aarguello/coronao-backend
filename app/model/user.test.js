@@ -1,5 +1,5 @@
 const User = require('./user')
-const Actor = require('./actor-new')
+const Actor = require('./actor')
 const Map = require('./map')
 
 jest.mock('./map')

@@ -1,4 +1,4 @@
-const Map = require('./map')
+const Map = require('./model/map')
 
 module.exports.initGlobals         = initGlobals
 module.exports.getRandomInt        = getRandomInt
@@ -20,10 +20,12 @@ function initGlobals() {
   global.inventorySize     = 9
   global.messageMaxLength  = 100
 
+  global.config = require('./assets/config.json')
+
   global.intervals = require('./assets/intervals.json')
 
   const selectedMap = 'map-1'
-  global.map     = Map.load(`./assets/${selectedMap}.json`)
+  global.map     = new Map(selectedMap)
   global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./assets/NPCs.json',    'name')

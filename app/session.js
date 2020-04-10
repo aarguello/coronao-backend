@@ -1,6 +1,5 @@
 const jwt       = require('jsonwebtoken')
-const User      = require('./user')
-const Map       = require('./map')
+const User      = require('./model/user')
 const broadcast = require('./emitters')
 const combat    = require('./combat')
 
@@ -50,19 +49,11 @@ function login(request, response) {
 
 function connection(socket) {
 
-  let user = global.users[socket.decoded_token.name]
+  let payload = socket.decoded_token
+  let user = global.users[payload.name]
 
   if (!user) {
-
-    user = new User(
-      socket.decoded_token.name,
-      global.races[socket.decoded_token.race],
-      global.classes[socket.decoded_token.class]
-    )
-
-    global.users[user._id] = user
-    Map.updateActorPosition(user, Map.getRandomPosition())
-
+    user = createUser(payload.name, payload.race, payload.class)
     initHandlers(user, socket)
     initBroadcasts(user, socket)
   }
@@ -75,12 +66,31 @@ function connection(socket) {
   broadcast.userJoined(user, socket)
 }
 
+function createUser(name, race, class_) {
+
+  const position = global.map.randomPosition()
+
+  const user = new User(
+    name,
+    global.races[race],
+    global.classes[class_],
+    global.config.user,
+  )
+
+  user.position = position
+
+  global.users[user._id] = user
+  global.map.moveActor(user, null, position)
+
+  return user
+}
+
 function disconnect() {
 
   const user = global.users[this.decoded_token.name]
 
   if (user) {
-    delete global.map.positions[user.position].USER
+    global.map.removeActor(user)
     delete global.users[user._id]
     broadcast.userLeft(user._id)
   }
@@ -106,19 +116,19 @@ function initHandlers(user, socket) {
 }
 
 function initBroadcasts(user, socket) {
-  user.on('ATTACKED',           broadcast.userAttacked)
-  user.on('SPOKE',              broadcast.userSpoke)
-  user.on('DIED',               broadcast.userDied)
-  user.on('REVIVED',            broadcast.userRevived)
-  user.on('DIRECTION_CHANGED',  broadcast.userDirectionChanged)
-  user.on('POSITION_CHANGED',   broadcast.userPositionChanged.bind(null, socket))
-  user.on('VISIBILITY_CHANGED', broadcast.userVisibilityChanged)
-  user.on('INVENTORY_CHANGED',  broadcast.userInventoryChanged)
-  user.on('STAT_CHANGED',       broadcast.userStatChanged)
-  user.on('EQUIPED_ITEM',       broadcast.userEquipedItem)
-  user.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)
-  user.on('STARTED_MEDITATING', broadcast.userStartedMeditating)
-  user.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
+  user.events.on('ATTACKED',           broadcast.userAttacked)
+  user.events.on('SPOKE',              broadcast.userSpoke)
+  user.events.on('DIED',               broadcast.userDied)
+  user.events.on('REVIVED',            broadcast.userRevived)
+  user.events.on('DIRECTION_CHANGED',  broadcast.userDirectionChanged)
+  user.events.on('POSITION_CHANGED',   broadcast.userPositionChanged.bind(null, socket))
+  user.events.on('VISIBILITY_CHANGED', broadcast.userVisibilityChanged)
+  user.events.on('INVENTORY_CHANGED',  broadcast.userInventoryChanged)
+  user.events.on('STAT_CHANGED',       broadcast.userStatChanged)
+  user.events.on('EQUIPED_ITEM',       broadcast.userEquipedItem)
+  user.events.on('UNEQUIPED_ITEM',     broadcast.userUnequipedItem)
+  user.events.on('STARTED_MEDITATING', broadcast.userStartedMeditating)
+  user.events.on('STOPPED_MEDITATING', broadcast.userStoppedMeditating)
 }
 
 function injectIntervals(socket) {
