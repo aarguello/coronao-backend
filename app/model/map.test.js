@@ -297,6 +297,33 @@ describe('Map', () => {
     })
   })
 
+  describe('collisions', () => {
+
+    it('should return all colliding tiles', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      const collisions = map.collisions()
+
+      // Assert
+      expect(collisions).toEqual([[0, 1], [1, 1]])
+    })
+
+    it('should not return free tiles', () => {
+
+      // Arrange
+      const map = new Map('map-1-test')
+
+      // Act
+      const collisions = map.collisions()
+
+      // Assert
+      expect(collisions).not.toContainEqual([[0, 0], [1, 0]])
+    })
+  })
+
   describe('randomPosition', () => {
 
     it('should return free position in map', () => {

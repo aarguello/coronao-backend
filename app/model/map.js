@@ -78,6 +78,13 @@ class Map {
     return !!(outOfMap || actorCollision || tileCollision)
   }
 
+  collisions() {
+    return Object
+      .entries(this.#coordinates)
+      .filter(([position, content]) =>  content.actor || content.tile && content.tile.collides)
+      .map(([position, content]) => position.split(',').map(Number))
+  }
+
   randomPosition() {
 
     const position = [
