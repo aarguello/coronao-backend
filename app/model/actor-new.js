@@ -167,6 +167,9 @@ class Actor {
 
   #setStat(stat, value) {
 
+    // TODO: test this
+    value = Math.round(value)
+
     if (value === this[stat]) {
       return
     }
