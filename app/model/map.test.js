@@ -1,5 +1,6 @@
 const fs  = require('fs')
-const Map = require('./map.js')
+const Map = require('./map')
+const emitters = require('../emitters')
 
 describe('Map', () => {
 
@@ -102,6 +103,10 @@ describe('Map', () => {
 
   describe('removeActor', () => {
 
+    beforeEach(() => {
+      emitters.tileItemChanged = jest.fn()
+    })
+
     it('should remove actor from position', () => {
 
       // Arrange
@@ -147,6 +152,10 @@ describe('Map', () => {
 
   describe('addItem', () => {
 
+    beforeEach(() => {
+      emitters.tileItemChanged = jest.fn()
+    })
+
     it('should add item when tile is empty', () => {
 
       // Arrange
@@ -157,6 +166,7 @@ describe('Map', () => {
 
       // Assert
       expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 5 })
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([0, 0], 'some item id', 5)
     })
 
     it('should increase quantity if same item lies on tile', () => {
@@ -170,6 +180,7 @@ describe('Map', () => {
 
       // Assert
       expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 12 })
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([0, 0], 'some item id', 12)
     })
 
     it('should not increase quantity over item stacking limit', () => {
@@ -185,6 +196,8 @@ describe('Map', () => {
       // Assert
       expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 10000 })
       expect(map.getItem([1, 1])).toEqual({ _id: 'another item id', quantity: 10000 })
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([0, 0], 'some item id', 10000)
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([1, 1], 'another item id', 10000)
     })
 
     it('should do nothing if there\'s another item on tile', () => {
@@ -198,10 +211,15 @@ describe('Map', () => {
 
       // Assert
       expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 5 })
+      expect(emitters.tileItemChanged).toHaveBeenLastCalledWith([0, 0], 'some item id', 5)
     })
   })
 
   describe('remove item', () => {
+
+    beforeEach(() => {
+      emitters.tileItemChanged = jest.fn()
+    })
 
     it('should decrease item quantity in tile', () => {
 
@@ -214,6 +232,7 @@ describe('Map', () => {
 
       // Assert
       expect(map.getItem([0, 0])).toEqual({ _id: 'some item id', quantity: 4 })
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([0, 0], 'some item id', 4)
     })
 
     it('should remove item from tile when quatity exceeds total', () => {
@@ -230,6 +249,8 @@ describe('Map', () => {
       // Assert
       expect(map.getItem([0, 0])).toBeUndefined()
       expect(map.getItem([1, 1])).toBeUndefined()
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([0, 0], 'some item id', 0)
+      expect(emitters.tileItemChanged).toHaveBeenCalledWith([1, 1], 'another item id', 0)
     })
   })
 

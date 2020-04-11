@@ -110,6 +110,10 @@ module.exports.npcReceivedSpell = (_id, spellId) => {
   this.io.emit('NPC_RECEIVED_SPELL', { npc: { _id }, spellId })
 }
 
+module.exports.tileItemChanged = (position, itemId, quantity) => {
+  this.io.emit('TILE_ITEM_CHANGED', { position, itemId, quantity })
+}
+
 function parseUser(u) {
 
   const user = {
@@ -118,9 +122,9 @@ function parseUser(u) {
     race: u.race.name,
     class: u.class.name,
     stats: u.stats,
+    spells: u.spells,
     position: u.position,
     intervals: u.intervals,
-    spells: u.spells,
     inventory: u.inventory,
     equipement: u.equipement,
   }

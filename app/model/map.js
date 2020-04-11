@@ -1,3 +1,4 @@
+const broadcast = require('../emitters')
 
 class Map {
 
@@ -46,22 +47,34 @@ class Map {
     }
 
     if (this.#coordinates[position].item._id === _id) {
-      quantity += this.#coordinates[position].item.quantity
-      this.#coordinates[position].item.quantity = Math.min(quantity, global.config.itemStackLimit)
+
+      quantity = Math.min(
+        this.#coordinates[position].item.quantity + quantity,
+        global.config.itemStackLimit,
+      )
+
+      this.#coordinates[position].item.quantity = quantity
+      broadcast.tileItemChanged(position, _id, quantity)
     }
   }
 
   removeItem(position, quantity) {
 
-    if (!this.#coordinates[position] || !this.#coordinates[position].item) {
+    const item = this.#coordinates[position] && this.#coordinates[position].item
+
+    if (!item) {
       return
     }
 
-    if (this.#coordinates[position].item.quantity - quantity > 0) {
-      this.#coordinates[position].item.quantity -= quantity
+    quantity = Math.max(this.#coordinates[position].item.quantity - quantity, 0)
+
+    if (quantity > 0) {
+      item.quantity = quantity
     } else {
       delete this.#coordinates[position].item
     }
+
+    broadcast.tileItemChanged(position, item._id, quantity)
   }
 
   collides(position) {
