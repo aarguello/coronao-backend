@@ -2,28 +2,28 @@
   "_id": "H07mwFXaKeuULQvOOkEv",
   "name": "Brown hat",
   "body_part": "HEAD",
-  "physical_defense": [4, 8],
-  "magical_defense": [20, 40]
+  "physicalDefense": [4, 8],
+  "magicalDefense": [20, 40]
 }, {
   "_id": "Wq0HhjkjN5zR8N8DENZF",
   "name": "Iron helm",
   "body_part": "HEAD",
-  "physical_defense": [3, 10]
+  "physicalDefense": [3, 10]
 }, {
   "_id": "jXnfxBE01Hx3YsTTi734",
   "name": "Plate armor",
   "body_part": "TORSO",
-  "physical_defense": [10, 20]
+  "physicalDefense": [10, 20]
 }, {
   "_id": "XD0VuskON97LFPG0kdct",
   "name": "Tunic",
   "body_part": "TORSO",
-  "physical_defense": [5, 10]
+  "physicalDefense": [5, 10]
 }, {
   "_id": "8Z5Fzc9t3VAQotaaZEag",
   "name": "Long sword",
   "body_part": "RIGHT_HAND",
-  "physical_damage": [4, 12]
+  "physicalDamage": [4, 12]
 }, {
   "_id": "J0ldZPPAL2FZg1eqUS4T",
   "name": "Oak wand",
@@ -33,28 +33,28 @@
   "_id": "5ihnF4fXoHTQycWfNfAH",
   "name": "Wooden arch",
   "body_part": "RIGHT_HAND",
-  "physical_damage": [10, 20]
+  "physicalDamage": [10, 20]
 }, {
   "_id": "RVAl3xVPy4nn5v7M84vr",
   "name": "Bronze dagger",
   "body_part": "RIGHT_HAND",
-  "physical_damage": [5, 15],
+  "physicalDamage": [5, 15],
   "stab_chance": [15, 20]
 }, {
   "_id": "G21gfv4T2YijDaTR0UVh",
   "name": "Oak shield",
   "body_part": "LEFT_HAND",
-  "physical_defense": [6, 15]
+  "physicalDefense": [6, 15]
 }, {
   "_id": "4I7A6d1kGyCgTsq9Psiz",
   "name": "Pine arrow",
   "body_part": "LEFT_HAND",
-  "physical_damage": [5, 10]
+  "physicalDamage": [5, 10]
 }, {
   "_id": "2DuoNlOe5SlgANpeFvzo",
   "name": "Gold ring",
   "body_part": "FINGER",
-  "magical_defense": [15, 20]
+  "magicalDefense": [15, 20]
 }, {
   "_id": "vBFVyGsUj9beNGjmJpVi",
   "name": "Red potion",

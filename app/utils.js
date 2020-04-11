@@ -43,9 +43,8 @@ function weightedRandom(prob) {
 
 function getEquipementBonus(equipement, attribute) {
 
-  const reducer = (total, itemId) => {
+  const reducer = (total, item) => {
 
-    let item = global.items[itemId]
     let value = 0
 
     if (item[attribute]) {
