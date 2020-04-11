@@ -526,12 +526,14 @@ describe('User', () => {
         const helmet  = { 'some helmet id': 1}
         user.stats.hp.current = 0
         user.inventory = { [helmet._id]: 1 }
+        jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(helmet)
 
         // Assert
         expect(user.equipement).toEqual([])
+        expect(user.emit).not.toHaveBeenCalled()
       })
 
       it('should not equip item if it\'s not in inventory', () => {
@@ -539,12 +541,14 @@ describe('User', () => {
         // Arrange
         const user = createTestUser()
         const helmet  = { 'some helmet id': 1}
+        jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(helmet)
 
         // Assert
         expect(user.equipement).toEqual([])
+        expect(user.emit).not.toHaveBeenCalled()
       })
 
       it('should equip item if it\'s not equiped', () => {
@@ -553,12 +557,14 @@ describe('User', () => {
         const user = createTestUser()
         const helmet  = { 'some helmet id': 1}
         user.inventory = { [helmet._id]: 1 }
+        jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(helmet)
 
         // Assert
         expect(user.equipement).toEqual([helmet])
+        expect(user.emit).toHaveBeenCalledWith('EQUIPED_ITEM', helmet._id)
       })
 
       it('should unequip item if it\'s already equiped', () => {
@@ -568,12 +574,14 @@ describe('User', () => {
         const item = { _id: 'some item id', bodyPart: 'HEAD' }
         user.inventory = { [item._id]: 1 }
         user.equipement = [ item ]
+        jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(item)
 
         // Assert
         expect(user.equipement).toEqual([])
+        expect(user.emit).toHaveBeenCalledWith('UNEQUIPED_ITEM', item._id)
       })
 
       it('should unequip item in same body part before equipping', () => {
@@ -585,6 +593,7 @@ describe('User', () => {
         const hammer = { _id: 'some hammer id', bodyPart: 'RIGHT_HAND' }
         user.inventory = { [armor._id]: 1, [sword._id] : 1, [hammer._id]: 1 }
         user.equipement = [ armor, sword ]
+        jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(hammer)
@@ -593,6 +602,8 @@ describe('User', () => {
         expect(user.equipement).toContain(hammer)
         expect(user.equipement).not.toContain(sword)
         expect(user.equipement).toContain(armor)
+        expect(user.emit).toHaveBeenCalledWith('UNEQUIPED_ITEM', sword._id)
+        expect(user.emit).toHaveBeenCalledWith('EQUIPED_ITEM', hammer._id)
       })
 
       it('should not modify inventory', () => {
@@ -709,18 +720,21 @@ describe('User', () => {
       expect(user.inventory['some item id']).toEqual(2)
     })
 
-    it('should remove item from equipement when removing from inventory', () =>{
+    it('should remove item from equipement if equipped', () =>{
 
       // Arrange
       const user = createTestUser()
-      user.inventory = { 'some item id': 14, 'another item id': 5 }
-      user.equipement = ['some item id', 'another item id']
+      const armor = { _id: 'some armor id', bodyPart: 'TORSO' }
+      const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
+      user.inventory = { [armor._id]: 14, [sword._id]: 5 }
+      user.equipement = [ armor, sword ]
+      jest.spyOn(user, 'emit')
 
       // Act
-      user.decreaseInventoryItem('some item id', 20)
+      user.decreaseInventoryItem(armor._id, 20)
 
       // Assert
-      expect(user.equipement).toEqual(['another item id'])
+      expect(user.equipement).toEqual([ sword ])
     })
   })
 })

@@ -127,7 +127,7 @@ class User extends Actor {
       this.#consumeItem(item)
     } else {
       if (this.equipement.includes(item)) {
-        this.#unequipItem(item)
+        this.#unequipItem(item._id)
       } else {
         this.#equipItem(item)
       }
@@ -183,15 +183,21 @@ class User extends Actor {
     const itemInSameBodyPart = this.equipement.find(e => e.bodyPart === item.bodyPart)
 
     if (itemInSameBodyPart) {
-      this.#unequipItem(itemInSameBodyPart)
+      this.#unequipItem(itemInSameBodyPart._id)
     }
 
     this.equipement.push(item)
+    this.emit('EQUIPED_ITEM', item._id)
   }
 
-  #unequipItem(item) {
-    const index = this.equipement.indexOf(item)
-    this.equipement.splice(index, 1)
+  #unequipItem(itemId) {
+
+    const index = this.equipement.findIndex(item => item._id === itemId)
+
+    if (index !== -1) {
+      this.equipement.splice(index, 1)
+      this.emit('UNEQUIPED_ITEM', itemId)
+    }
   }
 
   #startMeditating() {

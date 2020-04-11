@@ -104,7 +104,7 @@ function initHandlers(user, socket) {
   const userSpeakHandler    = (msg)    => user.speak(msg)
   const userAttackHandler   = ()       => user.attack()
   const userMeditateHandler = ()       => user.meditate()
-  const userUseItemHandler  = (_id)    => user.userItem(_id)
+  const userUseItemHandler  = (_id)    =>  _id in global.items && user.useItem(global.items[_id])
   const userGrabItemHandler = (_id)    => user.grabItem(_id)
   const userDropItemHandler = (_id, qty) => user.dropItem(_id, qty)
   const userCastHandler     = spells.cast.bind(user)
