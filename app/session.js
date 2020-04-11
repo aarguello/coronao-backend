@@ -90,7 +90,7 @@ function disconnect() {
   const user = global.users[this.decoded_token.name]
 
   if (user) {
-    global.map.removeActor(user)
+    global.map.removeActor(user.position)
     delete global.users[user._id]
     broadcast.userLeft(user._id)
   }
