@@ -110,7 +110,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       Actor.prototype.move = jest.fn(() => [1, 0])
-      jest.spyOn(user, 'emit')
 
       // Act
       user.move('RIGHT', 'randomIndex')
@@ -139,7 +138,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       Actor.prototype.move = jest.fn()
-      jest.spyOn(user, 'emit')
 
       // Act
       user.move('DOWN')
@@ -317,7 +315,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.mana.current = 450
-      jest.spyOn(user, 'emit')
 
       // Act
       user.meditate()
@@ -336,28 +333,26 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.hurt(user.hp)
-      jest.spyOn(user, 'emit')
 
       // Act
       user.meditate()
 
       // Assert
       expect(user.meditating).toBeFalsy()
-      expect(user.emit).not.toHaveBeenCalled()
+      expect(user.emit).not.toHaveBeenCalledWith('STARTED_MEDITATING')
     })
 
     it('should not meditate if mana is full', () => {
 
       // Arrange
       const user = createTestUser()
-      jest.spyOn(user, 'emit')
 
       // Act
       user.meditate()
 
       // Assert
       expect(user.meditating).toBeFalsy()
-      expect(user.emit).not.toHaveBeenCalled()
+      expect(user.emit).not.toHaveBeenCalledWith('STARTED_MEDITATING')
     })
 
     it('should stop meditating if user was meditating', () => {
@@ -365,7 +360,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.mana.current = 200
-      jest.spyOn(user, 'emit')
 
       // Act
       user.meditate()
@@ -384,7 +378,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.hp.current = 0
-      jest.spyOn(user, 'emit')
 
       // Act
       user.revive()
@@ -420,7 +413,6 @@ describe('User', () => {
       user.stats.hp.current = 25
       user.stats.mana.current = 15
       user.stats.stamina.current = 10
-      jest.spyOn(user, 'emit')
 
       // Act
       user.revive()
@@ -455,7 +447,6 @@ describe('User', () => {
 
       // Arrange
       const user = createTestUser()
-      jest.spyOn(user, 'emit')
 
       // Act
       user.makeInvisible()
@@ -469,7 +460,6 @@ describe('User', () => {
 
       // Arrange
       const user = createTestUser()
-      jest.spyOn(user, 'emit')
 
       // Act
       user.makeInvisible(100)
@@ -487,7 +477,6 @@ describe('User', () => {
       // Arrange
       const user = createTestUser()
       user.stats.hp.current = 0
-      jest.spyOn(user, 'emit')
 
       // Act
       user.makeInvisible()
@@ -728,7 +717,6 @@ describe('User', () => {
       const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
       user.inventory = { [armor._id]: 14, [sword._id]: 5 }
       user.equipement = [ armor, sword ]
-      jest.spyOn(user, 'emit')
 
       // Act
       user.decreaseInventoryItem(armor._id, 20)
@@ -740,5 +728,15 @@ describe('User', () => {
 })
 
 function createTestUser(name) {
-  return new User(name, global.races[0], global.classes[0], global.config.user)
+
+  const user = new User(
+    name,
+    global.races[0],
+    global.classes[0],
+    global.config.user
+  )
+
+  jest.spyOn(user, 'emit')
+
+  return user
 }

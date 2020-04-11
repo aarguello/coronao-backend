@@ -71,7 +71,7 @@ module.exports.userRevived = (_id) => {
 }
 
 module.exports.userSpoke = (_id, message) => {
-  this.io.emit('USER_SPOKE', { user: { _id }, message})
+  this.io.emit('USER_SPOKE', { user: { _id }, message })
 }
 
 module.exports.userStartedMeditating = (_id) => {
@@ -87,7 +87,7 @@ module.exports.npcSpawned = (npc) => {
 }
 
 module.exports.npcSpeak = (_id, message) => {
-  this.io.emit('NPC_SPOKE', { npc: { _id }, message})
+  this.io.emit('NPC_SPOKE', { npc: { _id }, message })
 }
 
 module.exports.npcDied = (_id) => {
@@ -126,7 +126,7 @@ function parseUser(u) {
     position: u.position,
     intervals: u.intervals,
     inventory: u.inventory,
-    equipement: u.equipement,
+    equipement: u.equipement.map(i => i._id),
   }
 
   return user
