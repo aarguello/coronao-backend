@@ -5,12 +5,15 @@ module.exports.userWelcome = (_id, socket) => {
 
   const users = {}
   const aliveNPCs = global.aliveNPCs
+  const items = global.map.items()
 
   for (const [userId, u] of Object.entries(global.users)) {
     users[userId] = parseUser(u)
   }
 
-  this.io.to(socket.id).emit('USER_WELCOME', { user: users[_id], globals: { users, aliveNPCs } })
+  const globals = { users, items, aliveNPCs }
+
+  this.io.to(socket.id).emit('USER_WELCOME', { user: users[_id], globals })
 }
 
 module.exports.userJoined = (user, socket) => {

@@ -91,6 +91,20 @@ class Map {
     return !!(outOfMap || actorCollision || tileCollision)
   }
 
+  // TODO: test this
+  items() {
+
+    const items = {}
+
+    for (const [position, content] of Object.entries(this.#coordinates)) {
+      if (content.item) {
+        items[position] = content.item
+      }
+    }
+
+    return items
+  }
+
   collisions() {
     return Object
       .entries(this.#coordinates)
