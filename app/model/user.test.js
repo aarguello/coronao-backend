@@ -50,7 +50,7 @@ describe('User', () => {
       expect(user.type).toBe('USER')
       expect(user.race).toBe(global.races[0])
       expect(user.class).toBe(global.classes[0])
-      expect(user.equipement).toEqual([])
+      expect(user.equipment).toEqual([])
       expect(user.spells).toEqual(['some spell id'])
     })
 
@@ -281,17 +281,17 @@ describe('User', () => {
       expect(user.meditating).toBe(false)
     })
 
-    it('should remove equipement', () => {
+    it('should remove equipment', () => {
 
       // Arrange
       const user = createTestUser()
-      user.equipement = ['some sword id']
+      user.equipment = ['some sword id']
 
       // Act
       user.kill()
 
       // Assert
-      expect(user.equipement).toEqual([])
+      expect(user.equipment).toEqual([])
     })
 
     it('should revive user after five reconds', () => {
@@ -521,7 +521,7 @@ describe('User', () => {
         user.useItem(helmet)
 
         // Assert
-        expect(user.equipement).toEqual([])
+        expect(user.equipment).toEqual([])
         expect(user.emit).not.toHaveBeenCalled()
       })
 
@@ -536,7 +536,7 @@ describe('User', () => {
         user.useItem(helmet)
 
         // Assert
-        expect(user.equipement).toEqual([])
+        expect(user.equipment).toEqual([])
         expect(user.emit).not.toHaveBeenCalled()
       })
 
@@ -552,7 +552,7 @@ describe('User', () => {
         user.useItem(helmet)
 
         // Assert
-        expect(user.equipement).toEqual([helmet])
+        expect(user.equipment).toEqual([helmet])
         expect(user.emit).toHaveBeenCalledWith('EQUIPED_ITEM', helmet._id)
       })
 
@@ -562,14 +562,14 @@ describe('User', () => {
         const user = createTestUser()
         const item = { _id: 'some item id', bodyPart: 'HEAD' }
         user.inventory = { [item._id]: 1 }
-        user.equipement = [ item ]
+        user.equipment = [ item ]
         jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(item)
 
         // Assert
-        expect(user.equipement).toEqual([])
+        expect(user.equipment).toEqual([])
         expect(user.emit).toHaveBeenCalledWith('UNEQUIPED_ITEM', item._id)
       })
 
@@ -581,16 +581,16 @@ describe('User', () => {
         const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
         const hammer = { _id: 'some hammer id', bodyPart: 'RIGHT_HAND' }
         user.inventory = { [armor._id]: 1, [sword._id] : 1, [hammer._id]: 1 }
-        user.equipement = [ armor, sword ]
+        user.equipment = [ armor, sword ]
         jest.spyOn(user, 'emit')
 
         // Act
         user.useItem(hammer)
 
         // Assert
-        expect(user.equipement).toContain(hammer)
-        expect(user.equipement).not.toContain(sword)
-        expect(user.equipement).toContain(armor)
+        expect(user.equipment).toContain(hammer)
+        expect(user.equipment).not.toContain(sword)
+        expect(user.equipment).toContain(armor)
         expect(user.emit).toHaveBeenCalledWith('UNEQUIPED_ITEM', sword._id)
         expect(user.emit).toHaveBeenCalledWith('EQUIPED_ITEM', hammer._id)
       })
@@ -602,7 +602,7 @@ describe('User', () => {
         const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
         const hammer = { _id: 'some hammer id', bodyPart: 'RIGHT_HAND' }
         user.inventory = { [sword._id] : 1, [hammer._id]: 1 }
-        user.equipement = [ sword ]
+        user.equipment = [ sword ]
 
         // Act
         user.useItem(hammer)
@@ -709,20 +709,20 @@ describe('User', () => {
       expect(user.inventory['some item id']).toEqual(2)
     })
 
-    it('should remove item from equipement if equipped', () =>{
+    it('should remove item from equipment if equipped', () =>{
 
       // Arrange
       const user = createTestUser()
       const armor = { _id: 'some armor id', bodyPart: 'TORSO' }
       const sword = { _id: 'some sword id', bodyPart: 'RIGHT_HAND' }
       user.inventory = { [armor._id]: 14, [sword._id]: 5 }
-      user.equipement = [ armor, sword ]
+      user.equipment = [ armor, sword ]
 
       // Act
       user.decreaseInventoryItem(armor._id, 20)
 
       // Assert
-      expect(user.equipement).toEqual([ sword ])
+      expect(user.equipment).toEqual([ sword ])
     })
   })
 })

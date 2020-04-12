@@ -13,7 +13,7 @@ class User extends Actor {
     this.race = race
     this.class = class_
     this.spells = Object.keys(global.spells)
-    this.equipement = [
+    this.equipment = [
       global.items['jXnfxBE01Hx3YsTTi734'],
       global.items['8Z5Fzc9t3VAQotaaZEag'],
     ]
@@ -74,7 +74,7 @@ class User extends Actor {
     this.decreaseStat('stamina', this.stamina)
     this.#makeVisible()
     this.#stopMeditating()
-    this.equipement = []
+    this.equipment = []
     this.reviveTimeout = setTimeout(() => this.revive(), this.intervals.revive)
   }
 
@@ -129,7 +129,7 @@ class User extends Actor {
     if (item.consumable) {
       this.#consumeItem(item)
     } else {
-      if (this.equipement.includes(item)) {
+      if (this.equipment.includes(item)) {
         this.#unequipItem(item._id)
       } else {
         this.#equipItem(item)
@@ -147,25 +147,25 @@ class User extends Actor {
   }
 
   getPhysicalDamage() {
-    const itemsDamage = utils.getEquipementBonus(this.equipement, 'physicalDamage')
+    const itemsDamage = utils.getequipmentBonus(this.equipment, 'physicalDamage')
     const classDamage = this.class.physicalDamage || 1
     return (this.physicalDamage + itemsDamage) * classDamage
   }
 
   getPhysicalDefense() {
-    const itemsDefense = utils.getEquipementBonus(this.equipement, 'physicalDefense')
+    const itemsDefense = utils.getequipmentBonus(this.equipment, 'physicalDefense')
     const classDefense = this.class.physicalDefense || 1
     return itemsDefense * classDefense
   }
 
   getMagicalDamage() {
-    const itemsDamage = utils.getEquipementBonus(this.equipement, 'magicalDamage') || 1
+    const itemsDamage = utils.getequipmentBonus(this.equipment, 'magicalDamage') || 1
     const classDamage = this.class.magicalDamage || 1
     return itemsDamage * classDamage
   }
 
   getMagicalDefense() {
-    return utils.getEquipementBonus(this.equipement, 'magicalDefense')
+    return utils.getequipmentBonus(this.equipment, 'magicalDefense')
   }
 
   #consumeItem(item) {
@@ -183,22 +183,22 @@ class User extends Actor {
 
   #equipItem(item) {
 
-    const itemInSameBodyPart = this.equipement.find(e => e.bodyPart === item.bodyPart)
+    const itemInSameBodyPart = this.equipment.find(e => e.bodyPart === item.bodyPart)
 
     if (itemInSameBodyPart) {
       this.#unequipItem(itemInSameBodyPart._id)
     }
 
-    this.equipement.push(item)
+    this.equipment.push(item)
     this.emit('EQUIPED_ITEM', item._id)
   }
 
   #unequipItem(itemId) {
 
-    const index = this.equipement.findIndex(item => item._id === itemId)
+    const index = this.equipment.findIndex(item => item._id === itemId)
 
     if (index !== -1) {
-      this.equipement.splice(index, 1)
+      this.equipment.splice(index, 1)
       this.emit('UNEQUIPED_ITEM', itemId)
     }
   }

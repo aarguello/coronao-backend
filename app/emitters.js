@@ -129,7 +129,7 @@ function parseUser(u) {
     position: u.position,
     intervals: u.intervals,
     inventory: u.inventory,
-    equipement: u.equipement.map(i => i._id),
+    equipment: u.equipment.map(i => i._id),
   }
 
   return user

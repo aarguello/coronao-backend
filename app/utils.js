@@ -3,7 +3,7 @@ const Map = require('./model/map')
 module.exports.initGlobals         = initGlobals
 module.exports.getRandomInt        = getRandomInt
 module.exports.getRandomNPC        = getRandomNPC
-module.exports.getEquipementBonus  = getEquipementBonus
+module.exports.getequipmentBonus  = getequipmentBonus
 module.exports.weightedRandom      = weightedRandom
 
 function initGlobals() {
@@ -41,7 +41,7 @@ function weightedRandom(prob) {
   }
 }
 
-function getEquipementBonus(equipement, attribute) {
+function getequipmentBonus(equipment, attribute) {
 
   const reducer = (total, item) => {
 
@@ -57,7 +57,7 @@ function getEquipementBonus(equipement, attribute) {
     return total + value
   }
 
-  return equipement.reduce(reducer, 0)
+  return equipment.reduce(reducer, 0)
 }
 
 function importJSONArrayAsDictionary(path, key) {
