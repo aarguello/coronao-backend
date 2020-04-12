@@ -9,12 +9,7 @@ class Actor {
     this._id = _id
     this.stats = { hp: { current: 0, max: 0 } }
     this.direction = 'DOWN'
-    this.inventory = {
-      'jXnfxBE01Hx3YsTTi734': 1,
-      '8Z5Fzc9t3VAQotaaZEag': 2,
-      'vBFVyGsUj9beNGjmJpVi': 100,
-      'p024Y6sJFnb9IfDVFgkS': 200,
-    }
+    this.inventory = {}
     this.inventorySize = 5
   }
 

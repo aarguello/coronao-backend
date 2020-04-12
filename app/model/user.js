@@ -12,13 +12,9 @@ class User extends Actor {
     this.name = name
     this.race = race
     this.class = class_
-    this.spells = Object.keys(global.spells)
-    this.equipment = [
-      global.items['jXnfxBE01Hx3YsTTi734'],
-      global.items['8Z5Fzc9t3VAQotaaZEag'],
-    ]
-
     this.stats = this.#buildStats(defaults, race, class_)
+    this.spells = Object.keys(global.spells)
+    this.equipment = []
 
     this.physicalDamage = defaults.physicalDamage
     this.inventorySize = defaults.inventorySize

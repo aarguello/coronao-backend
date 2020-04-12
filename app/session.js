@@ -79,6 +79,20 @@ function createUser(name, race, class_) {
 
   user.position = position
 
+  // Start with some armor
+  user.equipment = [
+    global.items['jXnfxBE01Hx3YsTTi734'],
+    global.items['8Z5Fzc9t3VAQotaaZEag'],
+  ]
+
+  // Start with some potions
+  user.inventory = {
+    'jXnfxBE01Hx3YsTTi734': 1,
+    '8Z5Fzc9t3VAQotaaZEag': 2,
+    'vBFVyGsUj9beNGjmJpVi': 100,
+    'p024Y6sJFnb9IfDVFgkS': 200,
+  }
+
   global.users[user._id] = user
   global.map.moveActor(user, null, position)
 
