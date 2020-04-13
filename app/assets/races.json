@@ -3,17 +3,19 @@
   "name": "HUMAN",
   "hp": 1,
   "mana": 1,
-  "stamina": 1
+  "stamina": 1,
+  "evasion": 1
 }, {
   "_id": "",
   "name": "ELF",
   "hp": 0.9,
   "mana": 1.1,
-  "stamina": 1
+  "stamina": 1,
+  "evasion": 1.5
 }, {
   "_id": "",
   "name": "DWARF",
   "hp": 1.1,
-  "mana": 0.9,
-  "stamina": 1.1
+  "mana": 0.7,
+  "evasion": 0.8
 }]

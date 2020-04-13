@@ -234,6 +234,10 @@ class User extends Actor {
     }
   }
 
+  getEvasion() {
+    return this.class.evasion * this.race.evasion
+  }
+
   affectedBy() {
     return true
   }

@@ -23,12 +23,12 @@
   "_id": "8Z5Fzc9t3VAQotaaZEag",
   "name": "Long sword",
   "bodyPart": "RIGHT_HAND",
-  "physicalDamage": [4, 12]
+  "physicalDamage": [40, 80]
 }, {
   "_id": "J0ldZPPAL2FZg1eqUS4T",
   "name": "Oak wand",
   "bodyPart": "RIGHT_HAND",
-  "magical_damage": [30, 35]
+  "magicalDamage": [1.8, 2]
 }, {
   "_id": "5ihnF4fXoHTQycWfNfAH",
   "name": "Wooden arch",
@@ -39,7 +39,7 @@
   "name": "Bronze dagger",
   "bodyPart": "RIGHT_HAND",
   "physicalDamage": [5, 15],
-  "stab_chance": [15, 20]
+  "stabChance": [0.15, 0.2]
 }, {
   "_id": "G21gfv4T2YijDaTR0UVh",
   "name": "Oak shield",
@@ -64,5 +64,5 @@
   "_id": "p024Y6sJFnb9IfDVFgkS",
   "name": "Blue potion",
   "consumable": "mana",
-  "value": 0.15
+  "value": 0.05
 }]

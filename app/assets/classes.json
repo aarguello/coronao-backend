@@ -1,37 +1,37 @@
 [{
   "_id": "",
   "name": "WARRIOR",
-  "hp": 1.2,
+  "hp": 1.47,
   "mana": 0,
   "stamina": 1.2,
-  "physicalDamage": 1.1,
+  "physicalDamage": 1.5,
   "magicalDamage": 1,
-  "evasion": 1.15
+  "evasion": 0.1
 }, {
   "_id": "",
   "name": "MAGE",
-  "hp": 0.8,
-  "mana": 1.2,
+  "hp": 0.95,
+  "mana": 1.84,
   "stamina": 0.8,
-  "physicalDamage": 0.5,
+  "physicalDamage": 0.3,
   "magicalDamage": 1.2,
-  "evasion": 1.05
+  "evasion": 0.05
 }, {
   "_id": "",
   "name": "BARD",
-  "hp": 1.05,
+  "hp": 1.12,
   "stamina": 1.05,
-  "mana": 1.05,
-  "physicalDamage": 0.75,
+  "mana": 1.59,
+  "physicalDamage": 0.8,
   "magicalDamage": 1.1,
-  "evasion": 1.2
+  "evasion": 0.25
 }, {
   "_id": "",
   "name": "PALADIN",
-  "hp": 1.1,
+  "hp": 1.27,
   "stamina": 1.1,
-  "mana": 0.9,
-  "physicalDamage": 0.925,
+  "mana": 0.75,
+  "physicalDamage": 1.15,
   "magicalDamage": 1.05,
-  "evasion": 1.1
+  "evasion": 0.15
 }]

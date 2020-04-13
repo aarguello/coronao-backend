@@ -2,42 +2,42 @@
   "_id": "SDFKVuUMnvKVYjXl9JEY",
   "name": "Magic misil",
   "type": "DAMAGE",
-  "value": [50, 70],
-  "mana": 50
+  "value": [25, 35],
+  "mana": 210
 }, {
   "_id": "zAG5uBOmsC1jZ1wKBA29",
   "name": "Thunderbolt",
   "type": "DAMAGE",
-  "value": [70, 100],
-  "mana": 100
+  "value": [55, 75],
+  "mana": 460
 }, {
   "_id": "uIg54upHwdApsaLZWVNs",
   "name": "Apocalypse",
   "type": "DAMAGE",
-  "mana": 150,
-  "value": [100, 150]
+  "mana": 1000,
+  "value": [90, 110]
 }, {
   "_id": "NC3t63uHbA7yAqv0tmpf",
   "name": "Heal",
   "type": "HEAL",
-  "mana": 100,
-  "value": [60, 100]
+  "mana": 50,
+  "value": [15, 40]
 }, {
   "_id": "55QVgxwJa7BJc2apChDi",
   "name": "Freeze",
   "type": "FREEZE",
-  "mana": 150,
+  "mana": 300,
   "value": 5000
 }, {
   "_id": "KKuwrH5fN7pZK4X2LAUW",
   "name": "Unfreeze",
   "type": "UNFREEZE",
-  "mana": 100
+  "mana": 300
 }, {
   "_id": "15Q7qyRoflf85dXFac30",
   "name": "Revive",
   "type": "REVIVE",
-  "mana": 500
+  "mana": 900
 }, {
   "_id": "ugrI5joEK0MMK6SQxBmm",
   "name": "Invisibility",

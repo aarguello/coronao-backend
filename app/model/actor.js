@@ -58,7 +58,8 @@ class Actor {
     let damage = 0
 
     if (!target.dodge()) {
-      damage = Math.max(this.getPhysicalDamage() - target.getPhysicalDefense(), 0)
+      damage = Math.round(this.getPhysicalDamage() - target.getPhysicalDefense())
+      damage = Math.max(damage, 0)
       target.hurt(damage)
     }
 

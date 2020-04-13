@@ -78,20 +78,7 @@ function createUser(name, race, class_) {
   )
 
   user.position = position
-
-  // Start with some armor
-  user.equipment = [
-    global.items['jXnfxBE01Hx3YsTTi734'],
-    global.items['8Z5Fzc9t3VAQotaaZEag'],
-  ]
-
-  // Start with some potions
-  user.inventory = {
-    'jXnfxBE01Hx3YsTTi734': 1,
-    '8Z5Fzc9t3VAQotaaZEag': 2,
-    'vBFVyGsUj9beNGjmJpVi': 100,
-    'p024Y6sJFnb9IfDVFgkS': 200,
-  }
+  user.inventory = getInventoryByClass(class_)
 
   global.users[user._id] = user
   global.map.moveActor(user, null, position)
@@ -179,4 +166,33 @@ function injectIntervals(socket) {
 
     on.call(socket, action, handler)
   }
+}
+
+function getInventoryByClass(class_) {
+
+  const reds = { 'p024Y6sJFnb9IfDVFgkS': 500 }
+  const blues = { 'vBFVyGsUj9beNGjmJpVi': 500 }
+
+  const physical = {
+    'Wq0HhjkjN5zR8N8DENZF': 1,
+    'jXnfxBE01Hx3YsTTi734': 1,
+    '8Z5Fzc9t3VAQotaaZEag': 1,
+    'G21gfv4T2YijDaTR0UVh': 1,
+  }
+
+  const magical = {
+    'H07mwFXaKeuULQvOOkEv': 1,
+    'XD0VuskON97LFPG0kdct': 1,
+    'J0ldZPPAL2FZg1eqUS4T': 1,
+    '2DuoNlOe5SlgANpeFvzo': 1,
+  }
+
+  const inventories = {
+    'MAGE': { ...magical, ...blues, ...reds },
+    'BARD': { ...magical, ...physical, ...blues, ...reds },
+    'PALADIN': { ...physical, ...blues, ...reds },
+    'WARRIOR': { ...physical, ...reds },
+  }
+
+  return inventories[class_]
 }
