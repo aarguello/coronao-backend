@@ -105,6 +105,10 @@ module.exports.npcDirectionChanged = (_id, direction) => {
   this.io.emit('NPC_DIRECTION_CHANGED', { _id, direction })
 }
 
+module.exports.npcAttacked = (_id, damage) => {
+  this.io.emit('NPC_ATTACKED', { npc: { _id }, damage })
+}
+
 module.exports.npcStatChanged = (_id, stat, value) => {
   this.io.emit(`NPC_STAT_CHANGED`, { _id, stats: { [stat]: value } })
 }

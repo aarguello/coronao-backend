@@ -212,6 +212,7 @@ function spawnNPC() {
   npc.position = position
   npc.events.on('DIRECTION_CHANGED', emitters.npcDirectionChanged)
   npc.events.on('STAT_CHANGED', emitters.npcStatChanged)
+  npc.events.on('ATTACKED', emitters.npcAttacked)
   npc.events.on('DIED', () => haveFuneral(npc))
 
   emitters.npcSpawned(npc)
