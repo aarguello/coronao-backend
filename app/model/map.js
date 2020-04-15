@@ -7,6 +7,7 @@ class Map {
   constructor(name) {
     this.name = name
     this.#coordinates = this.load(`../assets/${name}.json`)
+    this.#dropRandomItems(0.05)
   }
 
   getActor(position) {
@@ -103,6 +104,50 @@ class Map {
     }
 
     return items
+  }
+
+  #dropRandomItems(dropChance) {
+
+    const dropables = [
+      { itemId: "H07mwFXaKeuULQvOOkEv", quantity: [1, 1] },  // "Brown hat"
+      { itemId: "Wq0HhjkjN5zR8N8DENZF", quantity: [1, 1] },  // "Iron helm"
+      { itemId: "jXnfxBE01Hx3YsTTi734", quantity: [1, 1] },  // "Plate armor"
+      { itemId: "XD0VuskON97LFPG0kdct", quantity: [1, 1] },  // "Tunic"
+      { itemId: "8Z5Fzc9t3VAQotaaZEag", quantity: [1, 1] },  // "Long sword"
+      { itemId: "J0ldZPPAL2FZg1eqUS4T", quantity: [1, 1] },  // "Oak wand"
+      { itemId: "5ihnF4fXoHTQycWfNfAH", quantity: [1, 1] },  // "Wooden arch"
+      { itemId: "RVAl3xVPy4nn5v7M84vr", quantity: [1, 1] },  // "Bronze dagger"
+      { itemId: "G21gfv4T2YijDaTR0UVh", quantity: [1, 1] },  // "Oak shield"
+      { itemId: "2DuoNlOe5SlgANpeFvzo", quantity: [1, 1] },  // "Gold ring"
+      { itemId: "4I7A6d1kGyCgTsq9Psiz", quantity: [100, 200] },  // "Pine arrow"
+      { itemId: "vBFVyGsUj9beNGjmJpVi", quantity: [200, 400] },  // "Red potion"
+      { itemId: "p024Y6sJFnb9IfDVFgkS", quantity: [300, 500] },  // "Blue potion"
+    ]
+
+    let dropableIndex = 0
+
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+
+        const position = [i, j]
+        const dropItemOnTile = Math.random() < dropChance
+
+        if (!this.collides(position) && dropItemOnTile) {
+
+          const dropable = dropables[dropableIndex]
+          const quantity = Map.getRandomInt(
+            dropable.quantity[0],
+            dropable.quantity[1] + 1,
+          )
+
+          if (dropable.itemId in global.items) {
+            this.addItem(position, dropable.itemId, quantity)
+          }
+
+          dropableIndex = (dropableIndex + 1) % dropables.length
+        }
+      }
+    }
   }
 
   collisions() {
