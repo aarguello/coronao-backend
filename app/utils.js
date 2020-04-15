@@ -14,13 +14,15 @@ function initGlobals() {
   global.intervals = require('./assets/intervals.json')
 
   const selectedMap = 'map-1'
-  global.map     = new Map(selectedMap)
+
   global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./assets/NPCs.json',    'name')
   global.items   = importJSONArrayAsDictionary('./assets/items.json',   '_id')
   global.spells  = importJSONArrayAsDictionary('./assets/spells.json',  '_id')
   global.mapNPCs = importJSONArrayAsDictionary('./assets/mapNPCs.json',  'map')[selectedMap]
+
+  global.map = new Map(selectedMap)
 }
 
 function getRandomInt(min, max) {
