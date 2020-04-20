@@ -7,6 +7,7 @@ describe('Map', () => {
   beforeAll(() => {
 
     global.config = { itemStackLimit: 10000 }
+    global.items = {}
 
     const map = {
       width: 2,
