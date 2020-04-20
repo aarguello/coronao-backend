@@ -11,7 +11,6 @@ function initGlobals() {
   global.users     = {}
   global.aliveNPCs = {}
   global.config    = require('./assets/config.json')
-  global.intervals = require('./assets/intervals.json')
 
   const selectedMap = 'map-1'
 
@@ -21,6 +20,12 @@ function initGlobals() {
   global.items   = importJSONArrayAsDictionary('./assets/items.json',   '_id')
   global.spells  = importJSONArrayAsDictionary('./assets/spells.json',  '_id')
   global.mapNPCs = importJSONArrayAsDictionary('./assets/mapNPCs.json',  'map')[selectedMap]
+
+  global.intervals = require('./assets/intervals.json')
+  for (let npc of Object.values(global.NPCs)) {
+    global.intervals.npcMove[npc.name] = npc.movement_speed
+    global.intervals.npcAttack[npc.name] = npc.attack_speed
+  }
 
   global.map = new Map(selectedMap)
 }

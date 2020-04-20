@@ -7,7 +7,7 @@
   "userCastSpell": 500,
   "userRecoverMana": 1000,
   "userRecoverStamina": 3000,
-  "npcMove": 500,
-  "npcAttack": 1000,
+  "npcMove": {},
+  "npcAttack": {},
   "npcActions": 250
 }
