@@ -121,6 +121,9 @@ function initHandlers(user, socket) {
 }
 
 function initBroadcasts(user, socket) {
+
+  socket.on('REQUEST_GAME_STATE', () => broadcast.gameState(socket))
+
   user.events.on('ATTACKED',           broadcast.userAttacked)
   user.events.on('SPOKE',              broadcast.userSpoke)
   user.events.on('DIED',               broadcast.userDied)
