@@ -38,8 +38,7 @@ describe('Actor', () => {
     it('should set actor\'s direction', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
 
       // Act
       actor.move('UP')
@@ -52,9 +51,8 @@ describe('Actor', () => {
     it('should not emit actor\'s direction if it does not change', () => {
 
       // Arrange
-      const actor = new Actor('some random id')
+      const actor = createTestActor()
       actor.direction = 'DOWN'
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.move('DOWN')
@@ -66,10 +64,9 @@ describe('Actor', () => {
     it('should move actor when position is free', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.position = [0, 0]
       Map.neighbour = jest.fn(() => [1, 0])
-      jest.spyOn(actor, 'emit')
 
       // Act
       const position = actor.move('RIGHT')
@@ -83,10 +80,9 @@ describe('Actor', () => {
     it('should not move actor when position collides', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.position = [0, 0]
       global.map.collides = jest.fn(() => true)
-      jest.spyOn(actor, 'emit')
 
       // Act
       const position = actor.move('DOWN')
@@ -100,7 +96,7 @@ describe('Actor', () => {
     it('should not move actor when frozen', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.position = [0, 0]
       actor.frozen = true
 
@@ -118,8 +114,7 @@ describe('Actor', () => {
     it('should emit "SPOKE" event with message', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
 
       // Act
       actor.speak('hey there!')
@@ -131,8 +126,7 @@ describe('Actor', () => {
     it('should not exceed maximum length', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
       global.config.messageMaxLength = 3
 
       // Act
@@ -148,11 +142,7 @@ describe('Actor', () => {
     let user, target
 
     beforeEach(() => {
-
-      user = new Actor('some actor id')
-      user.stats.hp = { current: 100, max: 100 }
-      jest.spyOn(user, 'emit')
-
+      user = createTestActor()
       target = new Actor('some target id')
       target.stats.hp = { current: 75, max: 100 }
       target.dodge = jest.fn(() => false)
@@ -222,8 +212,8 @@ describe('Actor', () => {
     it('should inflict positive damage', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.hurt(25)
@@ -235,8 +225,8 @@ describe('Actor', () => {
     it('should not inflict negative damage', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.hurt(-25)
@@ -248,9 +238,9 @@ describe('Actor', () => {
     it('should kill user when damage exceeds hp', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       const kill = jest.spyOn(actor, 'kill')
-      actor.stats.hp = { current: 50, max: 100 }
+      actor.stats.hp.current = 50
 
       // Act
       actor.hurt(50)
@@ -269,8 +259,7 @@ describe('Actor', () => {
     it('should emit "DIED" event', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
 
       // Act
       actor.kill()
@@ -282,8 +271,8 @@ describe('Actor', () => {
     it('should set hp to zero', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.kill()
@@ -295,7 +284,7 @@ describe('Actor', () => {
     it('should unfreeze actor', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.frozen = true
 
       // Act
@@ -311,7 +300,7 @@ describe('Actor', () => {
     it('should freeze actor', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.frozen = false
 
       // Act
@@ -324,7 +313,7 @@ describe('Actor', () => {
     it('should stay frozen for elapsed duration', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.frozen = false
 
       // Act
@@ -340,7 +329,7 @@ describe('Actor', () => {
     it('it should reset frozen duration', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor =createTestActor()
       actor.frozen = false
 
       // Act
@@ -361,7 +350,7 @@ describe('Actor', () => {
     it('should unfreeze actor', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
+      const actor = createTestActor()
       actor.frozen = true
 
       // Act
@@ -377,9 +366,9 @@ describe('Actor', () => {
     it('should not grab item when dead', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
+      actor.stats.hp.current = 0
       global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.grabItem()
@@ -392,11 +381,10 @@ describe('Actor', () => {
     it('should not grab item when inventory is full', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
       global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.grabItem()
@@ -409,10 +397,9 @@ describe('Actor', () => {
     it('should grab item on current position', () => {
 
       // Arrage
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [1, 1]
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.grabItem()
@@ -426,7 +413,7 @@ describe('Actor', () => {
     it('should not grab if tile is empty', () => {
 
       // Arrage
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [1, 1]
       global.map.getItem = jest.fn()
 
@@ -440,7 +427,7 @@ describe('Actor', () => {
     it('should increase item quantity in inventory', () => {
 
       // Arrage
-      const actor = new Actor()
+      const actor = createTestActor()
       this.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
@@ -455,7 +442,7 @@ describe('Actor', () => {
     it('should not increase quantity over stacking limit', () => {
 
       // Arrage
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 45 }
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
 
@@ -469,7 +456,7 @@ describe('Actor', () => {
     it('should sustract item quantity on tile', () => {
 
       // Arrage
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [1, 0]
       actor.inventory = { 'some item id': 7000 }
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
@@ -487,7 +474,7 @@ describe('Actor', () => {
     it('should drop item on current position', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [0, 1]
       actor.inventory = { 'some item id': 5 }
 
@@ -502,7 +489,7 @@ describe('Actor', () => {
     it('should not drop item if it\'s not in inventory', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
 
       // Act
       actor.dropItem('some item id')
@@ -514,7 +501,7 @@ describe('Actor', () => {
     it('should not drop null or negative quantity', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 5 }
 
       // Act
@@ -529,7 +516,7 @@ describe('Actor', () => {
     it('should not drop more that item quantity on inventory', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [0, 1]
       actor.inventory = { 'some item id': 5 }
 
@@ -544,7 +531,7 @@ describe('Actor', () => {
     it('should not drop if there\'s another item on tile', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 1 }
       global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
 
@@ -558,7 +545,7 @@ describe('Actor', () => {
     it('should not drop more that tile allows', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.position = [1, 0]
       actor.inventory = { 'some item id': 3000 }
       global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9000 }))
@@ -577,9 +564,8 @@ describe('Actor', () => {
     it('should decrease item amount', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 14 }
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseInventoryItem('some item id', 10)
@@ -592,9 +578,8 @@ describe('Actor', () => {
     it('should remove item from inventory if amount equals total', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 14 }
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseInventoryItem('some item id', 14)
@@ -607,9 +592,8 @@ describe('Actor', () => {
     it('should remove item from inventory if amount exceeds total', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 14 }
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseInventoryItem('some item id', 20)
@@ -622,9 +606,8 @@ describe('Actor', () => {
     it('should not decrease item amount by negative or null value', () => {
 
       // Arrange
-      const actor = new Actor()
+      const actor = createTestActor()
       actor.inventory = { 'some item id': 14 }
-      jest.spyOn(actor, 'emit')
 
       // Act
       actor.decreaseInventoryItem('some item id', 0)
@@ -641,9 +624,8 @@ describe('Actor', () => {
     it('should not accept negative values', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.increaseStat('hp', -15)
@@ -656,9 +638,8 @@ describe('Actor', () => {
     it('shoud increase stat when value is positive', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.increaseStat('hp', 15)
@@ -671,9 +652,8 @@ describe('Actor', () => {
     it('should not increase over maximum', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.increaseStat('hp', 85)
@@ -686,9 +666,7 @@ describe('Actor', () => {
     it('should not emit event if stat did not change', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 100, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
 
       // Act
       actor.increaseStat('hp', 9999)
@@ -703,9 +681,8 @@ describe('Actor', () => {
     it('should not accept negative values', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.decreaseStat('hp', -15)
@@ -718,9 +695,8 @@ describe('Actor', () => {
     it('should descrease stat when value is positive', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.decreaseStat('hp', 15)
@@ -733,9 +709,8 @@ describe('Actor', () => {
     it('should not decrease below zero', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 50, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 50
 
       // Act
       actor.decreaseStat('hp', 85)
@@ -748,9 +723,8 @@ describe('Actor', () => {
     it('should not emit event if stat did not change', () => {
 
       // Arrange
-      const actor = new Actor('some actor id')
-      actor.stats.hp = { current: 0, max: 100 }
-      jest.spyOn(actor, 'emit')
+      const actor = createTestActor()
+      actor.stats.hp.current = 0
 
       // Act
       actor.decreaseStat('hp', 9999)
@@ -759,5 +733,15 @@ describe('Actor', () => {
       expect(actor.emit).not.toHaveBeenCalled()
     })
   })
-
 })
+
+
+function createTestActor() {
+
+  const actor = new Actor('some actor id')
+
+  actor.stats.hp = { current: 100, max: 100 }
+  jest.spyOn(actor, 'emit')
+
+  return actor
+}
