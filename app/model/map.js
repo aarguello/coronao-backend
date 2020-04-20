@@ -56,6 +56,41 @@ class Map {
 
       this.#coordinates[position].item.quantity = quantity
       broadcast.tileItemChanged(position, _id, quantity)
+
+      return quantity // TODO: test this
+    }
+
+    return 0 // TODO: test this
+  }
+
+  // TODO: test this
+  addItems(position, items = []) {
+
+    if (items.length === 0) {
+      return
+    }
+
+    const iterator = this.#makeSquareIterator(position)
+
+    for (position of iterator) {
+
+      // TODO: this is repeated a lot, should be a method
+      const coord = this.#coordinates[position]
+      if (coord && coord.tile && coord.tile.collides) {
+        continue
+      }
+
+      const item = items.shift()
+      const added = this.addItem(position, item._id, item.quantity)
+
+      if (added < item.quantity) {
+        item.quantity -= added
+        items.unshift(item)
+      }
+
+      if (items.length === 0) {
+        break
+      }
     }
   }
 
@@ -214,6 +249,47 @@ class Map {
     })
 
     return closest.id
+  }
+
+  // TODO: this should be called from collision
+  #inBounds(position) {
+    const horizontalBounds = 0 <= position[0] && position[0] < this.size
+    const verticalBounds = 0 <= position[1] && position[1] < this.size
+    return horizontalBounds && verticalBounds
+  }
+
+  *#makeSquareIterator(position = [0, 0]) {
+
+    let topLeft = position
+    let topRight, bottomRight, bottomLeft
+    let i = 0, radius = 0, length = 0, direction = ''
+
+    while (i < this.size * this.size) {
+
+      const next = position
+
+      if (Map.equals(position, topLeft))     { expandSquare() }
+      if (Map.equals(position, topRight))    { direction = 'DOWN' }
+      if (Map.equals(position, bottomRight)) { direction = 'LEFT' }
+      if (Map.equals(position, bottomLeft))  { direction = 'UP' }
+
+      position = Map.neighbour(position, direction)
+
+      if (this.#inBounds(next)) {
+        yield next
+        i++
+      }
+    }
+
+    function expandSquare() {
+      length      = 2 * ++radius
+      topLeft     = [ topLeft[0] - 1     , topLeft[1] - 1 ]
+      topRight    = [ topLeft[0] + length, topLeft[1] ]
+      bottomLeft  = [ topLeft[0]         , topLeft[1] + length ]
+      bottomRight = [ topLeft[0] + length, topLeft[1] + length ]
+      direction   = 'RIGHT'
+      position    = topLeft
+    }
   }
 
   static neighbour(position, direction) {

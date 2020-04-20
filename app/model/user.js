@@ -70,7 +70,7 @@ class User extends Actor {
     this.decreaseStat('stamina', this.stamina)
     this.#makeVisible()
     this.#stopMeditating()
-    this.equipment = []
+    this.#dropItems()
     this.reviveTimeout = setTimeout(() => this.revive(), this.intervals.revive)
   }
 
@@ -232,6 +232,20 @@ class User extends Actor {
       mana: { current: mana, max: mana },
       stamina: { current: stamina, max: stamina },
     }
+  }
+
+  // TODO: this should be inside actor
+  #dropItems() {
+
+    const items = Object.entries(this.inventory).map(([_id, quantity]) => (
+      { _id, quantity }
+    ))
+
+    this.inventory = []
+    this.equipment = []
+
+    items.forEach(item => this.emit('INVENTORY_CHANGED', item._id, 0))
+    global.map.addItems(this.position, items)
   }
 
   getEvasion() {
