@@ -99,7 +99,7 @@ class Actor {
     const item = global.map.getItem(this.position)
     const itemCount = Object.keys(this.inventory).length
 
-    if (!item) {
+    if (this.hp === 0 || !item) {
       return
     }
 

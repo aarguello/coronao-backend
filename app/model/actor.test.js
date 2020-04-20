@@ -374,6 +374,21 @@ describe('Actor', () => {
 
   describe('grabItem', () => {
 
+    it('should not grab item when dead', () => {
+
+      // Arrange
+      const actor = new Actor()
+      global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+      jest.spyOn(actor, 'emit')
+
+      // Act
+      actor.grabItem()
+
+      // Assert
+      expect(actor.inventory).toEqual({})
+      expect(actor.emit).not.toHaveBeenCalled()
+    })
+
     it('should not grab item when inventory is full', () => {
 
       // Arrange
