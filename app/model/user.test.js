@@ -133,17 +133,18 @@ describe('User', () => {
       expect(user.meditating).toBe(false)
     })
 
-    it('should not emit event if position didn\'t change', () => {
+    it('should emit event if position didn\'t change', () => {
 
       // Arrange
       const user = createTestUser()
+      user.position = [1, 0]
       Actor.prototype.move = jest.fn()
 
       // Act
-      user.move('DOWN')
+      user.move('DOWN', 'randomIndex')
 
       // Assert
-      expect(user.emit).not.toHaveBeenCalled()
+      expect(user.emit).toHaveBeenCalledWith('POSITION_CHANGED', [1, 0], 'randomIndex')
     })
 
     it('should not stop meditating if position didn\'t change', () => {

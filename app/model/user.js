@@ -37,15 +37,11 @@ class User extends Actor {
 
     const position = super.move(direction)
 
-    if (!position) {
-      return
-    }
-
-    if (this.meditating) {
+    if (position && this.meditating) {
       this.#stopMeditating()
     }
 
-    this.emit('POSITION_CHANGED', position, clientPredictionIndex)
+    this.emit('POSITION_CHANGED', position || this.position, clientPredictionIndex)
   }
 
   attack() {
