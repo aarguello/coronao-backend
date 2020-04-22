@@ -38,6 +38,7 @@ function login(request, response) {
 
   response.status(200)
   response.send({
+    _id:           name,
     token:         jwt.sign(payload, process.env.JWT_SECRET),
     items:         global.items,
     spells:        global.spells,
