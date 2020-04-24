@@ -4,6 +4,9 @@ const cors        = require('cors')
 const socketIo    = require('socket.io')
 const socketIoJWT = require('socketio-jwt')
 const session     = require('./session')
+const MongoClient = require('mongodb').MongoClient
+
+connectToDB()
 
 const app    = express()
 const server = require('http').createServer(app)
@@ -23,3 +26,18 @@ io.on('connection', session.connection)
 require('./emitters').setIO(io)
 require('./utils').initGlobals()
 require('./npc').init()
+
+async function connectToDB() {
+
+  const client = new MongoClient(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+
+  try {
+    await client.connect()
+  } catch (err) {
+    console.log(err)
+  }
+
+}

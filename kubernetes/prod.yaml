@@ -28,8 +28,13 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: jwt-secret
+                  name: credentials
                   key: jwt-secret
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: db-uri
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
