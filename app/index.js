@@ -13,6 +13,7 @@ const io     = socketIo(server, { pingInterval: 3000 })
 app.use(express.static('app/public'))
 app.use(cors())
 app.use(bodyParser.json())
+app.post('/register', session.register)
 app.post('/login', session.login)
 
 store.init().then(() => {

@@ -2,9 +2,56 @@ const jwt       = require('jsonwebtoken')
 const User      = require('./model/user')
 const broadcast = require('./emitters')
 const spells    = require('./spells')
+const store     = require('./store')
+const bcrypt    = require('bcrypt')
 
+module.exports.register   = register
 module.exports.login      = login
 module.exports.connection = connection
+
+async function register(request, response) {
+
+  const username = request.body.username || ''
+  const password = request.body.password || ''
+
+  const usernameValidator = /^(?=.{3,10}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
+  const passwordValidator = /^(?=.{5,12}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
+
+  if (typeof username !== 'string' || !usernameValidator.test(username)) {
+    response.status(400)
+    response.send({ error: 'INVALID_USERNAME' })
+    return
+  }
+
+  if (typeof password !== 'string' || !passwordValidator.test(password)) {
+    response.status(400)
+    response.send({ error: 'INVALID_PASSWORD' })
+    return
+  }
+
+  const users$ = store.db.collection('users')
+  const exists = await users$.findOne({ username })
+
+  if (exists) {
+    response.status(400)
+    response.send({ error: 'USERNAME_EXISTS' })
+    return
+  }
+
+  try {
+
+    const r = await users$.insertOne({
+      username,
+      password: await bcrypt.hash(password, 10),
+    })
+
+    response.send({ _id: r.insertedId })
+    response.status(200)
+
+  } catch (err) {
+    response.send({ error: 'UNEXPECTED_ERROR' })
+  }
+}
 
 function login(request, response) {
 
