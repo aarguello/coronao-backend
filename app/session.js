@@ -95,6 +95,61 @@ function login(request, response) {
   })
 }
 
+async function loginNew(request, response) {
+
+  const users$ = store.db.collection('users')
+
+  const username = request.body.name || ''
+  const password = request.body.password || ''
+  const race = request.body.race || ''
+  const class_ = request.body.class || ''
+
+  if (!global.races[race]) {
+    response.status(400)
+    response.send({ error: 'RACE_NOT_FOUND' })
+    return
+  }
+
+  if (!global.classes[class_]) {
+    response.status(400)
+    response.send({ error: 'CLASS_NOT_FOUND' })
+    return
+  }
+
+  const user = await users$.findOne({ username })
+
+  if (!user) {
+    response.status(400)
+    response.send({ error: 'USERNAME_NOT_FOUND' })
+    return
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password)
+
+  if (!passwordMatch) {
+    response.status(400)
+    response.send({ error: 'WRONG_PASSWORD' })
+    return
+  }
+
+  const payload = {
+    _id: user._id,
+    race: race,
+    class: class_,
+  }
+
+  response.status(200)
+  response.send({
+    token: jwt.sign(payload, process.env.JWT_SECRET),
+    _id: user._id,
+    items: global.items,
+    spells: global.spells,
+    mapSize: global.map.size,
+    intervals: global.intervals,
+    inventorySize: global.config.user.inventorySize,
+  })
+}
+
 function connection(socket) {
 
   let payload = socket.decoded_token
