@@ -14,22 +14,6 @@ module.exports.gameState = (socket) => {
   socket.emit('GAME_STATE', { users, NPCs, items })
 }
 
-// This should no longer be necessary with GAME_STATE event
-module.exports.userWelcome = (_id, socket) => {
-
-  const users = {}
-  const aliveNPCs = global.aliveNPCs
-  const items = global.map.items()
-
-  for (const [userId, u] of Object.entries(global.users)) {
-    users[userId] = parseUser(u)
-  }
-
-  const globals = { users, items, aliveNPCs }
-
-  this.io.to(socket.id).emit('USER_WELCOME', { user: users[_id], globals })
-}
-
 module.exports.userJoined = (user, socket) => {
   socket.broadcast.emit('USER_JOINED', parseUser(user))
 }
@@ -53,10 +37,6 @@ module.exports.userInventoryChanged = (_id, itemId, amount) => {
 
 module.exports.userAttacked = (_id, damage) => {
   this.io.emit('USER_ATTACKED', { user: { _id }, damage })
-}
-
-module.exports.userMissedAttack = (_id) => {
-  this.io.emit('USER_MISSED_ATTACK', { _id })
 }
 
 module.exports.userReceivedSpell = (_id, spellId) => {
