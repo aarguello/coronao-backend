@@ -12,7 +12,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://coronao:coronao@postgres/coronao
+      DB_URI: mongodb+srv://wonejo:quienteconoce@braodb-dp8uh.gcp.mongodb.net/brao
       JWT_SECRET: This is not the real secret
   postgres:
     image: postgres:9.6
