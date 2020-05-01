@@ -1,6 +1,17 @@
 
 module.exports.setIO = (io) => this.io = io
 
+module.exports.gameStateNew = (roomId, players, NPCs, items) => {
+
+  const users = {}
+
+  for (const [userId, u] of Object.entries(players)) {
+    users[userId] = parseUser(u)
+  }
+
+  this.io.to(roomId).emit('GAME_STATE', { users, NPCs, items })
+}
+
 module.exports.gameState = (socket) => {
 
   const users = {}
