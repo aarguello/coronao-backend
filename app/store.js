@@ -18,6 +18,10 @@ class Store {
   get db () {
     return this.#connected && this.#client.db()
   }
+
+  get users () {
+    return this.#client.db().collection('users')
+  }
 }
 
 module.exports = new Store(process.env.DB_URI)
