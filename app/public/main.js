@@ -1,21 +1,19 @@
 
 let socket
-let token = localStorage.getItem('jwt');
-let payload = { name: 'Nitsu' }
 
-if (!token) {
+function login() {
+
+  const username = document.getElementById('username').value
+  const password = document.getElementById('password').value
 
   fetch('/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    .then((response) => response.json())
-    .then((data) => connect(data.token))
-    .catch(console.error)
-
-} else {
-  connect(token)
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
+  .then((response) => response.json())
+  .then((data) => connect(data.token))
+  .catch(console.error)
 }
 
 function connect(token) {
@@ -23,8 +21,11 @@ function connect(token) {
   socket = io(`localhost:3000?token=${token}`)
 
   socket.on('connect', () => {
-    localStorage.setItem('jwt', token);
     document.getElementById('socket_id').innerHTML = socket.id
+  })
+
+  socket.on('disconnect', () => {
+    document.getElementById('socket_id').innerHTML = ''
   })
 
   const onevent = socket.onevent
