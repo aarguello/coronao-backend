@@ -1,8 +1,9 @@
-const broadcast = require('../emitters')
+const EventEmitter = require('events')
 
 class Map {
 
   #coordinates
+  events = new EventEmitter()
 
   constructor(name) {
     this.name = name
@@ -55,7 +56,7 @@ class Map {
       )
 
       this.#coordinates[position].item.quantity = quantity
-      broadcast.tileItemChanged(position, _id, quantity)
+      this.events.emit('TILE_ITEM_CHANGED', position, _id, quantity)
 
       return quantity // TODO: test this
     }
@@ -110,7 +111,7 @@ class Map {
       delete this.#coordinates[position].item
     }
 
-    broadcast.tileItemChanged(position, item._id, quantity)
+    this.events.emit('TILE_ITEM_CHANGED', position, item._id, quantity)
   }
 
   collides(position) {
