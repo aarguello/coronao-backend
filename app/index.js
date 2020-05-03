@@ -2,7 +2,7 @@ const express     = require('express')
 const bodyParser  = require('body-parser')
 const cors        = require('cors')
 const socketIo    = require('socket.io')
-const socketIoJWT = require('socketio-jwt')
+const broadcast   = require('./emitters')
 const session     = require('./session')
 const store       = require('./store')
 
@@ -17,13 +17,10 @@ app.post('/register', session.register)
 app.post('/login', session.login)
 
 store.init().then(() => {
+  session.init(io)
   server.listen(3000)
 })
 
-io.origins((origin, callback) => { callback(null, true) })
-io.use(socketIoJWT.authorize({ secret: process.env.JWT_SECRET, handshake: true }))
-io.on('connection', session.connection)
-
-require('./emitters').setIO(io)
+broadcast.init(io)
 require('./utils').initGlobals()
 require('./npc').init()

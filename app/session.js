@@ -4,10 +4,23 @@ const broadcast = require('./emitters')
 const spells    = require('./spells')
 const store     = require('./store')
 const bcrypt    = require('bcrypt')
+const socketIoJWT = require('socketio-jwt')
 
 module.exports.register   = register
 module.exports.login      = login
-module.exports.connection = connection
+module.exports.init       = init
+
+function init(io) {
+
+  const JWT = socketIoJWT.authorize({
+    secret: process.env.JWT_SECRET,
+    handshake: true,
+  })
+
+  io.origins((_, callback) => { callback(null, true) })
+  io.use(JWT)
+  io.on('connection', handleConnection)
+}
 
 async function register(request, response) {
 
@@ -95,7 +108,7 @@ function login(request, response) {
   })
 }
 
-function connection(socket) {
+function handleConnection(socket) {
 
   let payload = socket.decoded_token
   let user = global.users[payload.name]

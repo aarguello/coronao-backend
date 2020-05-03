@@ -1,5 +1,5 @@
 
-module.exports.setIO = (io) => this.io = io
+module.exports.init = (io) => this.io = io
 
 module.exports.userJoinedGameRoom = (userId, gameRoom) => {
 
