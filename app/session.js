@@ -82,5 +82,19 @@ async function login(request, response) {
 }
 
 function handleConnection(socket) {
+  socket.on('FIND_GAME_ROOM', findGameRoom)
+  socket.on('REJOIN_GAME_ROOM', rejoinGameRoom)
+  socket.on('disconnect', leaveGameRoom)
+}
+
+async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
+
+}
+
+async function rejoinGameRoom() {
+
+}
+
+async function leaveGameRoom() {
 
 }
