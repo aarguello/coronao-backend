@@ -1,6 +1,25 @@
 
 module.exports.setIO = (io) => this.io = io
 
+module.exports.userJoinedGameRoom = (userId, gameRoom) => {
+
+  const user = { _id: userId }
+  const room = {
+    _id: gameRoom._id,
+    capacity: gameRoom.capacity,
+    players: Object.entries(gameRoom.players).map(([_id, player]) => ({
+      _id,
+      name: player.name
+    }))
+  }
+
+  this.io.to(room._id).emit('USER_JOINED_GAME_ROOM', { user,  room })
+}
+
+module.exports.userLeftGameRoom = (userId, roomId) => {
+  this.io.to(roomId).emit('USER_LEFT_GAME_ROOM', userId, roomId)
+}
+
 module.exports.gameStateNew = (roomId, players, NPCs, items) => {
 
   const users = {}
