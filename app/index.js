@@ -23,4 +23,4 @@ store.init().then(() => {
 
 broadcast.init(io)
 require('./utils').initGlobals()
-require('./npc').init()
+// require('./npc').init()
