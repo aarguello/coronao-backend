@@ -54,44 +54,32 @@ async function register(request, response) {
   }
 }
 
-function login(request, response) {
+async function login(request, response) {
 
-  const name   = request.body.name
-  const race   = request.body.race  || 'HUMAN'
-  const class_ = request.body.class || 'BARD'
+  const username = request.body.username || ''
+  const password = request.body.password || ''
 
-  if (!name || name in global.users) {
-    response.status(400)
-    response.send({ error: 'USERNAME_TAKEN' })
-    return
+  const user = await store.users.findOne({ username })
+
+  if (!user) {
+    return response.status(400).json({ error: 'INVALID_USERNAME' })
   }
 
-  if (!global.races[race]) {
-    response.status(400)
-    response.send({ error: 'RACE_NOT_FOUND' })
-    return
+  const match = await bcrypt.compare(password, user.password)
+
+  if (!match) {
+    return response.status(400).json({ error: 'INVALID_PASSWORD' })
   }
 
-  if (!global.classes[class_]) {
-    response.status(400)
-    response.send({ error: 'CLASS_NOT_FOUND' })
-    return
-  }
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
 
-  const payload = {
-    name:  name,
-    race:  race,
-    class: class_,
-  }
-
-  response.status(200)
-  response.send({
-    _id:           name,
-    token:         jwt.sign(payload, process.env.JWT_SECRET),
-    items:         global.items,
-    spells:        global.spells,
-    mapSize:       global.map.size,
-    intervals:     global.intervals,
+  response.status(200).json({
+    token,
+    _id: user._id,
+    items: global.items,
+    spells: global.spells,
+    mapSize: global.map.size,
+    intervals: global.intervals,
     inventorySize: global.config.user.inventorySize,
   })
 }
