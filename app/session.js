@@ -5,6 +5,7 @@ const spells    = require('./spells')
 const store     = require('./store')
 const bcrypt    = require('bcrypt')
 const socketIoJWT = require('socketio-jwt')
+const validators = require('./validators')
 
 module.exports.register   = register
 module.exports.login      = login
@@ -24,42 +25,29 @@ function init(io) {
 
 async function register(request, response) {
 
-  const username = request.body.username || ''
-  const password = request.body.password || ''
+  const username = request.body.username
+  const password = request.body.password
 
-  const usernameValidator = /^(?=.{3,10}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
-  const passwordValidator = /^(?=.{5,12}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
-
-  if (typeof username !== 'string' || !usernameValidator.test(username)) {
-    response.status(400)
-    response.send({ error: 'INVALID_USERNAME' })
-    return
+  if (!validators.username(username)) {
+    return response.status(400).json({ error: 'INVALID_USERNAME' })
   }
 
-  if (typeof password !== 'string' || !passwordValidator.test(password)) {
-    response.status(400)
-    response.send({ error: 'INVALID_PASSWORD' })
-    return
+  if (!validators.password(password)) {
+    return response.status(400).json({ error: 'INVALID_PASSWORD' })
   }
 
-  const users$ = store.db.collection('users')
-  const exists = await users$.findOne({ username })
-
-  if (exists) {
-    response.status(400)
-    response.send({ error: 'USERNAME_EXISTS' })
-    return
+  if (await store.users.findOne({ username })) {
+    return response.status(400).json({ error: 'USERNAME_EXISTS' })
   }
 
   try {
 
-    const r = await users$.insertOne({
+    const insert = await store.users.insertOne({
       username,
       password: await bcrypt.hash(password, 10),
     })
 
-    response.send({ _id: r.insertedId })
-    response.status(200)
+    response.status(200).send({ _id: insert.insertedId })
 
   } catch (err) {
     response.send({ error: 'UNEXPECTED_ERROR' })
