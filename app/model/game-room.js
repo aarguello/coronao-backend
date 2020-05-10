@@ -1,9 +1,15 @@
 const Map = require('./map')
+const store = require('../store')
 
 class GameRoom {
 
   status = 'QUEUE'
   players = {}
+
+  static init() {
+    global.gameRooms = []
+    return store.accounts.updateMany({}, { $unset: { gameRoomId: ''}})
+  }
 
   constructor(_id, capacity, map) {
     this._id = _id

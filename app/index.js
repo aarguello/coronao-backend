@@ -5,6 +5,7 @@ const socketIo    = require('socket.io')
 const broadcast   = require('./emitters')
 const session     = require('./session')
 const store       = require('./store')
+const GameRoom    = require('./model/game-room')
 
 const app    = express()
 const server = require('http').createServer(app)
@@ -17,6 +18,7 @@ app.post('/register', session.register)
 app.post('/login', session.login)
 
 store.init().then(() => {
+  GameRoom.init()
   session.init(io)
   server.listen(3000)
 })

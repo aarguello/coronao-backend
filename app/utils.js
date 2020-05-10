@@ -11,7 +11,6 @@ function initGlobals() {
   global.users     = {}
   global.aliveNPCs = {}
   global.config    = require('./assets/config.json')
-  global.gameRooms = []
 
   const selectedMap = 'map-1'
 
