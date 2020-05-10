@@ -1,11 +1,11 @@
-const User = require('./user')
+const Player = require('./player')
 const Actor = require('./actor')
 const Map = require('./map')
 
 jest.mock('./map')
 jest.useFakeTimers()
 
-describe('User', () => {
+describe('Player', () => {
 
   beforeAll(() => {
 
@@ -730,7 +730,7 @@ describe('User', () => {
 
 function createTestUser(name) {
 
-  const user = new User(
+  const user = new Player(
     name,
     global.races[0],
     global.classes[0],

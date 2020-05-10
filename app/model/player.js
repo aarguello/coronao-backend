@@ -2,7 +2,7 @@ const Actor = require('./actor')
 const Map = require('./map')
 const utils = require('../utils')
 
-class User extends Actor {
+class Player extends Actor {
 
   constructor(name, race, class_, defaults) {
 
@@ -253,4 +253,4 @@ class User extends Actor {
   }
 }
 
-module.exports = User
+module.exports = Player
