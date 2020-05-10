@@ -19,8 +19,8 @@ class Store {
     return this.#connected && this.#client.db()
   }
 
-  get users () {
-    return this.#client.db().collection('users')
+  get accounts () {
+    return this.#client.db().collection('accounts')
   }
 }
 

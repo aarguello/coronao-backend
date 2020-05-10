@@ -1,8 +1,7 @@
-const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const socketIoJWT = require('socketio-jwt')
-const store = require('./store')
 const validators = require('./validators')
+const Account = require('./model/account')
 
 module.exports.init = init
 module.exports.login = login
@@ -33,19 +32,13 @@ async function register(request, response) {
     return response.status(400).json({ error: 'INVALID_PASSWORD' })
   }
 
-  if (await store.users.findOne({ username })) {
+  if (await Account.exists(username)) {
     return response.status(400).json({ error: 'USERNAME_EXISTS' })
   }
 
   try {
-
-    const insert = await store.users.insertOne({
-      username,
-      password: await bcrypt.hash(password, 10),
-    })
-
-    response.status(200).send({ _id: insert.insertedId })
-
+    const account = await Account.create(username, password)
+    response.status(200).send({ _id: account._id })
   } catch (err) {
     response.send({ error: 'UNEXPECTED_ERROR' })
   }
@@ -55,24 +48,17 @@ async function login(request, response) {
 
   const username = request.body.username || ''
   const password = request.body.password || ''
+  const account = await Account.get(username, password)
 
-  const user = await store.users.findOne({ username })
-
-  if (!user) {
-    return response.status(400).json({ error: 'INVALID_USERNAME' })
+  if (!account) {
+    return response.status(400).json({ error: 'INVALID_CREDENTIALS' })
   }
 
-  const match = await bcrypt.compare(password, user.password)
-
-  if (!match) {
-    return response.status(400).json({ error: 'INVALID_PASSWORD' })
-  }
-
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+  const token = jwt.sign({ _id: account._id }, process.env.JWT_SECRET)
 
   response.status(200).json({
     token,
-    _id: user._id,
+    _id: account._id,
     items: global.items,
     spells: global.spells,
     mapSize: global.map.size,
