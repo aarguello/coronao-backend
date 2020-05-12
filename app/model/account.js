@@ -1,13 +1,22 @@
+const mongodb = require('mongodb')
 const bcrypt = require('bcrypt')
 const store = require('../store')
 
 class Account {
 
-  static exists(username) {
+  static getByUsername(username) {
     return store.accounts.findOne({ username })
   }
 
-  static async get(username, password) {
+  static async getById(_id) {
+
+    const accountId = mongodb.ObjectId(_id)
+    const account = await store.accounts.findOne(accountId)
+
+    return new Account(account._id, account.username, account.gameRoomId)
+  }
+
+  static async getByCredentials(username, password) {
 
     const account = await store.accounts.findOne({ username })
 
@@ -18,7 +27,7 @@ class Account {
     const match = await bcrypt.compare(password, account.password)
 
     if (match) {
-      return account
+      return new Account(account._id, account.username)
     }
   }
 
@@ -27,12 +36,25 @@ class Account {
     password = await bcrypt.hash(password, 10)
     const account = await store.accounts.insertOne({ username, password })
 
-    return new Account(account.insertedId)
+    return new Account(account.insertedId, username)
   }
 
-  constructor(_id) {
+  constructor(_id, username, gameRoomId) {
     this._id = _id
+    this.username = username
+    this.gameRoomId = gameRoomId
   }
+
+  setRoom(roomId) {
+
+    this.gameRoomId = roomId
+
+    store.accounts.updateOne(
+      { _id: mongodb.ObjectId(this._id) },
+      { $set: { gameRoomId: roomId },
+    })
+  }
+
 }
 
 module.exports = Account

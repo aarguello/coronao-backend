@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken')
 const socketIoJWT = require('socketio-jwt')
 const validators = require('./validators')
+const broadcast = require('./emitters')
 const Account = require('./model/account')
+const GameRoom = require('./model/game-room')
+const Player = require('./model/player')
 
 module.exports.init = init
 module.exports.login = login
@@ -32,7 +35,7 @@ async function register(request, response) {
     return response.status(400).json({ error: 'INVALID_PASSWORD' })
   }
 
-  if (await Account.exists(username)) {
+  if (await Account.getByUsername(username)) {
     return response.status(400).json({ error: 'USERNAME_EXISTS' })
   }
 
@@ -48,7 +51,7 @@ async function login(request, response) {
 
   const username = request.body.username || ''
   const password = request.body.password || ''
-  const account = await Account.get(username, password)
+  const account = await Account.getByCredentials(username, password)
 
   if (!account) {
     return response.status(400).json({ error: 'INVALID_CREDENTIALS' })
@@ -75,6 +78,30 @@ function handleConnection(socket) {
 
 async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
 
+  const account = await Account.getById(this.decoded_token._id)
+
+  if (account.gameRoomId >= 0) {
+    return
+  }
+
+  const room = GameRoom.getOrCreate(3)
+  const player = new Player(
+    account.username,
+    global.races[race],
+    global.classes[class_],
+    global.config.user,
+  )
+
+  room.addPlayer(account._id, player)
+  room.addSocket(account._id, this)
+
+  account.setRoom(room._id)
+  broadcast.userJoinedGameRoom(account._id, room)
+
+  if (room.capacity === Object.keys(room.players).length) {
+    room.startGame()
+    broadcast.gameStateNew(room._id, room.players, {}, {})
+  }
 }
 
 async function rejoinGameRoom() {
