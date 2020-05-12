@@ -1,5 +1,6 @@
 const Map = require('./map')
 const store = require('../store')
+const utils = require('../utils')
 
 class GameRoom {
 
@@ -47,6 +48,7 @@ class GameRoom {
 
     const position = this.map.randomPosition()
     player.position = position
+    player.inventory = utils.getInventory(player.class.name)
 
     this.map.moveActor(player, null, position)
     this.players[_id] = player

@@ -93,6 +93,22 @@ describe('gameRoom', () => {
       expect(room.map.randomPosition).toHaveBeenCalled()
       expect(room.map.moveActor).toHaveBeenCalledWith(player, null, player.position)
     })
+
+    it('should set player inventory by class', () => {
+
+      // Arrange
+      const room = new GameRoom('some random id', 1)
+      const player = createTestPlayer()
+      utils.getInventory = jest.fn()
+      utils.getInventory.mockReturnValueOnce('some bard inventory')
+
+      // Act
+      room.addPlayer('some player id', player)
+
+      // Assert
+      expect(utils.getInventory).toHaveBeenCalledWith('BARD')
+      expect(player.inventory).toEqual('some bard inventory')
+    })
   })
 
   describe('removePlayer', () => {

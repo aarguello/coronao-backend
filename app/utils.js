@@ -1,10 +1,11 @@
 const Map = require('./model/map')
 
-module.exports.initGlobals         = initGlobals
-module.exports.getRandomInt        = getRandomInt
-module.exports.getRandomNPC        = getRandomNPC
-module.exports.getequipmentBonus  = getequipmentBonus
-module.exports.weightedRandom      = weightedRandom
+module.exports.initGlobals       = initGlobals
+module.exports.getRandomInt      = getRandomInt
+module.exports.getRandomNPC      = getRandomNPC
+module.exports.getequipmentBonus = getEquipmentBonus
+module.exports.weightedRandom    = weightedRandom
+module.exports.getInventory      = getInventoryByClass
 
 function initGlobals() {
 
@@ -48,7 +49,7 @@ function weightedRandom(prob) {
   }
 }
 
-function getequipmentBonus(equipment, attribute) {
+function getEquipmentBonus(equipment, attribute) {
 
   const reducer = (total, item) => {
 
@@ -65,6 +66,35 @@ function getequipmentBonus(equipment, attribute) {
   }
 
   return equipment.reduce(reducer, 0)
+}
+
+function getInventoryByClass(class_) {
+
+  const reds = { 'p024Y6sJFnb9IfDVFgkS': 500 }
+  const blues = { 'vBFVyGsUj9beNGjmJpVi': 500 }
+
+  const physical = {
+    'Wq0HhjkjN5zR8N8DENZF': 1,
+    'jXnfxBE01Hx3YsTTi734': 1,
+    '8Z5Fzc9t3VAQotaaZEag': 1,
+    'G21gfv4T2YijDaTR0UVh': 1,
+  }
+
+  const magical = {
+    'H07mwFXaKeuULQvOOkEv': 1,
+    'XD0VuskON97LFPG0kdct': 1,
+    'J0ldZPPAL2FZg1eqUS4T': 1,
+    '2DuoNlOe5SlgANpeFvzo': 1,
+  }
+
+  const inventories = {
+    'MAGE': { ...magical, ...blues, ...reds },
+    'BARD': { ...magical, ...physical, ...blues, ...reds },
+    'PALADIN': { ...physical, ...blues, ...reds },
+    'WARRIOR': { ...physical, ...reds },
+  }
+
+  return inventories[class_]
 }
 
 function importJSONArrayAsDictionary(path, key) {
