@@ -20,7 +20,6 @@ describe('gameRoom', () => {
     it('should load map', () => {
 
     })
-
   })
 
   describe('startGame', () => {
@@ -48,6 +47,17 @@ describe('gameRoom', () => {
 
       // Assert
       expect(room.status).toBe('INGAME')
+    })
+
+    it('should init player handlers', () => {
+
+    })
+  })
+
+  describe('addSocket', () => {
+
+    it('should map accountId to socket', () => {
+
     })
 
   })

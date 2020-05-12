@@ -1,11 +1,13 @@
 const Map = require('./map')
 const store = require('../store')
 const utils = require('../utils')
+const handlers = require('../handlers/player')
 
 class GameRoom {
 
   status = 'QUEUE'
   players = {}
+  sockets = {}
 
   static init() {
     global.gameRooms = []
@@ -38,6 +40,12 @@ class GameRoom {
     }
 
     this.status = 'INGAME'
+
+    for (const [accountId, socket] of Object.entries(this.sockets)) {
+      const player = this.players[accountId]
+      handlers.initListener(socket, player)
+      handlers.initBroadcast(socket, player)
+    }
   }
 
   addPlayer(_id, player) {
@@ -52,6 +60,12 @@ class GameRoom {
 
     this.map.moveActor(player, null, position)
     this.players[_id] = player
+  }
+
+  addSocket(_id, socket) {
+    // TODO: check what happens with multiple joins
+    socket.join(this._id)
+    this.sockets[_id] = socket
   }
 
   removePlayer(_id) {
