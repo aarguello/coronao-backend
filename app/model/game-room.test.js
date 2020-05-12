@@ -1,4 +1,5 @@
 const GameRoom = require('./game-room')
+const utils = require('../utils')
 
 jest.mock('./map')
 
@@ -40,7 +41,7 @@ describe('gameRoom', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 1)
-      room.addPlayer('some player id', {})
+      room.addPlayer('some player id', createTestPlayer())
 
       // Act
       room.startGame()
@@ -57,11 +58,11 @@ describe('gameRoom', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 1)
-      room.addPlayer('player 1', {})
+      room.addPlayer('player 1', createTestPlayer())
       room.startGame()
 
       // Act
-      room.addPlayer('player 2', {})
+      room.addPlayer('player 2', createTestPlayer())
 
       // Assert
       expect(Object.keys(room.players)).toEqual(['player 1'])
@@ -73,7 +74,7 @@ describe('gameRoom', () => {
       const room = new GameRoom('some random id', 1)
 
       // Act
-      room.addPlayer('some player id', {})
+      room.addPlayer('some player id', createTestPlayer())
 
       // Assert
       expect(Object.keys(room.players)).toEqual(['some player id'])
@@ -83,7 +84,7 @@ describe('gameRoom', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 1)
-      const player = {}
+      const player = createTestPlayer()
 
       // Act
       room.addPlayer('some player id', player)
@@ -100,8 +101,8 @@ describe('gameRoom', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 2)
-      room.addPlayer('player 1', {})
-      room.addPlayer('player 2', {})
+      room.addPlayer('player 1', createTestPlayer())
+      room.addPlayer('player 2', createTestPlayer())
 
       // Act
       room.removePlayer('player 1')
@@ -111,3 +112,7 @@ describe('gameRoom', () => {
     })
   })
 })
+
+function createTestPlayer(name) {
+  return { name, class: { name: 'BARD' } }
+}
