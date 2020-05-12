@@ -30,9 +30,6 @@ function connect(token) {
 
   const onevent = socket.onevent
 
-  socket.on('USER_POSITION_CHANGED', updatePosition)
-  socket.on('USER_WELCOME', updatePosition)
-
   socket.onevent = function (packet) {
     console.log(packet.data)
     onevent.call(this, packet)
@@ -45,15 +42,4 @@ function userMove(direction) {
 
 function userAttack() {
   socket.emit('USER_ATTACK')
-}
-
-function updatePosition(data) {
-
-  data = data.user ? data.user : data
-
-  if (data._id === payload.name) {
-    const x = data.position[0]
-    const y = data.position[1]
-    document.getElementById('user_position').innerHTML = `(${x}, ${y})`
-  }
 }
