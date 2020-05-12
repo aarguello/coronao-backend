@@ -11,6 +11,19 @@ class GameRoom {
     return store.accounts.updateMany({}, { $unset: { gameRoomId: ''}})
   }
 
+  static getOrCreate(capacity) {
+
+    let room = global.gameRooms[global.gameRooms.length - 1]
+
+    if (!room || room.status === 'INGAME') {
+      const _id = global.gameRooms.length
+      room = new GameRoom(_id, capacity, 'map-1')
+      global.gameRooms[_id] = room
+    }
+
+    return room
+  }
+
   constructor(_id, capacity, map) {
     this._id = _id
     this.capacity = capacity
