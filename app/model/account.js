@@ -55,6 +55,16 @@ class Account {
     })
   }
 
+  unsetRoom() {
+
+    delete this.gameRoomId
+
+    store.accounts.updateOne(
+      { _id: mongodb.ObjectId(this._id) },
+      { $unset: { gameRoomId: '' },
+    })
+  }
+
 }
 
 module.exports = Account

@@ -16,8 +16,9 @@ module.exports.userJoinedGameRoom = (userId, gameRoom) => {
   this.io.to(room._id).emit('USER_JOINED_GAME_ROOM', { user,  room })
 }
 
-module.exports.userLeftGameRoom = (userId, roomId) => {
-  this.io.to(roomId).emit('USER_LEFT_GAME_ROOM', userId, roomId)
+module.exports.userLeftGameRoom = (userId, roomId, socketId) => {
+  this.io.to(roomId).emit('USER_LEFT_GAME_ROOM', userId)
+  this.io.to(socketId).emit('USER_LEFT_GAME_ROOM', userId)
 }
 
 module.exports.gameStateNew = (roomId, players, NPCs, items) => {

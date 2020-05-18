@@ -137,6 +137,10 @@ describe('gameRoom', () => {
       expect(Object.keys(room.players)).toEqual(['player 2'])
     })
   })
+
+  it('should remove socket from room', () => {
+
+  })
 })
 
 function createTestPlayer(name) {

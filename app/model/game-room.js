@@ -69,6 +69,14 @@ class GameRoom {
   }
 
   removePlayer(_id) {
+
+    const socket = this.sockets[_id]
+
+    if (socket) {
+      socket.leave(this._id)
+      delete this.sockets[_id]
+    }
+
     delete this.players[_id]
   }
 }

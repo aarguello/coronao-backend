@@ -73,6 +73,7 @@ async function login(request, response) {
 function handleConnection(socket) {
   socket.on('FIND_GAME_ROOM', findGameRoom)
   socket.on('REJOIN_GAME_ROOM', rejoinGameRoom)
+  socket.on('LEAVE_GAME_ROOM', leaveGameRoom)
   socket.on('disconnect', leaveGameRoom)
 }
 
@@ -110,4 +111,18 @@ async function rejoinGameRoom() {
 
 async function leaveGameRoom() {
 
+  const account = await Account.getById(this.decoded_token._id)
+  const room = global.gameRooms[account.gameRoomId]
+
+  if (!room) {
+    return
+  }
+
+  const player = room.players[account._id]
+
+  if (room.status === 'QUEUE' || room.status === 'INGAME' && player.hp === 0) {
+    room.removePlayer(account._id)
+    account.unsetRoom()
+    broadcast.userLeftGameRoom(account._id, room._id, this.id)
+  }
 }
