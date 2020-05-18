@@ -43,8 +43,8 @@ class GameRoom {
 
     for (const [accountId, socket] of Object.entries(this.sockets)) {
       const player = this.players[accountId]
-      handlers.initListener(socket, player)
-      handlers.initBroadcast(socket, player)
+      handlers.initListener(this._id, accountId, player, socket)
+      handlers.initBroadcast(this._id, accountId, player, socket)
     }
   }
 

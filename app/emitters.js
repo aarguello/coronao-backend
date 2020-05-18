@@ -3,7 +3,10 @@ module.exports.init = (io) => this.io = io
 
 module.exports.userJoinedGameRoom = (userId, gameRoom) => {
 
-  const user = { _id: userId }
+  const user = {
+    _id: userId
+  }
+
   const room = {
     _id: gameRoom._id,
     capacity: gameRoom.capacity,
@@ -21,7 +24,7 @@ module.exports.userLeftGameRoom = (userId, roomId, socketId) => {
   this.io.to(socketId).emit('USER_LEFT_GAME_ROOM', userId)
 }
 
-module.exports.gameStateNew = (roomId, players, NPCs, items) => {
+module.exports.gameState = (roomId, players, NPCs, items) => {
 
   const users = {}
 
@@ -32,82 +35,121 @@ module.exports.gameStateNew = (roomId, players, NPCs, items) => {
   this.io.to(roomId).emit('GAME_STATE', { users, NPCs, items })
 }
 
-module.exports.gameState = (socket) => {
+module.exports.userPositionChanged = (roomId, accountId, socket, position, index) => {
 
-  const users = {}
-  const NPCs = global.aliveNPCs
-  const items = global.map.items()
-
-  for (const [userId, u] of Object.entries(global.users)) {
-    users[userId] = parseUser(u)
+  const packet = {
+    _id: accountId,
+    position,
   }
 
-  socket.emit('GAME_STATE', { users, NPCs, items })
+  this.io.to(socket.id).emit('USER_POSITION_CHANGED', { ...packet, index })
+  socket.broadcast.to(roomId).emit('USER_POSITION_CHANGED', packet)
 }
 
-module.exports.userJoined = (user, socket) => {
-  socket.broadcast.emit('USER_JOINED', parseUser(user))
+module.exports.userDirectionChanged = (roomId, accountId, direction) => {
+
+  const packet = {
+    _id: accountId,
+    direction,
+  }
+
+  this.io.to(roomId).emit('USER_DIRECTION_CHANGED', packet)
 }
 
-module.exports.userLeft = (_id) => {
-  this.io.emit('USER_LEFT', { _id })
+module.exports.userInventoryChanged = (roomId, accountId, itemId, amount) => {
+
+  const packet = {
+    _id: accountId,
+    inventory: { [itemId]: amount },
+  }
+
+  this.io.to(roomId).emit('USER_INVENTORY_CHANGED', packet)
 }
 
-module.exports.userPositionChanged = (socket, _id, position, index) => {
-  this.io.to(socket.id).emit('USER_POSITION_CHANGED', { _id, position, index })
-  socket.broadcast.emit('USER_POSITION_CHANGED', { _id, position })
+module.exports.userAttacked = (roomId, accountId, damage) => {
+
+  const packet = {
+    user: { _id: accountId },
+    damage,
+  }
+
+  this.io.to(roomId).emit('USER_ATTACKED', packet)
 }
 
-module.exports.userDirectionChanged = (_id, direction) => {
-  this.io.emit('USER_DIRECTION_CHANGED', { _id, direction })
+module.exports.userReceivedSpell = (roomId, accountId, spellId) => {
+
+  const packet = {
+    user: { _id: accountId },
+    spellId,
+  }
+
+  this.io.to(roomId).emit('USER_RECEIVED_SPELL', packet)
 }
 
-module.exports.userInventoryChanged = (_id, itemId, amount) => {
-  this.io.emit('USER_INVENTORY_CHANGED', { _id, inventory : { [itemId]: amount } })
+module.exports.userStatChanged = (roomId, accountId, stat, value) => {
+
+  const packet = {
+    _id: accountId,
+    stats: { [stat]: value }
+  }
+
+  this.io.to(roomId).emit('USER_STAT_CHANGED', packet)
 }
 
-module.exports.userAttacked = (_id, damage) => {
-  this.io.emit('USER_ATTACKED', { user: { _id }, damage })
+module.exports.userVisibilityChanged = (roomId, accountId, invisible) => {
+
+  const packet = {
+    _id: accountId,
+    invisible,
+  }
+
+  this.io.to(roomId).emit('USER_VISIBILITY_CHANGED', packet)
 }
 
-module.exports.userReceivedSpell = (_id, spellId) => {
-  this.io.emit('USER_RECEIVED_SPELL', { user: { _id }, spellId })
+module.exports.userEquipedItem = (roomId, accountId, itemId) => {
+
+  const packet = {
+    user: { _id: accountId },
+    itemId,
+  }
+
+  this.io.to(roomId).emit('USER_EQUIPED_ITEM', packet)
 }
 
-module.exports.userStatChanged = (_id, stat, value) => {
-  this.io.emit(`USER_STAT_CHANGED`, { _id, stats: { [stat]: value } })
+module.exports.userUnequipedItem = (roomId, accountId, itemId) => {
+
+  const packet = {
+    user: { _id: accountId },
+    itemId,
+  }
+
+  this.io.to(roomId).emit('USER_UNEQUIPED_ITEM', packet)
 }
 
-module.exports.userVisibilityChanged = (_id, invisible) => {
-  this.io.emit(`USER_VISIBILITY_CHANGED`, { _id, invisible })
+module.exports.userDied = (roomId, accountId) => {
+  this.io.to(roomId).emit('USER_DIED', { _id: accountId })
 }
 
-module.exports.userEquipedItem = (_id, itemId) => {
-  this.io.emit('USER_EQUIPED_ITEM', { user: { _id }, itemId })
+module.exports.userRevived = (roomId, accountId) => {
+  this.io.to(roomId).emit('USER_REVIVED', { _id: accountId })
 }
 
-module.exports.userUnequipedItem = (_id, itemId) => {
-  this.io.emit('USER_UNEQUIPED_ITEM', { user: { _id }, itemId })
+module.exports.userSpoke = (roomId, accountId, message) => {
+
+  const packet = {
+    user: { _id: accountId },
+    message,
+  }
+
+  this.io.to(roomId).emit('USER_SPOKE', packet)
 }
 
-module.exports.userDied = (_id) => {
-  this.io.emit('USER_DIED', { _id })
+module.exports.userStartedMeditating = (roomId, accountId) => {
+  this.io.to(roomId).emit('USER_STARTED_MEDITATING', { _id: accountId })
 }
 
-module.exports.userRevived = (_id) => {
-  this.io.emit('USER_REVIVED', { _id })
-}
-
-module.exports.userSpoke = (_id, message) => {
-  this.io.emit('USER_SPOKE', { user: { _id }, message })
-}
-
-module.exports.userStartedMeditating = (_id) => {
-  this.io.emit('USER_STARTED_MEDITATING', { _id })
-}
-
-module.exports.userStoppedMeditating = (_id) => {
-  this.io.emit('USER_STOPPED_MEDITATING', { _id })
+module.exports.userStoppedMeditating = (roomId, accountId) => {
+  this.io.to(roomId).emit('USER_STOPPED_MEDITATING', { _id: accountId })
 }
 
 module.exports.npcSpawned = (npc) => {

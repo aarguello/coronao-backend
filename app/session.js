@@ -101,7 +101,7 @@ async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
 
   if (room.capacity === Object.keys(room.players).length) {
     room.startGame()
-    broadcast.gameStateNew(room._id, room.players, {}, {})
+    broadcast.gameState(room._id, room.players, {}, {})
   }
 }
 
