@@ -13,7 +13,7 @@ function initGlobals() {
   global.aliveNPCs = {}
   global.config    = require('./assets/config.json')
   global.connectedAccounts = new Set()
-  const selectedMap = 'map-1'
+  const selectedMap = 'map-2'
 
   global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')

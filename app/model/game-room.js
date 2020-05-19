@@ -26,7 +26,7 @@ class GameRoom {
 
     if (!room) {
       const _id = global.gameRooms.length
-      room = new GameRoom(_id, capacity, 'map-1')
+      room = new GameRoom(_id, capacity, 'map-2')
       global.gameRooms[_id] = room
     }
 
