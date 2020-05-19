@@ -62,6 +62,7 @@ async function login(request, response) {
   response.status(200).json({
     token,
     _id: account._id,
+    gameRoomId: account.gameRoomId,
     items: global.items,
     spells: global.spells,
     mapSize: global.map.size,

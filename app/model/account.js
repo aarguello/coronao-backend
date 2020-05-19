@@ -27,7 +27,7 @@ class Account {
     const match = await bcrypt.compare(password, account.password)
 
     if (match) {
-      return new Account(account._id, account.username)
+      return new Account(account._id, account.username, account.gameRoomId)
     }
   }
 
