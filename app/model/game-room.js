@@ -40,12 +40,6 @@ class GameRoom {
     }
 
     this.status = 'INGAME'
-
-    for (const [accountId, socket] of Object.entries(this.sockets)) {
-      const player = this.players[accountId]
-      handlers.initListener(this._id, accountId, player, socket)
-      handlers.initBroadcast(this._id, accountId, player, socket)
-    }
   }
 
   addPlayer(_id, player) {
@@ -63,9 +57,13 @@ class GameRoom {
   }
 
   addSocket(_id, socket) {
-    // TODO: check what happens with multiple joins
+
     socket.join(this._id)
     this.sockets[_id] = socket
+
+    const player = this.players[_id]
+    handlers.initListener(this, _id, player, socket)
+    handlers.initBroadcast(this._id, _id, player, socket)
   }
 
   removePlayer(_id) {

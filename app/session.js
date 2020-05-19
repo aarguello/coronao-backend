@@ -85,7 +85,7 @@ async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
     return
   }
 
-  const room = GameRoom.getOrCreate(3)
+  const room = GameRoom.getOrCreate(2)
   const player = new Player(
     account.username,
     global.races[race],
@@ -107,6 +107,13 @@ async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
 
 async function rejoinGameRoom() {
 
+  const account = await Account.getById(this.decoded_token._id)
+  const room = global.gameRooms[account.gameRoomId]
+
+  if (room && room.status === 'INGAME') {
+    room.addSocket(account._id, this)
+    broadcast.gameState(room._id, room.players, {}, {})
+  }
 }
 
 async function leaveGameRoom() {

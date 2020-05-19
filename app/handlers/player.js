@@ -4,7 +4,7 @@ const spellsHandler = require('../spells')
 module.exports.initListener = initListener
 module.exports.initBroadcast = initBroadcast
 
-function initListener(roomId, accountId, player, socket) {
+function initListener(room, accountId, player, socket) {
 
   socket.on('USER_MOVE', userMoveHandler)
   socket.on('USER_SPEAK', userSpeakHandler)
@@ -14,6 +14,12 @@ function initListener(roomId, accountId, player, socket) {
   socket.on('USER_GRAB_ITEM', userGrabItemHandler)
   socket.on('USER_DROP_ITEM', userDropItemHandler)
   socket.on('USER_CAST_SPELL', userCastHandler)
+
+  socket.use((_, next) => {
+    if (room.status === 'INGAME') {
+      next()
+    }
+  })
 
   function userMoveHandler(direction, clientPrediction) {
 
@@ -59,7 +65,7 @@ function initListener(roomId, accountId, player, socket) {
   }
 
   function userCastHandler(spellId, position) {
-    spellsHandler.call(roomId, accountId, player, spellId, position)
+    spellsHandler.call(room._id, accountId, player, spellId, position)
   }
 }
 
