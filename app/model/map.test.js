@@ -10,14 +10,10 @@ describe('Map', () => {
     global.items = {}
 
     const map = {
-      width: 2,
+      height: 2,
       layers: [
-        { name: 'collision-1', data: [0, 0, 1, 0] },
-        { name: 'collision-2', data: [0, 0, 0, 1] },
-      ],
-      tilesets: [{
-        tiles: [ { id: 0, properties: [{ name: "collides", value: true }] }]
-      }]
+        { name: 'Collisions', data: [0, 0, 1, 1] },
+      ]
     }
 
     fs.writeFileSync('app/assets/map-1-test.json', JSON.stringify(map), 'utf8')

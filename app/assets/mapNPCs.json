@@ -1,5 +1,5 @@
 [{
-    "map": "map-1",
+    "map": "map-2",
     "amount": [1, 5],
     "spawnProbabilities":{
         "SKELETON": 0.8,

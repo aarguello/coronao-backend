@@ -210,23 +210,18 @@ class Map {
 
     const map = require(path)
     const coordinates = {}
+    const collisions = map.layers.find(l => l.name === 'Collisions').data
 
-    this.size = map.width
+    this.size = map.height
 
-    const collisionLayers = map.layers.filter(l => l.name.startsWith('collision'))
-    const collisionTiles  = map.tilesets[0].tiles.map(t => (
-      t.properties && t.properties.some(p => p.name === 'collides' && p.value)
-    ))
+    collisions.forEach((tileId, i) => {
 
-    for (let i = 0; i < this.size * this.size; i++) {
-      for (let j = 0; j < collisionLayers.length; j++) {
-        const tileId = collisionLayers[j].data[i] - 1
-        if (tileId >= 0 && collisionTiles[tileId]) {
-          const position = [i % this.size, Math.floor(i / this.size)]
-          coordinates[position] = { tile: { _id: tileId, collides: true } }
-        }
+      const position = [ i % this.size, Math.floor(i / this.size) ]
+
+      if (tileId > 0) {
+        coordinates[position] = { tile: { _id: tileId, collides: true } }
       }
-    }
+    })
 
     return coordinates
   }
