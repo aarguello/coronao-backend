@@ -40,7 +40,11 @@ function initListener(room, accountId, player, socket) {
   }
 
   function userAttackHandler() {
-    player.attack()
+
+    const neighbour = Map.neighbour(player.position, player.direction)
+    const target = room.map.getActor(neighbour)
+
+    player.attack(target)
   }
 
   function userMeditateHandler() {

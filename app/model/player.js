@@ -44,14 +44,11 @@ class Player extends Actor {
     this.emit('POSITION_CHANGED', position || this.position, clientPredictionIndex)
   }
 
-  attack() {
+  attack(target) {
 
     if (this.meditating || this.stamina < this.attackEffort) {
       return
     }
-
-    const neighbour = Map.neighbour(this.position, this.direction)
-    const target = global.map.getActor(neighbour)
 
     if (target) {
       super.attack(target)

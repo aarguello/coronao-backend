@@ -164,39 +164,31 @@ describe('Player', () => {
 
   describe('attack', () => {
 
-    let user, target
-
     beforeEach(() => {
-
-      // Arrange
-      user = createTestUser()
-      user.position = [0, 0]
-      user.direction = 'RIGHT'
-
-      target = createTestUser()
-      target.position = [1, 0]
-      target.direction = 'DOWN'
-
       Actor.prototype.attack = jest.fn()
-      Map.neighbour = jest.fn(() => [1, 0])
-      global.map.getActor = jest.fn(() => target)
     })
 
-    it('should attack neighbour', () => {
+    it('should attack target', () => {
+
+      // Arrange
+      const user = createTestUser()
+      const target = createTestUser()
 
       // Act
-      user.attack()
+      user.attack(target)
 
       // Assert
-      expect(Map.neighbour).toHaveBeenCalledWith([0, 0], 'RIGHT')
-      expect(global.map.getActor).toHaveBeenCalledWith([1, 0])
       expect(Actor.prototype.attack).toHaveBeenCalledWith(target)
     })
 
     it('should consume stamina', () => {
 
+      // Arrange
+      const user = createTestUser()
+      const target = createTestUser()
+
       // Act
-      user.attack()
+      user.attack(target)
 
       // Assert
       expect(user.stamina).toBe(175)
@@ -205,10 +197,12 @@ describe('Player', () => {
     it('should not attack with insufficient stamina', () => {
 
       // Arrange
+      const user = createTestUser()
+      const target = createTestUser()
       user.stats.stamina.current = 19
 
       // Act
-      user.attack()
+      user.attack(target)
 
       // Assert
       expect(Actor.prototype.attack).not.toHaveBeenCalled()
@@ -218,10 +212,12 @@ describe('Player', () => {
     it('should not attack while meditating', () => {
 
       // Arrange
+      const user = createTestUser()
+      const target = createTestUser()
       user.meditating = true
 
       // Act
-      user.attack()
+      user.attack(target)
 
       // Assert
       expect(Actor.prototype.attack).not.toHaveBeenCalled()
@@ -230,8 +226,10 @@ describe('Player', () => {
 
     it('should not attack null target', () => {
 
+      // Arrange
+      const user = createTestUser()
+
       // Act
-      global.map.getActor = jest.fn(() => null)
       user.attack()
 
       // Assert
