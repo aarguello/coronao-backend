@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   app:
     build: .
@@ -7,14 +7,8 @@ services:
       - ./node_modules:/usr/app/node_modules
     ports:
       - "3000:3000"
-    depends_on:
-      - postgres
     environment:
-      DB_URI: mongodb+srv://wonejo:quienteconoce@braodb-dp8uh.gcp.mongodb.net/brao
+      DB_URI: mongodb://db
       JWT_SECRET: This is not the real secret
-  postgres:
-    image: postgres:9.6
-    environment:
-      POSTGRES_USER: coronao
-      POSTGRES_DB: coronao
-      POSTGRES_PASSWORD: coronao
+  db:
+    image: mongo:latest
