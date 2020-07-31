@@ -6,6 +6,8 @@ module.exports.initBroadcast = initBroadcast
 
 function initListener(room, accountId, player, socket) {
 
+  socket.on('REQUEST_GAME_STATE', gameStateHandler)
+
   socket.on('USER_MOVE', userMoveHandler)
   socket.on('USER_SPEAK', userSpeakHandler)
   socket.on('USER_ATTACK', userAttackHandler)
@@ -20,6 +22,10 @@ function initListener(room, accountId, player, socket) {
       next()
     }
   })
+
+  function gameStateHandler() {
+    broadcast.gameState(this.id, room.players, {}, {})
+  }
 
   function userMoveHandler(direction, clientPrediction) {
 

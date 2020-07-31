@@ -24,12 +24,29 @@ module.exports.userLeftGameRoom = (userId, roomId, socketId) => {
   this.io.to(socketId).emit('USER_LEFT_GAME_ROOM', userId)
 }
 
+module.exports.userJoined = (socket, roomId, accountId, player) => {
+  const user = parsePlayer(accountId, player)
+  socket.broadcast.to(roomId).emit('USER_JOINED', user)
+}
+
+module.exports.userWelcome = (socketId, accountId, players, aliveNPCs, items) => {
+
+  const users = {}
+  const globals = { users, items, aliveNPCs }
+
+  for (const [_id, player] of Object.entries(players)) {
+    users[_id] = parsePlayer(_id, player)
+  }
+
+  this.io.to(socketId).emit('USER_WELCOME', { user: users[accountId], globals })
+}
+
 module.exports.gameState = (roomId, players, NPCs, items) => {
 
   const users = {}
 
-  for (const [userId, u] of Object.entries(players)) {
-    users[userId] = parseUser(u)
+  for (const [_id, player] of Object.entries(players)) {
+    users[_id] = parsePlayer(_id, player)
   }
 
   this.io.to(roomId).emit('GAME_STATE', { users, NPCs, items })
@@ -188,20 +205,20 @@ module.exports.tileItemChanged = (position, itemId, quantity) => {
   this.io.emit('TILE_ITEM_CHANGED', { position, itemId, quantity })
 }
 
-function parseUser(u) {
+function parsePlayer(_id, p) {
 
-  const user = {
-    _id: u._id,
-    name: u.name,
-    race: u.race.name,
-    class: u.class.name,
-    stats: u.stats,
-    spells: u.spells,
-    position: u.position,
-    intervals: u.intervals,
-    inventory: u.inventory,
-    equipment: u.equipment.map(i => i._id),
+  const player = {
+    _id,
+    name: p.name,
+    race: p.race.name,
+    class: p.class.name,
+    stats: p.stats,
+    spells: p.spells,
+    position: p.position,
+    intervals: p.intervals,
+    inventory: p.inventory,
+    equipment: p.equipment.map(i => i._id),
   }
 
-  return user
+  return player
 }

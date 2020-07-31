@@ -51,7 +51,7 @@ async function login(request, response) {
 
   /*
     Heads up! Client-side has not implemented sign-up method yet,
-    so the account is created at login time if it doesn't exist (setting password = username)
+    so the account is created at login time and deleted on 'disconnect' event.
   */
   const username = request.body.name || ''
   const password = request.body.name || ''
@@ -75,7 +75,7 @@ async function login(request, response) {
   }
 
   const account = await Account.create(username, password)
-  const token = jwt.sign({ _id: account._id }, process.env.JWT_SECRET)
+  const token = jwt.sign({ _id: account._id, class: class_, race }, process.env.JWT_SECRET)
 
   response.status(200).json({
     token,
@@ -90,29 +90,19 @@ async function login(request, response) {
 }
 
 function handleConnection(socket) {
-  socket.on('FIND_GAME_ROOM', findGameRoom)
-  socket.on('REJOIN_GAME_ROOM', rejoinGameRoom)
-  socket.on('LEAVE_GAME_ROOM', leaveGameRoom)
-  socket.on('disconnect', disconnect)
+  findGameRoom.call(socket)
+  socket.on('disconnect', leaveGameRoom)
 }
 
-function disconnect() {
-  Account.remove(this.decoded_token._id)
-}
-
-async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
+async function findGameRoom() {
 
   const account = await Account.getById(this.decoded_token._id)
 
-  if (account.gameRoomId >= 0) {
-    return
-  }
-
-  const room = GameRoom.getOrCreate(2)
+  const room = GameRoom.getOrCreate()
   const player = new Player(
     account.username,
-    global.races[race],
-    global.classes[class_],
+    global.races[this.decoded_token.race],
+    global.classes[this.decoded_token.class],
     global.config.user,
   )
 
@@ -120,39 +110,20 @@ async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
   room.addSocket(account._id, this)
 
   account.setRoom(room._id)
-  broadcast.userJoinedGameRoom(account._id, room)
-
-  if (room.capacity === Object.keys(room.players).length) {
-    room.startGame()
-    broadcast.gameState(room._id, room.players, {}, {})
-  }
-}
-
-async function rejoinGameRoom() {
-
-  const account = await Account.getById(this.decoded_token._id)
-  const room = global.gameRooms[account.gameRoomId]
-
-  if (room && room.status === 'INGAME') {
-    room.addSocket(account._id, this)
-    broadcast.gameState(room._id, room.players, {}, {})
-  }
+  broadcast.userWelcome(this.id, account._id, room.players, {}, {})
+  broadcast.userJoined(this, room._id, account._id, player)
 }
 
 async function leaveGameRoom() {
 
-  const account = await Account.getById(this.decoded_token._id)
-  const room = global.gameRooms[account.gameRoomId]
+  const accountId = this.decoded_token._id
+  const room = global.gameRooms[0]
 
   if (!room) {
     return
   }
 
-  const player = room.players[account._id]
-
-  if (room.status === 'QUEUE' || room.status === 'INGAME' && player.hp === 0) {
-    room.removePlayer(account._id)
-    account.unsetRoom()
-    broadcast.userLeftGameRoom(account._id, room._id, this.id)
-  }
+  room.removePlayer(accountId)
+  Account.remove(accountId)
+  broadcast.userLeftGameRoom(accountId, room._id, this.id)
 }
