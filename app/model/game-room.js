@@ -1,7 +1,8 @@
 const Map = require('./map')
 const store = require('../store')
 const utils = require('../utils')
-const handlers = require('../handlers/player')
+const playerHandlers = require('../handlers/player')
+const mapHandlers = require('../handlers/map')
 
 class GameRoom {
 
@@ -10,8 +11,12 @@ class GameRoom {
   sockets = {}
 
   static init() {
+
     global.gameRooms = []
-    GameRoom.getOrCreate(global.config.roomCapacity)
+
+    const room = GameRoom.getOrCreate(global.config.roomCapacity)
+    mapHandlers.init(room._id, room.map)
+
     return store.accounts.updateMany({}, { $unset: { gameRoomId: ''}})
   }
 
@@ -59,8 +64,8 @@ class GameRoom {
     this.sockets[_id] = socket
 
     const player = this.players[_id]
-    handlers.initListener(this, _id, player, socket)
-    handlers.initBroadcast(this._id, _id, player, socket)
+    playerHandlers.initListener(this, _id, player, socket)
+    playerHandlers.initBroadcast(this._id, _id, player, socket)
   }
 
   removePlayer(_id) {

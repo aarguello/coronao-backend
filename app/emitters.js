@@ -201,8 +201,8 @@ module.exports.npcReceivedSpell = (_id, spellId) => {
   this.io.emit('NPC_RECEIVED_SPELL', { npc: { _id }, spellId })
 }
 
-module.exports.tileItemChanged = (position, itemId, quantity) => {
-  this.io.emit('TILE_ITEM_CHANGED', { position, itemId, quantity })
+module.exports.tileItemChanged = (roomId, position, itemId, quantity) => {
+  this.io.to(roomId).emit('TILE_ITEM_CHANGED', { position, itemId, quantity })
 }
 
 function parsePlayer(_id, p) {

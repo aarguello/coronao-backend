@@ -94,9 +94,9 @@ class Actor {
     this.frozen = false
   }
 
-  grabItem() {
+  grabItem(map) {
 
-    const item = global.map.getItem(this.position)
+    const item = map.getItem(this.position)
     const itemCount = Object.keys(this.inventory).length
 
     if (this.hp === 0 || !item) {
@@ -116,7 +116,7 @@ class Actor {
 
       this.inventory[item._id] += quantity
       this.emit('INVENTORY_CHANGED', item._id, this.inventory[item._id])
-      global.map.removeItem(this.position, quantity)
+      map.removeItem(this.position, quantity)
     }
   }
 

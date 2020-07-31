@@ -1,5 +1,6 @@
 const broadcast = require('../emitters')
 const spellsHandler = require('../spells')
+const Map = require('../model/map')
 
 module.exports.initListener = initListener
 module.exports.initBroadcast = initBroadcast
@@ -24,7 +25,7 @@ function initListener(room, accountId, player, socket) {
   })
 
   function gameStateHandler() {
-    broadcast.gameState(this.id, room.players, {}, {})
+    broadcast.gameState(this.id, room.players, {}, room.map.items())
   }
 
   function userMoveHandler(direction, clientPrediction) {
@@ -67,7 +68,7 @@ function initListener(room, accountId, player, socket) {
   }
 
   function userGrabItemHandler() {
-    player.grabItem()
+    player.grabItem(room.map)
   }
 
   function userDropItemHandler(itemId, quantity) {

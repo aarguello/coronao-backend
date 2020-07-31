@@ -110,7 +110,7 @@ async function findGameRoom() {
   room.addSocket(account._id, this)
 
   account.setRoom(room._id)
-  broadcast.userWelcome(this.id, account._id, room.players, {}, {})
+  broadcast.userWelcome(this.id, account._id, room.players, {}, room.map.items())
   broadcast.userJoined(this, room._id, account._id, player)
 }
 
