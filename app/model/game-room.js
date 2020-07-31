@@ -5,12 +5,13 @@ const handlers = require('../handlers/player')
 
 class GameRoom {
 
-  status = 'QUEUE'
+  status = 'INGAME'
   players = {}
   sockets = {}
 
   static init() {
     global.gameRooms = []
+    GameRoom.getOrCreate(global.config.roomCapacity)
     return store.accounts.updateMany({}, { $unset: { gameRoomId: ''}})
   }
 
@@ -18,7 +19,7 @@ class GameRoom {
 
     let room = global.gameRooms[global.gameRooms.length - 1]
 
-    if (!room || room.status === 'INGAME') {
+    if (!room) {
       const _id = global.gameRooms.length
       room = new GameRoom(_id, capacity, 'map-1')
       global.gameRooms[_id] = room
@@ -43,10 +44,6 @@ class GameRoom {
   }
 
   addPlayer(_id, player) {
-
-    if (this.status === 'INGAME') {
-      return
-    }
 
     const position = this.map.randomPosition()
     player.position = position
