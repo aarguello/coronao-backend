@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   app:
     build: .
@@ -9,14 +9,8 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
-    depends_on:
-      - postgres
     environment:
-      DB_URI: mongodb+srv://wonejo:quienteconoce@braodb-dp8uh.gcp.mongodb.net/brao
-      JWT_SECRET: This is not the real secret
-  postgres:
-    image: postgres:9.6
-    environment:
-      POSTGRES_USER: coronao
-      POSTGRES_DB: coronao
-      POSTGRES_PASSWORD: coronao
+      DB_URI: mongodb://db
+      JWT_SECRET: Thiglobal.s is not the real secret
+  db:
+    image: mongo:latest
