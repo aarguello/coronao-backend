@@ -1,5 +1,5 @@
 const mongodb = require('mongodb')
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 const store = require('../store')
 
 class Account {
@@ -24,7 +24,7 @@ class Account {
       return
     }
 
-    const match = await bcrypt.compare(password, account.password)
+    const match = await bcryptjs.compare(password, account.password)
 
     if (match) {
       return new Account(account._id, account.username, account.gameRoomId)
@@ -33,7 +33,7 @@ class Account {
 
   static async create(username, password) {
 
-    password = await bcrypt.hash(password, 10)
+    password = await bcryptjs.hash(password, 10)
     const account = await store.accounts.insertOne({ username, password })
 
     return new Account(account.insertedId, username)
