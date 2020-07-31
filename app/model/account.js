@@ -39,6 +39,10 @@ class Account {
     return new Account(account.insertedId, username)
   }
 
+  static remove(_id) {
+    store.accounts.deleteOne({ _id: mongodb.ObjectId(_id) })
+  }
+
   constructor(_id, username, gameRoomId) {
     this._id = _id
     this.username = username

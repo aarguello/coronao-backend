@@ -49,14 +49,32 @@ async function register(request, response) {
 
 async function login(request, response) {
 
-  const username = request.body.username || ''
-  const password = request.body.password || ''
-  const account = await Account.getByCredentials(username, password)
+  /*
+    Heads up! Client-side has not implemented sign-up method yet,
+    so the account is created at login time if it doesn't exist (setting password = username)
+  */
+  const username = request.body.name || ''
+  const password = request.body.name || ''
+  const race = request.body.race || ''
+  const class_ = request.body.class || ''
 
-  if (!account) {
-    return response.status(400).json({ error: 'INVALID_CREDENTIALS' })
+  if (!validators.username(username)) {
+    return response.status(400).json({ error: 'INVALID_USERNAME' })
   }
 
+  if (await Account.getByCredentials(username, password)) {
+    return response.status(400).json({ error: 'USERNAME_EXISTS' })
+  }
+
+  if (!global.races[race]) {
+    return response.status(400).json({ error: 'INVALID_RACE' })
+  }
+
+  if (!global.classes[class_]) {
+    return response.status(400).json({ error: 'INVALID_CLASS' })
+  }
+
+  const account = await Account.create(username, password)
   const token = jwt.sign({ _id: account._id }, process.env.JWT_SECRET)
 
   response.status(200).json({
@@ -75,7 +93,11 @@ function handleConnection(socket) {
   socket.on('FIND_GAME_ROOM', findGameRoom)
   socket.on('REJOIN_GAME_ROOM', rejoinGameRoom)
   socket.on('LEAVE_GAME_ROOM', leaveGameRoom)
-  socket.on('disconnect', leaveGameRoom)
+  socket.on('disconnect', disconnect)
+}
+
+function disconnect() {
+  Account.remove(this.decoded_token._id)
 }
 
 async function findGameRoom(race = 'HUMAN', class_ = 'BARD') {
