@@ -13,7 +13,7 @@ class Account {
     const accountId = mongodb.ObjectId(_id)
     const account = await store.accounts.findOne(accountId)
 
-    return new Account(account._id, account.username, account.gameRoomId)
+    return new Account(account._id.toString(), account.username, account.gameRoomId)
   }
 
   static async getByCredentials(username, password) {
@@ -27,7 +27,7 @@ class Account {
     const match = await bcryptjs.compare(password, account.password)
 
     if (match) {
-      return new Account(account._id, account.username, account.gameRoomId)
+      return new Account(account._id.toString(), account.username, account.gameRoomId)
     }
   }
 
@@ -36,7 +36,7 @@ class Account {
     password = await bcryptjs.hash(password, 10)
     const account = await store.accounts.insertOne({ username, password })
 
-    return new Account(account.insertedId, username)
+    return new Account(account.insertedId.toString(), username)
   }
 
   static remove(_id) {

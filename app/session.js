@@ -51,7 +51,7 @@ async function login(request, response) {
 
   /*
     Heads up! Client-side has not implemented sign-up method yet,
-    so the account is created at login time and deleted on 'disconnect' event.
+    so the account is created at login time with password == username.
   */
   const username = request.body.name || ''
   const password = request.body.name || ''
@@ -62,10 +62,6 @@ async function login(request, response) {
     return response.status(400).json({ error: 'INVALID_USERNAME' })
   }
 
-  if (await Account.getByCredentials(username, password)) {
-    return response.status(400).json({ error: 'USERNAME_EXISTS' })
-  }
-
   if (!global.races[race]) {
     return response.status(400).json({ error: 'INVALID_RACE' })
   }
@@ -74,7 +70,16 @@ async function login(request, response) {
     return response.status(400).json({ error: 'INVALID_CLASS' })
   }
 
-  const account = await Account.create(username, password)
+  let account = await Account.getByCredentials(username, password)
+
+  if (!account) {
+    account = await Account.create(username, password)
+  }
+
+  if (global.connectedAccounts.has(account._id)) {
+    return response.status(400).json({ error: 'USERNAME_EXISTS' })
+  }
+
   const token = jwt.sign({ _id: account._id, class: class_, race }, process.env.JWT_SECRET)
 
   response.status(200).json({
@@ -91,6 +96,7 @@ async function login(request, response) {
 
 function handleConnection(socket) {
   findGameRoom.call(socket)
+  global.connectedAccounts.add(socket.decoded_token._id)
   socket.on('disconnect', leaveGameRoom)
 }
 
@@ -124,6 +130,6 @@ async function leaveGameRoom() {
   }
 
   room.removePlayer(accountId)
-  Account.remove(accountId)
+  global.connectedAccounts.delete(accountId)
   broadcast.userLeftGameRoom(accountId, room._id, this.id)
 }
