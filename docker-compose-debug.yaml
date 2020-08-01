@@ -11,6 +11,6 @@ services:
       - "9229:9229"
     environment:
       DB_URI: mongodb://db
-      JWT_SECRET: Thiglobal.s is not the real secret
+      JWT_SECRET: This is not the real secret
   db:
     image: mongo:latest

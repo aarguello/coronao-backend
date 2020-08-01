@@ -76,7 +76,7 @@ function initListener(room, accountId, player, socket) {
   }
 
   function userCastHandler(spellId, position) {
-    spellsHandler.call(room._id, accountId, player, spellId, position)
+    spellsHandler.cast(room, accountId, player, spellId, position)
   }
 }
 
