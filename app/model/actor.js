@@ -23,7 +23,7 @@ class Actor {
     this.events.emit(action, this._id, ...params)
   }
 
-  move(direction) {
+  move(map, direction) {
 
     if (direction != this.direction) {
       this.direction = direction
@@ -33,8 +33,8 @@ class Actor {
     const from = this.position
     const to = Map.neighbour(from, direction)
 
-    if (!this.frozen && !global.map.collides(to)) {
-      global.map.moveActor(this, from, to)
+    if (!this.frozen && !map.collides(to)) {
+      map.moveActor(this, from, to)
       this.position = to
       return to
     }
@@ -120,9 +120,9 @@ class Actor {
     }
   }
 
-  dropItem(itemId, quantity = 0) {
+  dropItem(map, itemId, quantity = 0) {
 
-    const itemOnTile = global.map.getItem(this.position)
+    const itemOnTile = map.getItem(this.position)
 
     if (itemOnTile && itemOnTile._id !== itemId) {
       return
@@ -134,7 +134,7 @@ class Actor {
         quantity = Math.min(quantity, global.config.itemStackLimit - itemOnTile.quantity)
       }
 
-      global.map.addItem(this.position, itemId, quantity)
+      map.addItem(this.position, itemId, quantity)
       this.decreaseInventoryItem(itemId, quantity)
     }
   }

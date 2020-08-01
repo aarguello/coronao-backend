@@ -33,7 +33,7 @@ function initListener(room, accountId, player, socket) {
     const directionValid = ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(direction)
 
     if (directionValid) {
-      player.move(direction, clientPrediction)
+      player.move(room.map, direction, clientPrediction)
     }
   }
 
@@ -72,7 +72,7 @@ function initListener(room, accountId, player, socket) {
   }
 
   function userDropItemHandler(itemId, quantity) {
-    player.dropItem(itemId, quantity)
+    player.dropItem(room.map, itemId, quantity)
   }
 
   function userCastHandler(spellId, position) {

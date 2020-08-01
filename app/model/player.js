@@ -33,9 +33,9 @@ class Player extends Actor {
   get mana() { return this.stats.mana.current }
   get stamina() { return this.stats.stamina.current }
 
-  move(direction, clientPredictionIndex) {
+  move(map, direction, clientPredictionIndex) {
 
-    const position = super.move(direction)
+    const position = super.move(map, direction)
 
     if (position && this.meditating) {
       this.#stopMeditating()
