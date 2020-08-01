@@ -119,18 +119,18 @@ function initBroadcast(roomId, accountId, player, socket) {
   })
 
   player.events.on('EQUIPED_ITEM', (_, itemId) => {
-    broadcast.userEquipedItem(accountId, roomId, itemId)
+    broadcast.userEquipedItem(roomId, accountId, itemId)
   })
 
   player.events.on('UNEQUIPED_ITEM', (_, itemId) => {
-    broadcast.userUnequipedItem(accountId, roomId, itemId)
+    broadcast.userUnequipedItem(roomId, accountId, itemId)
   })
 
   player.events.on('STARTED_MEDITATING', () => {
-    broadcast.userStartedMeditating(accountId, roomId)
+    broadcast.userStartedMeditating(roomId, accountId)
   })
 
   player.events.on('STOPPED_MEDITATING', () => {
-    broadcast.userStoppedMeditating(accountId, roomId)
+    broadcast.userStoppedMeditating(roomId, accountId)
   })
 }
