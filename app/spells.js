@@ -1,7 +1,7 @@
 const utils    = require('./utils')
 const emitters = require('./emitters')
 
-module.exports.cast = function (spellId, position) {
+module.exports.cast = function (room, accountId, caster, spellId, position) {
 
   const spellHandler = {
     'DAMAGE':       damage,
@@ -13,13 +13,12 @@ module.exports.cast = function (spellId, position) {
   }
 
   const spell  = global.spells[spellId]
-  const target = global.map.getActor(position)
+  const target = room.map.getActor(position)
 
   if (!spell || !target || !target.affectedBy(spell)) {
     return
   }
 
-  const caster   = this
   const hasSpell = caster.spells.includes(spell._id)
 
   if (!hasSpell || caster.hp === 0 || spell.mana > caster.mana || caster.meditating) {
@@ -30,7 +29,7 @@ module.exports.cast = function (spellId, position) {
 
   if (cast) {
     caster.decreaseStat('mana', spell.mana)
-    if (target.type === 'USER') emitters.userReceivedSpell(target._id, spell._id)
+    if (target.type === 'USER') emitters.userReceivedSpell(room._id, accountId, spell._id)
     if (target.type === 'NPC')  emitters.npcReceivedSpell(target._id, spell._id)
   }
 }

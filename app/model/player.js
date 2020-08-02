@@ -1,8 +1,7 @@
 const Actor = require('./actor')
-const Map = require('./map')
 const utils = require('../utils')
 
-class User extends Actor {
+class Player extends Actor {
 
   constructor(name, race, class_, defaults) {
 
@@ -33,9 +32,9 @@ class User extends Actor {
   get mana() { return this.stats.mana.current }
   get stamina() { return this.stats.stamina.current }
 
-  move(direction, clientPredictionIndex) {
+  move(map, direction, clientPredictionIndex) {
 
-    const position = super.move(direction)
+    const position = super.move(map, direction)
 
     if (position && this.meditating) {
       this.#stopMeditating()
@@ -44,14 +43,11 @@ class User extends Actor {
     this.emit('POSITION_CHANGED', position || this.position, clientPredictionIndex)
   }
 
-  attack() {
+  attack(target) {
 
     if (this.meditating || this.stamina < this.attackEffort) {
       return
     }
-
-    const neighbour = Map.neighbour(this.position, this.direction)
-    const target = global.map.getActor(neighbour)
 
     if (target) {
       super.attack(target)
@@ -241,7 +237,7 @@ class User extends Actor {
     this.equipment = []
 
     items.forEach(item => this.emit('INVENTORY_CHANGED', item._id, 0))
-    global.map.addItems(this.position, items)
+    this.emit('INVENTORY_DROP', this.position, items)
   }
 
   getEvasion() {
@@ -253,4 +249,4 @@ class User extends Actor {
   }
 }
 
-module.exports = User
+module.exports = Player

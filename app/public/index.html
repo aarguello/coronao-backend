@@ -6,14 +6,21 @@
     <script src="main.js"></script>
   </head>
   <body>
-    <div>User: <span id="socket_id"></span></div>
-    <div>Position: <span id="user_position"></span></div>
-    <br>
-    <b>Actions</b>
-    <div><button onclick="userMove('LEFT')">Move left</button></div>
-    <div><button onclick="userMove('RIGHT')">Move right</button></div>
-    <div><button onclick="userMove('UP')">Move up</button></div>
-    <div><button onclick="userMove('DOWN')">Move down</button></div>
-    <div><button onclick="userAttack()">Attack</button></div>
+
+    <div>
+      <div>
+        <label for="username">User</label>
+        <input id="username" value="Nitsu">
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" value="12345">
+      </div>
+      <button onclick="login()">Log In</button>
+    </div>
+
+    <br><br>
+    <div>Socket ID: <span id="socket_id"></span></div>
+
   </body>
 </html>

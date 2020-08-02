@@ -23,7 +23,7 @@ class Actor {
     this.events.emit(action, this._id, ...params)
   }
 
-  move(direction) {
+  move(map, direction) {
 
     if (direction != this.direction) {
       this.direction = direction
@@ -33,8 +33,8 @@ class Actor {
     const from = this.position
     const to = Map.neighbour(from, direction)
 
-    if (!this.frozen && !global.map.collides(to)) {
-      global.map.moveActor(this, from, to)
+    if (!this.frozen && !map.collides(to)) {
+      map.moveActor(this, from, to)
       this.position = to
       return to
     }
@@ -94,9 +94,9 @@ class Actor {
     this.frozen = false
   }
 
-  grabItem() {
+  grabItem(map) {
 
-    const item = global.map.getItem(this.position)
+    const item = map.getItem(this.position)
     const itemCount = Object.keys(this.inventory).length
 
     if (this.hp === 0 || !item) {
@@ -116,13 +116,13 @@ class Actor {
 
       this.inventory[item._id] += quantity
       this.emit('INVENTORY_CHANGED', item._id, this.inventory[item._id])
-      global.map.removeItem(this.position, quantity)
+      map.removeItem(this.position, quantity)
     }
   }
 
-  dropItem(itemId, quantity = 0) {
+  dropItem(map, itemId, quantity = 0) {
 
-    const itemOnTile = global.map.getItem(this.position)
+    const itemOnTile = map.getItem(this.position)
 
     if (itemOnTile && itemOnTile._id !== itemId) {
       return
@@ -134,7 +134,7 @@ class Actor {
         quantity = Math.min(quantity, global.config.itemStackLimit - itemOnTile.quantity)
       }
 
-      global.map.addItem(this.position, itemId, quantity)
+      map.addItem(this.position, itemId, quantity)
       this.decreaseInventoryItem(itemId, quantity)
     }
   }

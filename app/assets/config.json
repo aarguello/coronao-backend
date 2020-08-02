@@ -1,6 +1,7 @@
 {
   "itemStackLimit": 10000,
   "messageMaxLength": 100,
+  "roomCapacity": 50,
   "user": {
     "hp": 400,
     "mana": 1000,
