@@ -88,7 +88,6 @@ async function login(request, response) {
     gameRoomId: account.gameRoomId,
     items: global.items,
     spells: global.spells,
-    mapSize: global.map.size,
     intervals: global.intervals,
     inventorySize: global.config.user.inventorySize,
   })

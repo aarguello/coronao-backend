@@ -13,22 +13,19 @@ function initGlobals() {
   global.aliveNPCs = {}
   global.config    = require('./assets/config.json')
   global.connectedAccounts = new Set()
-  const selectedMap = 'map-2'
 
   global.classes = importJSONArrayAsDictionary('./assets/classes.json', 'name')
   global.races   = importJSONArrayAsDictionary('./assets/races.json',   'name')
   global.NPCs    = importJSONArrayAsDictionary('./assets/NPCs.json',    'name')
   global.items   = importJSONArrayAsDictionary('./assets/items.json',   '_id')
   global.spells  = importJSONArrayAsDictionary('./assets/spells.json',  '_id')
-  global.mapNPCs = importJSONArrayAsDictionary('./assets/mapNPCs.json',  'map')[selectedMap]
 
+  // Legacy
   global.intervals = require('./assets/intervals.json')
   for (let npc of Object.values(global.NPCs)) {
     global.intervals.npcMove[npc.name] = npc.movement_speed
     global.intervals.npcAttack[npc.name] = npc.attack_speed
   }
-
-  global.map = new Map(selectedMap)
 }
 
 function getRandomInt(min, max) {
