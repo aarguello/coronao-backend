@@ -1,5 +1,4 @@
 const Actor = require('./actor')
-const Map = require('./map')
 const utils = require('../utils')
 
 class Player extends Actor {
@@ -238,7 +237,7 @@ class Player extends Actor {
     this.equipment = []
 
     items.forEach(item => this.emit('INVENTORY_CHANGED', item._id, 0))
-    global.map.addItems(this.position, items)
+    this.emit('INVENTORY_DROP', this.position, items)
   }
 
   getEvasion() {

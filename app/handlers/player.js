@@ -80,7 +80,9 @@ function initListener(room, accountId, player, socket) {
   }
 }
 
-function initBroadcast(roomId, accountId, player, socket) {
+function initBroadcast(room, accountId, player, socket) {
+
+  const roomId = room._id
 
   player.events.on('ATTACKED', (_, damage) => {
     broadcast.userAttacked(roomId, accountId, damage)
@@ -112,6 +114,10 @@ function initBroadcast(roomId, accountId, player, socket) {
 
   player.events.on('INVENTORY_CHANGED', (_, itemId, amount) => {
     broadcast.userInventoryChanged(roomId, accountId, itemId, amount)
+  })
+
+  player.events.on('INVENTORY_DROP', (_, position, items) => {
+    room.map.addItems(position, items)
   })
 
   player.events.on('STAT_CHANGED', (_, stat, value) => {
