@@ -195,9 +195,12 @@ class Map {
 
   randomPosition() {
 
+    const center = Math.floor(this.size / 2)
+    const offset = 15
+
     const position = [
-      Map.getRandomInt(0, this.size),
-      Map.getRandomInt(0, this.size),
+      Map.getRandomInt(center - offset, center + offset),
+      Map.getRandomInt(center - offset, center + offset),
     ]
 
     if (this.collides(position)) {
