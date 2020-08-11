@@ -77,6 +77,8 @@ class GameRoom {
       delete this.sockets[_id]
     }
 
+    this.map.removeActor(this.players[_id].position)
+
     delete this.players[_id]
   }
 }

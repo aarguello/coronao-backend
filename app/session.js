@@ -130,5 +130,5 @@ async function leaveGameRoom() {
 
   room.removePlayer(accountId)
   global.connectedAccounts.delete(accountId)
-  broadcast.userLeftGameRoom(accountId, room._id, this.id)
+  broadcast.userLeft(this, room._id, accountId)
 }

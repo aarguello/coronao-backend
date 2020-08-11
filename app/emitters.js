@@ -29,6 +29,10 @@ module.exports.userJoined = (socket, roomId, accountId, player) => {
   socket.broadcast.to(roomId).emit('USER_JOINED', user)
 }
 
+module.exports.userLeft = (socket, roomId, accountId) => {
+  socket.broadcast.to(roomId).emit('USER_LEFT', { _id: accountId })
+}
+
 module.exports.userWelcome = (socketId, accountId, players, aliveNPCs, items) => {
 
   const users = {}
