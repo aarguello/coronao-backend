@@ -5,7 +5,7 @@ const Map = require('../model/map')
 module.exports.initListener = initListener
 module.exports.initBroadcast = initBroadcast
 
-function initListener(room, accountId, player, socket) {
+function initListener(room, player, socket) {
 
   socket.on('REQUEST_GAME_STATE', gameStateHandler)
 
@@ -76,67 +76,67 @@ function initListener(room, accountId, player, socket) {
   }
 
   function userCastHandler(spellId, position) {
-    spellsHandler.cast(room, accountId, player, spellId, position)
+    spellsHandler.cast(room, player, spellId, position)
   }
 }
 
-function initBroadcast(room, accountId, player, socket) {
+function initBroadcast(room, player, socket) {
 
   const roomId = room._id
 
-  player.events.on('ATTACKED', (_, damage) => {
-    broadcast.userAttacked(roomId, accountId, damage)
+  player.events.on('ATTACKED', (playerId, damage) => {
+    broadcast.userAttacked(roomId, playerId, damage)
   })
 
-  player.events.on('SPOKE', (_, message) => {
-    broadcast.userSpoke(roomId, accountId, message)
+  player.events.on('SPOKE', (playerId, message) => {
+    broadcast.userSpoke(roomId, playerId, message)
   })
 
-  player.events.on('DIED', () => {
-    broadcast.userDied(roomId, accountId)
+  player.events.on('DIED', (playerId) => {
+    broadcast.userDied(roomId, playerId)
   })
 
-  player.events.on('REVIVED', () => {
-    broadcast.userRevived(roomId, accountId)
+  player.events.on('REVIVED', (playerId) => {
+    broadcast.userRevived(roomId, playerId)
   })
 
-  player.events.on('DIRECTION_CHANGED', (_, direction) => {
-    broadcast.userDirectionChanged(roomId, accountId, direction)
+  player.events.on('DIRECTION_CHANGED', (playerId, direction) => {
+    broadcast.userDirectionChanged(roomId, playerId, direction)
   })
 
-  player.events.on('POSITION_CHANGED', (_, position, clientPrediction) => {
-    broadcast.userPositionChanged(roomId, accountId, socket, position, clientPrediction)
+  player.events.on('POSITION_CHANGED', (playerId, position, clientPrediction) => {
+    broadcast.userPositionChanged(roomId, playerId, socket, position, clientPrediction)
   })
 
-  player.events.on('VISIBILITY_CHANGED', (_, invisible) => {
-    broadcast.userVisibilityChanged(roomId, accountId, invisible)
+  player.events.on('VISIBILITY_CHANGED', (playerId, invisible) => {
+    broadcast.userVisibilityChanged(roomId, playerId, invisible)
   })
 
-  player.events.on('INVENTORY_CHANGED', (_, itemId, amount) => {
-    broadcast.userInventoryChanged(roomId, accountId, itemId, amount)
+  player.events.on('INVENTORY_CHANGED', (playerId, itemId, amount) => {
+    broadcast.userInventoryChanged(roomId, playerId, itemId, amount)
   })
 
   player.events.on('INVENTORY_DROP', (_, position, items) => {
     room.map.addItems(position, items)
   })
 
-  player.events.on('STAT_CHANGED', (_, stat, value) => {
-    broadcast.userStatChanged(roomId, accountId, stat, value)
+  player.events.on('STAT_CHANGED', (playerId, stat, value) => {
+    broadcast.userStatChanged(roomId, playerId, stat, value)
   })
 
-  player.events.on('EQUIPED_ITEM', (_, itemId) => {
-    broadcast.userEquipedItem(roomId, accountId, itemId)
+  player.events.on('EQUIPED_ITEM', (playerId, itemId) => {
+    broadcast.userEquipedItem(roomId, playerId, itemId)
   })
 
-  player.events.on('UNEQUIPED_ITEM', (_, itemId) => {
-    broadcast.userUnequipedItem(roomId, accountId, itemId)
+  player.events.on('UNEQUIPED_ITEM', (playerId, itemId) => {
+    broadcast.userUnequipedItem(roomId, playerId, itemId)
   })
 
-  player.events.on('STARTED_MEDITATING', () => {
-    broadcast.userStartedMeditating(roomId, accountId)
+  player.events.on('STARTED_MEDITATING', (playerId) => {
+    broadcast.userStartedMeditating(roomId, playerId)
   })
 
-  player.events.on('STOPPED_MEDITATING', () => {
-    broadcast.userStoppedMeditating(roomId, accountId)
+  player.events.on('STOPPED_MEDITATING', (playerId) => {
+    broadcast.userStoppedMeditating(roomId, playerId)
   })
 }

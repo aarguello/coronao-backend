@@ -24,25 +24,29 @@ module.exports.userLeftGameRoom = (userId, roomId, socketId) => {
   this.io.to(socketId).emit('USER_LEFT_GAME_ROOM', userId)
 }
 
-module.exports.userJoined = (socket, roomId, accountId, player) => {
-  const user = parsePlayer(accountId, player)
+module.exports.userJoined = (socket, roomId, player) => {
+  const user = parsePlayer(player)
   socket.broadcast.to(roomId).emit('USER_JOINED', user)
 }
 
-module.exports.userLeft = (socket, roomId, accountId) => {
-  socket.broadcast.to(roomId).emit('USER_LEFT', { _id: accountId })
+module.exports.userLeft = (socket, roomId, playerId) => {
+  socket.broadcast.to(roomId).emit('USER_LEFT', { _id: playerId })
 }
 
-module.exports.userWelcome = (socketId, accountId, players, aliveNPCs, items) => {
+module.exports.userWelcome = (socketId, room, playerId) => {
 
-  const users = {}
-  const globals = { users, items, aliveNPCs }
-
-  for (const [_id, player] of Object.entries(players)) {
-    users[_id] = parsePlayer(_id, player)
+  const players = {}
+  for (const p of Object.values(room.players)) {
+    players[p._id] = parsePlayer(p)
   }
 
-  this.io.to(socketId).emit('USER_WELCOME', { user: users[accountId], globals })
+  const globals = {
+    users: players,
+    items: room.map.items(),
+    aliveNPCs: {},
+  }
+
+  this.io.to(socketId).emit('USER_WELCOME', { user: players[playerId], globals })
 }
 
 module.exports.gameState = (roomId, players, NPCs, items) => {
@@ -50,16 +54,16 @@ module.exports.gameState = (roomId, players, NPCs, items) => {
   const users = {}
 
   for (const [_id, player] of Object.entries(players)) {
-    users[_id] = parsePlayer(_id, player)
+    users[_id] = parsePlayer(player)
   }
 
   this.io.to(roomId).emit('GAME_STATE', { users, NPCs, items })
 }
 
-module.exports.userPositionChanged = (roomId, accountId, socket, position, index) => {
+module.exports.userPositionChanged = (roomId, playerId, socket, position, index) => {
 
   const packet = {
-    _id: accountId,
+    _id: playerId,
     position,
   }
 
@@ -67,110 +71,110 @@ module.exports.userPositionChanged = (roomId, accountId, socket, position, index
   socket.broadcast.to(roomId).emit('USER_POSITION_CHANGED', packet)
 }
 
-module.exports.userDirectionChanged = (roomId, accountId, direction) => {
+module.exports.userDirectionChanged = (roomId, playerId, direction) => {
 
   const packet = {
-    _id: accountId,
+    _id: playerId,
     direction,
   }
 
   this.io.to(roomId).emit('USER_DIRECTION_CHANGED', packet)
 }
 
-module.exports.userInventoryChanged = (roomId, accountId, itemId, amount) => {
+module.exports.userInventoryChanged = (roomId, playerId, itemId, amount) => {
 
   const packet = {
-    _id: accountId,
+    _id: playerId,
     inventory: { [itemId]: amount },
   }
 
   this.io.to(roomId).emit('USER_INVENTORY_CHANGED', packet)
 }
 
-module.exports.userAttacked = (roomId, accountId, damage) => {
+module.exports.userAttacked = (roomId, playerId, damage) => {
 
   const packet = {
-    user: { _id: accountId },
+    user: { _id: playerId },
     damage,
   }
 
   this.io.to(roomId).emit('USER_ATTACKED', packet)
 }
 
-module.exports.userReceivedSpell = (roomId, accountId, spellId) => {
+module.exports.userReceivedSpell = (roomId, playerId, spellId) => {
 
   const packet = {
-    user: { _id: accountId },
+    user: { _id: playerId },
     spellId,
   }
 
   this.io.to(roomId).emit('USER_RECEIVED_SPELL', packet)
 }
 
-module.exports.userStatChanged = (roomId, accountId, stat, value) => {
+module.exports.userStatChanged = (roomId, playerId, stat, value) => {
 
   const packet = {
-    _id: accountId,
+    _id: playerId,
     stats: { [stat]: value }
   }
 
   this.io.to(roomId).emit('USER_STAT_CHANGED', packet)
 }
 
-module.exports.userVisibilityChanged = (roomId, accountId, invisible) => {
+module.exports.userVisibilityChanged = (roomId, playerId, invisible) => {
 
   const packet = {
-    _id: accountId,
+    _id: playerId,
     invisible,
   }
 
   this.io.to(roomId).emit('USER_VISIBILITY_CHANGED', packet)
 }
 
-module.exports.userEquipedItem = (roomId, accountId, itemId) => {
+module.exports.userEquipedItem = (roomId, playerId, itemId) => {
 
   const packet = {
-    user: { _id: accountId },
+    user: { _id: playerId },
     itemId,
   }
 
   this.io.to(roomId).emit('USER_EQUIPED_ITEM', packet)
 }
 
-module.exports.userUnequipedItem = (roomId, accountId, itemId) => {
+module.exports.userUnequipedItem = (roomId, playerId, itemId) => {
 
   const packet = {
-    user: { _id: accountId },
+    user: { _id: playerId },
     itemId,
   }
 
   this.io.to(roomId).emit('USER_UNEQUIPED_ITEM', packet)
 }
 
-module.exports.userDied = (roomId, accountId) => {
-  this.io.to(roomId).emit('USER_DIED', { _id: accountId })
+module.exports.userDied = (roomId, playerId) => {
+  this.io.to(roomId).emit('USER_DIED', { _id: playerId })
 }
 
-module.exports.userRevived = (roomId, accountId) => {
-  this.io.to(roomId).emit('USER_REVIVED', { _id: accountId })
+module.exports.userRevived = (roomId, playerId) => {
+  this.io.to(roomId).emit('USER_REVIVED', { _id: playerId })
 }
 
-module.exports.userSpoke = (roomId, accountId, message) => {
+module.exports.userSpoke = (roomId, playerId, message) => {
 
   const packet = {
-    user: { _id: accountId },
+    user: { _id: playerId },
     message,
   }
 
   this.io.to(roomId).emit('USER_SPOKE', packet)
 }
 
-module.exports.userStartedMeditating = (roomId, accountId) => {
-  this.io.to(roomId).emit('USER_STARTED_MEDITATING', { _id: accountId })
+module.exports.userStartedMeditating = (roomId, playerId) => {
+  this.io.to(roomId).emit('USER_STARTED_MEDITATING', { _id: playerId })
 }
 
-module.exports.userStoppedMeditating = (roomId, accountId) => {
-  this.io.to(roomId).emit('USER_STOPPED_MEDITATING', { _id: accountId })
+module.exports.userStoppedMeditating = (roomId, playerId) => {
+  this.io.to(roomId).emit('USER_STOPPED_MEDITATING', { _id: playerId })
 }
 
 module.exports.npcSpawned = (npc) => {
@@ -209,10 +213,10 @@ module.exports.tileItemChanged = (roomId, position, itemId, quantity) => {
   this.io.to(roomId).emit('TILE_ITEM_CHANGED', { position, itemId, quantity })
 }
 
-function parsePlayer(_id, p) {
+function parsePlayer(p) {
 
   const player = {
-    _id,
+    _id: p._id,
     name: p.name,
     race: p.race.name,
     class: p.class.name,

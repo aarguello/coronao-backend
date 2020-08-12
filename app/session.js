@@ -84,7 +84,7 @@ async function login(request, response) {
 
   response.status(200).json({
     token,
-    _id: account._id,
+    _id: username,
     gameRoomId: account.gameRoomId,
     items: global.items,
     spells: global.spells,
@@ -115,8 +115,8 @@ async function findGameRoom() {
   room.addSocket(account._id, this)
 
   account.setRoom(room._id)
-  broadcast.userWelcome(this.id, account._id, room.players, {}, room.map.items())
-  broadcast.userJoined(this, room._id, account._id, player)
+  broadcast.userWelcome(this.id, room, player._id)
+  broadcast.userJoined(this, room._id, player)
 }
 
 async function leaveGameRoom() {
@@ -128,7 +128,9 @@ async function leaveGameRoom() {
     return
   }
 
+  const playerId = room.players[accountId]._id
+
   room.removePlayer(accountId)
   global.connectedAccounts.delete(accountId)
-  broadcast.userLeft(this, room._id, accountId)
+  broadcast.userLeft(this, room._id, playerId)
 }

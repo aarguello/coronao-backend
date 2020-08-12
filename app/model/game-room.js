@@ -64,8 +64,8 @@ class GameRoom {
     this.sockets[_id] = socket
 
     const player = this.players[_id]
-    playerHandlers.initListener(this, _id, player, socket)
-    playerHandlers.initBroadcast(this, _id, player, socket)
+    playerHandlers.initListener(this, player, socket)
+    playerHandlers.initBroadcast(this, player, socket)
   }
 
   removePlayer(_id) {
