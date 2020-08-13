@@ -371,11 +371,12 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.stats.hp.current = 0
-      global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+      map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(actor.inventory).toEqual({})
@@ -386,12 +387,13 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
-      global.map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
+      map.getItem = jest.fn(() => ({ _id: 'another item id', quantity: 1 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 1 })
@@ -402,14 +404,15 @@ describe('Actor', () => {
 
       // Arrage
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [1, 1]
-      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 2 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
-      expect(global.map.getItem).toHaveBeenCalledWith([1, 1])
+      expect(map.getItem).toHaveBeenCalledWith([1, 1])
       expect(actor.inventory).toEqual({ 'some item id': 2 })
       expect(actor.emit).toHaveBeenCalledWith('INVENTORY_CHANGED','some item id', 2)
     })
@@ -418,11 +421,12 @@ describe('Actor', () => {
 
       // Arrage
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [1, 1]
-      global.map.getItem = jest.fn()
+      map.getItem = jest.fn()
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(actor.inventory).toEqual({})
@@ -432,12 +436,13 @@ describe('Actor', () => {
 
       // Arrage
       const actor = createTestActor()
+      const map = new Map('some map id')
       this.inventorySize = 1
       actor.inventory = { 'some item id': 1 }
-      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 6 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 7 })
@@ -447,11 +452,12 @@ describe('Actor', () => {
 
       // Arrage
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.inventory = { 'some item id': 45 }
-      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 9997 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(actor.inventory).toEqual({ 'some item id': 10000 })
@@ -461,12 +467,13 @@ describe('Actor', () => {
 
       // Arrage
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [1, 0]
       actor.inventory = { 'some item id': 7000 }
-      global.map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
+      map.getItem = jest.fn(() => ({ _id: 'some item id', quantity: 8000 }))
 
       // Act
-      actor.grabItem()
+      actor.grabItem(map)
 
       // Assert
       expect(map.removeItem).toHaveBeenCalledWith([1, 0], 3000)
