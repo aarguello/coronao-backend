@@ -22,38 +22,6 @@ describe('gameRoom', () => {
     })
   })
 
-  describe('startGame', () => {
-
-    it('should not start game with missing players', () => {
-
-      // Arrange
-      const room = new GameRoom('some random id', 1)
-
-      // Act
-      room.startGame()
-
-      // Assert
-      expect(room.status).toBe('QUEUE')
-    })
-
-    it('should start game with full capacity', () => {
-
-      // Arrange
-      const room = new GameRoom('some random id', 1)
-      room.addPlayer('some player id', createTestPlayer())
-
-      // Act
-      room.startGame()
-
-      // Assert
-      expect(room.status).toBe('INGAME')
-    })
-
-    it('should init player handlers', () => {
-
-    })
-  })
-
   describe('addSocket', () => {
 
     it('should map accountId to socket', () => {
@@ -64,30 +32,29 @@ describe('gameRoom', () => {
 
   describe('addPlayer', () => {
 
-    it('should not add player if game started', () => {
+    it('should add player to game room', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 1)
-      room.addPlayer('player 1', createTestPlayer())
-      room.startGame()
 
       // Act
-      room.addPlayer('player 2', createTestPlayer())
+      room.addPlayer('player 1', createTestPlayer())
 
       // Assert
       expect(Object.keys(room.players)).toEqual(['player 1'])
     })
 
-    it('should add player while in queue', () => {
+    it('should not add player on full capacity', () => {
 
       // Arrange
       const room = new GameRoom('some random id', 1)
 
       // Act
-      room.addPlayer('some player id', createTestPlayer())
+      room.addPlayer('player 1', createTestPlayer())
+      room.addPlayer('player 2', createTestPlayer())
 
       // Assert
-      expect(Object.keys(room.players)).toEqual(['some player id'])
+      expect(Object.keys(room.players)).toEqual(['player 1'])
     })
 
     it('should set player position', () => {

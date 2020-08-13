@@ -39,16 +39,11 @@ class GameRoom {
     this.map = new Map(map)
   }
 
-  startGame() {
+  addPlayer(_id, player) {
 
-    if (Object.keys(this.players).length < this.capacity) {
+    if (Object.keys(this.players).length == this.capacity) {
       return
     }
-
-    this.status = 'INGAME'
-  }
-
-  addPlayer(_id, player) {
 
     const position = this.map.randomPosition()
     player.position = position
