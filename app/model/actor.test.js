@@ -8,7 +8,6 @@ describe('Actor', () => {
 
   beforeEach(() => {
     global.config = { itemStackLimit: 10000 }
-    global.map = new Map('some map id')
     Map.mockClear()
   })
 
@@ -39,9 +38,10 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
 
       // Act
-      actor.move('UP')
+      actor.move(map, 'UP')
 
       // Assert
       expect(actor.direction).toBe('UP')
@@ -52,10 +52,11 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.direction = 'DOWN'
 
       // Act
-      actor.move('DOWN')
+      actor.move(map, 'DOWN')
 
       // Assert
       expect(actor.emit).not.toHaveBeenCalled()
@@ -65,14 +66,15 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [0, 0]
       Map.neighbour = jest.fn(() => [1, 0])
 
       // Act
-      const position = actor.move('RIGHT')
+      const position = actor.move(map, 'RIGHT')
 
       // Assert
-      expect(global.map.moveActor).toHaveBeenCalledWith(actor, [0, 0], [1, 0])
+      expect(map.moveActor).toHaveBeenCalledWith(actor, [0, 0], [1, 0])
       expect(actor.position).toEqual([1, 0])
       expect(position).toEqual([1, 0])
     })
@@ -81,15 +83,16 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [0, 0]
-      global.map.collides = jest.fn(() => true)
+      map.collides = jest.fn(() => true)
 
       // Act
-      const position = actor.move('DOWN')
+      const position = actor.move(map, 'DOWN')
 
       // Assert
       expect(actor.position).toEqual([0, 0])
-      expect(global.map.moveActor).not.toHaveBeenCalled()
+      expect(map.moveActor).not.toHaveBeenCalled()
       expect(position).toBeUndefined()
     })
 
@@ -97,15 +100,16 @@ describe('Actor', () => {
 
       // Arrange
       const actor = createTestActor()
+      const map = new Map('some map id')
       actor.position = [0, 0]
       actor.frozen = true
 
       // Act
-      actor.move('LEFT')
+      actor.move(map, 'LEFT')
 
       // Assert
       expect(actor.position).toEqual([0, 0])
-      expect(global.map.moveActor).not.toHaveBeenCalled()
+      expect(map.moveActor).not.toHaveBeenCalled()
     })
   })
 
