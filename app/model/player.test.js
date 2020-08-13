@@ -109,13 +109,14 @@ describe('Player', () => {
 
       // Arrange
       const user = createTestUser()
+      const map = new Map()
       Actor.prototype.move = jest.fn(() => [1, 0])
 
       // Act
-      user.move('RIGHT', 'randomIndex')
+      user.move(map, 'RIGHT', 'randomIndex')
 
       // Assert
-      expect(Actor.prototype.move).toHaveBeenCalledWith('RIGHT')
+      expect(Actor.prototype.move).toHaveBeenCalledWith(map, 'RIGHT')
       expect(user.emit).toHaveBeenCalledWith('POSITION_CHANGED', [1, 0], 'randomIndex')
     })
 
@@ -123,11 +124,12 @@ describe('Player', () => {
 
       // Arrange
       const user = createTestUser()
+      const map = new Map()
       Actor.prototype.move = jest.fn(() => [1, 0])
       user.meditating = true
 
       // Act
-      user.move('DOWN')
+      user.move(map, 'DOWN')
 
       // Assert
       expect(user.meditating).toBe(false)
@@ -137,11 +139,12 @@ describe('Player', () => {
 
       // Arrange
       const user = createTestUser()
+      const map = new Map()
       user.position = [1, 0]
       Actor.prototype.move = jest.fn()
 
       // Act
-      user.move('DOWN', 'randomIndex')
+      user.move(map, 'DOWN', 'randomIndex')
 
       // Assert
       expect(user.emit).toHaveBeenCalledWith('POSITION_CHANGED', [1, 0], 'randomIndex')
