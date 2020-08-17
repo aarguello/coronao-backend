@@ -2,6 +2,8 @@
 
 This NodeJS project contains the server side code for CoronAO, a browser based 2D combat game inspired on the famous RPG Argentum Online (AO).
 
+Game is live at coronao-client-686774399.sa-east-1.elb.amazonaws.com
+
 ## Build with Docker
 
 Simplest way to build and run the project locally is through a Docker container.
