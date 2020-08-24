@@ -135,25 +135,28 @@ class Player extends Actor {
   }
 
   getPhysicalDamage() {
-    const itemsDamage = utils.getequipmentBonus(this.equipment, 'physicalDamage')
-    const classDamage = this.class.physicalDamage || 1
-    return (this.physicalDamage + itemsDamage) * classDamage
-  }
 
-  getPhysicalDefense() {
-    const itemsDefense = utils.getequipmentBonus(this.equipment, 'physicalDefense')
-    const classDefense = this.class.physicalDefense || 1
-    return itemsDefense * classDefense
+    const playerDamage = this.physicalDamage
+    const classDamage = this.class.physicalDamage || 1
+    const itemsDamage = utils.getEquipmentBonus(this.equipment, 'physicalDamage')
+
+    const damage = itemsDamage.map(itemDamage => (playerDamage + itemDamage) * classDamage)
+
+    return damage.map(Math.round)
   }
 
   getMagicalDamage() {
-    const itemsDamage = utils.getequipmentBonus(this.equipment, 'magicalDamage') || 1
+    const itemsDamage = utils.getEquipmentBonus(this.equipment, 'magicalDamage')
     const classDamage = this.class.magicalDamage || 1
-    return itemsDamage * classDamage
+    return itemsDamage.map(d => (d || 1) * classDamage)
+  }
+
+  getPhysicalDefense() {
+    return utils.getEquipmentBonus(this.equipment, 'physicalDefense')
   }
 
   getMagicalDefense() {
-    return utils.getequipmentBonus(this.equipment, 'magicalDefense')
+    return utils.getEquipmentBonus(this.equipment, 'magicalDefense')
   }
 
   #consumeItem(item) {

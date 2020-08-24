@@ -1,6 +1,7 @@
 const Player = require('./player')
 const Actor = require('./actor')
 const Map = require('./map')
+const utils = require('../utils')
 
 jest.mock('./map')
 jest.useFakeTimers()
@@ -42,7 +43,7 @@ describe('Player', () => {
     it('should set initial values', () => {
 
       // Act
-      const user = createTestUser('Legolas')
+      const user = createTestUser({ name: 'Legolas' })
 
       // Assert
       expect(user._id).toBe('Legolas')
@@ -727,15 +728,139 @@ describe('Player', () => {
       expect(user.equipment).toEqual([ sword ])
     })
   })
+
+  describe('getPhysicalDamage', () => {
+
+    it('should add player base damage', () => {
+
+      // Arrange
+      const config = { ...global.config.user, physicalDamage: 99 }
+      const player = createTestUser({ config })
+
+      // Act
+      const damage = player.getPhysicalDamage()
+
+      // Assert
+      expect(damage).toEqual([ 99, 99 ])
+    })
+
+    it('should add items bonus', () => {
+
+      // Arrange
+      utils.getEquipmentBonus = jest.fn(() => [ 5, 8 ])
+      const config = { ...global.config.user, physicalDamage: 99 }
+      const player = createTestUser({ config })
+
+      // Act
+      const damage = player.getPhysicalDamage()
+
+      // Assert
+      expect(utils.getEquipmentBonus).toHaveBeenCalledWith(player.equipment, 'physicalDamage')
+      expect(damage).toEqual([ 104, 107 ])
+    })
+
+    it('should multiply and round class modifier', () => {
+
+      // Arrange
+      utils.getEquipmentBonus = jest.fn(() => [ 5, 8 ])
+      const config = { ...global.config.user, physicalDamage: 99 }
+      const class_ = { ...global.classes[0], physicalDamage: 1.3 }
+      const player = createTestUser({ config, class_ })
+
+      // Act
+      const damage = player.getPhysicalDamage()
+
+      // Assert
+      expect(damage).toEqual([ 135, 139 ])
+    })
+  })
+
+  describe('getMagicalDamage', () => {
+
+    it('should return 1 without items', () => {
+
+      // Arrange
+      const player = createTestUser()
+      utils.getEquipmentBonus = jest.fn(() => [ 0, 0 ])
+
+      // Act
+      const damage = player.getMagicalDamage()
+
+      // Assert
+      expect(damage).toEqual([ 1, 1 ])
+    })
+
+    it('should add items bonus', () => {
+
+      // Arrange
+      const player = createTestUser()
+      utils.getEquipmentBonus = jest.fn(() => [ 1.2, 1.5 ])
+
+      // Act
+      const damage = player.getMagicalDamage()
+
+      // Assert
+      expect(utils.getEquipmentBonus).toHaveBeenCalledWith(player.equipment, 'magicalDamage')
+      expect(damage).toEqual([ 1.2, 1.5 ])
+    })
+
+    it('should multiply class modifier', () => {
+
+      // Arrange
+      const class_ = { ...global.classes[0], magicalDamage: 1.2 }
+      const player = createTestUser({ config, class_ })
+      utils.getEquipmentBonus = jest.fn(() => [ 1.4, 1.8 ])
+
+      // Act
+      const damage = player.getMagicalDamage()
+
+      // Assert
+      expect(damage).toEqual([ 1.68, 2.16 ])
+    })
+  })
+
+  describe('getPhysicalDefense', () => {
+
+    it('should equal items bonus', () => {
+
+      // Arrange
+      const player = createTestUser()
+      utils.getEquipmentBonus = jest.fn(() => [ 25, 40 ])
+
+      // Act
+      const defense = player.getPhysicalDefense()
+
+      // Assert
+      expect(utils.getEquipmentBonus).toHaveBeenCalledWith(player.equipment, 'physicalDefense')
+      expect(defense).toEqual([ 25, 40 ])
+    })
+  })
+
+  describe('getMagicalDefense', () => {
+
+    it('should equal items bonus', () => {
+
+      // Arrange
+      const player = createTestUser()
+      utils.getEquipmentBonus = jest.fn(() => [ 13, 21 ])
+
+      // Act
+      const defense = player.getMagicalDefense()
+
+      // Assert
+      expect(utils.getEquipmentBonus).toHaveBeenCalledWith(player.equipment, 'magicalDefense')
+      expect(defense).toEqual([ 13, 21 ])
+    })
+  })
 })
 
-function createTestUser(name) {
+function createTestUser({ name, race, class_, config } = {}) {
 
   const user = new Player(
-    name,
-    global.races[0],
-    global.classes[0],
-    global.config.user
+    name   || 'Martín Fierro',
+    race   || global.races[0],
+    class_ || global.classes[0],
+    config || global.config.user,
   )
 
   jest.spyOn(user, 'emit')
