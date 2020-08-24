@@ -3,7 +3,7 @@ const Map = require('./model/map')
 module.exports.initGlobals       = initGlobals
 module.exports.getRandomInt      = getRandomInt
 module.exports.getRandomNPC      = getRandomNPC
-module.exports.getequipmentBonus = getEquipmentBonus
+module.exports.getEquipmentBonus = getEquipmentBonus
 module.exports.weightedRandom    = weightedRandom
 module.exports.getInventory      = getInventoryByClass
 
@@ -50,19 +50,17 @@ function getEquipmentBonus(equipment, attribute) {
 
   const reducer = (total, item) => {
 
-    let value = 0
-
-    if (item[attribute]) {
-      value = getRandomInt(
-        item[attribute][0],
-        item[attribute][1] + 1
-      )
+    if (!item[attribute]) {
+      return total
     }
 
-    return total + value
+    return [
+      total[0] + item[attribute][0],
+      total[1] + item[attribute][1],
+    ]
   }
 
-  return equipment.reduce(reducer, 0)
+  return equipment.reduce(reducer, [0, 0])
 }
 
 function getInventoryByClass(class_) {
