@@ -118,6 +118,7 @@ function initBroadcast(room, player, socket) {
 
   player.events.on('INVENTORY_DROP', (_, position, items) => {
     room.map.addItems(position, items)
+    broadcast.userCombatStatsChanged(socket.id, player)
   })
 
   player.events.on('STAT_CHANGED', (playerId, stat, value) => {
@@ -126,10 +127,12 @@ function initBroadcast(room, player, socket) {
 
   player.events.on('EQUIPED_ITEM', (playerId, itemId) => {
     broadcast.userEquipedItem(roomId, playerId, itemId)
+    broadcast.userCombatStatsChanged(socket.id, player)
   })
 
   player.events.on('UNEQUIPED_ITEM', (playerId, itemId) => {
     broadcast.userUnequipedItem(roomId, playerId, itemId)
+    broadcast.userCombatStatsChanged(socket.id, player)
   })
 
   player.events.on('STARTED_MEDITATING', (playerId) => {

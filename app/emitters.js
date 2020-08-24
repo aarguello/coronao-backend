@@ -121,6 +121,26 @@ module.exports.userStatChanged = (roomId, playerId, stat, value) => {
   this.io.to(roomId).emit('USER_STAT_CHANGED', packet)
 }
 
+module.exports.userCombatStatsChanged = (socketId, player) => {
+
+  const average = ([a, b]) => (a + b) / 2
+
+  const combatStats = {
+    physicalDamage: Math.round(average(player.getPhysicalDamage())),
+    physicalDefense: Math.round(average(player.getPhysicalDefense())),
+    magicalDamage: Math.round(average(player.getMagicalDamage()) * 100 - 100),
+    magicalDefense: Math.round(average(player.getMagicalDefense())),
+    evasion: Math.round(player.getEvasion() * 100),
+  }
+
+  const packet = {
+    _id: player._id,
+    combatStats,
+  }
+
+  this.io.to(socketId).emit('USER_COMBAT_STATS_CHANGED', packet)
+}
+
 module.exports.userVisibilityChanged = (roomId, playerId, invisible) => {
 
   const packet = {

@@ -117,6 +117,7 @@ async function findGameRoom() {
   account.setRoom(room._id)
   broadcast.userWelcome(this.id, room, player._id)
   broadcast.userJoined(this, room._id, player)
+  broadcast.userCombatStatsChanged(this.id, player)
 }
 
 async function leaveGameRoom() {
