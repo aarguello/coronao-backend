@@ -1,5 +1,6 @@
 const Map = require('./map')
 const EventEmitter = require('events')
+const utils = require('../utils')
 
 class Actor {
 
@@ -58,7 +59,9 @@ class Actor {
     let damage = 0
 
     if (!target.dodge()) {
-      damage = Math.round(this.getPhysicalDamage() - target.getPhysicalDefense())
+      const playerDamage = utils.getRandomInt(...this.getPhysicalDamage())
+      const targetDefense = utils.getRandomInt(...target.getPhysicalDefense())
+      damage = Math.round(playerDamage - targetDefense)
       damage = Math.max(damage, 0)
       target.hurt(damage)
     }

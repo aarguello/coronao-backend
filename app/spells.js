@@ -40,9 +40,9 @@ function damage(target, spell, caster) {
     return false
   }
 
-  const spellDamage   = utils.getRandomInt(spell.value[0], spell.value[1])
-  const casterDamage  = caster.getMagicalDamage()
-  const targetDefense = target.getMagicalDefense()
+  const spellDamage = utils.getRandomInt(...spell.value)
+  const casterDamage = utils.getAverage(caster.getMagicalDamage())
+  const targetDefense = utils.getRandomInt(...target.getMagicalDefense())
 
   const damage = spellDamage * casterDamage - targetDefense
   target.hurt(damage)

@@ -1,6 +1,7 @@
 const Map = require('./model/map')
 
 module.exports.initGlobals       = initGlobals
+module.exports.getAverage        = getAverage
 module.exports.getRandomInt      = getRandomInt
 module.exports.getRandomNPC      = getRandomNPC
 module.exports.getEquipmentBonus = getEquipmentBonus
@@ -26,6 +27,11 @@ function initGlobals() {
     global.intervals.npcMove[npc.name] = npc.movement_speed
     global.intervals.npcAttack[npc.name] = npc.attack_speed
   }
+}
+
+function getAverage(list) {
+  total = list.reduce((total, current) => total + current, 0)
+  return total / list.length
 }
 
 function getRandomInt(min, max) {

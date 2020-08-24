@@ -1,5 +1,6 @@
 const Actor = require('./actor')
 const Map = require('./map')
+const utils = require('../utils')
 
 jest.mock('./map')
 jest.useFakeTimers()
@@ -150,13 +151,14 @@ describe('Actor', () => {
       target = new Actor('some target id')
       target.stats.hp = { current: 75, max: 100 }
       target.dodge = jest.fn(() => false)
+      utils.getRandomInt = jest.fn(x => x)
     })
 
     it('should apply damage based on attack and defense attributes', () => {
 
       // Arrange
-      user.getPhysicalDamage = jest.fn(() => 100)
-      target.getPhysicalDefense = jest.fn(() => 50)
+      user.getPhysicalDamage = jest.fn(() => [100, 100])
+      target.getPhysicalDefense = jest.fn(() => [50, 50])
 
       // Act
       user.attack(target)
@@ -170,8 +172,8 @@ describe('Actor', () => {
 
       // Arrange
       user.stats.hp.current = 0
-      user.getPhysicalDamage = jest.fn(() => 100)
-      target.getPhysicalDefense = jest.fn(() => 50)
+      user.getPhysicalDamage = jest.fn(() => [100, 100])
+      target.getPhysicalDefense = jest.fn(() => [50, 50])
 
       // Act
       user.attack(target)
@@ -184,8 +186,8 @@ describe('Actor', () => {
     it('should not apply negative damage', () => {
 
       // Arrange
-      user.getPhysicalDamage = jest.fn(() => 100)
-      target.getPhysicalDefense = jest.fn(() => 125)
+      user.getPhysicalDamage = jest.fn(() => [100, 100])
+      target.getPhysicalDefense = jest.fn(() => [125, 125])
 
       // Act
       user.attack(target)
@@ -198,8 +200,8 @@ describe('Actor', () => {
     it('should not apply damage when target dodges', () => {
 
       // Arrange
-      user.getPhysicalDamage = jest.fn(() => 100)
-      target.getPhysicalDefense = jest.fn(() => 50)
+      user.getPhysicalDamage = jest.fn(() => [100, 100])
+      target.getPhysicalDefense = jest.fn(() => [50, 50])
       target.dodge = jest.fn(() => true)
 
       // Act
