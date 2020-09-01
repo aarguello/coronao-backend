@@ -3,6 +3,7 @@ const Map = require('./model/map')
 module.exports.initGlobals       = initGlobals
 module.exports.getAverage        = getAverage
 module.exports.getRandomInt      = getRandomInt
+module.exports.getRandomFromList = getRandomFromList
 module.exports.getRandomNPC      = getRandomNPC
 module.exports.getEquipmentBonus = getEquipmentBonus
 module.exports.weightedRandom    = weightedRandom
@@ -36,6 +37,11 @@ function getAverage(list) {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
+}
+
+function getRandomFromList(list) {
+  const index = getRandomInt(0, list.length)
+  return list[index]
 }
 
 function getRandomNPC() {
