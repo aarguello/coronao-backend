@@ -43,7 +43,7 @@ module.exports.userWelcome = (socketId, room, playerId) => {
   const globals = {
     users: players,
     items: room.map.items(),
-    aliveNPCs: {},
+    aliveNPCs: room.NPCs,
   }
 
   this.io.to(socketId).emit('USER_WELCOME', { user: players[playerId], globals })
@@ -197,8 +197,8 @@ module.exports.userStoppedMeditating = (roomId, playerId) => {
   this.io.to(roomId).emit('USER_STOPPED_MEDITATING', { _id: playerId })
 }
 
-module.exports.npcSpawned = (npc) => {
-  this.io.emit('NPC_SPAWNED', npc)
+module.exports.npcSpawned = (roomId, npc) => {
+  this.io.to(roomId).emit('NPC_SPAWNED', npc)
 }
 
 module.exports.npcSpeak = (_id, message) => {
@@ -209,12 +209,12 @@ module.exports.npcDied = (_id) => {
   this.io.emit('NPC_DIED', { _id })
 }
 
-module.exports.npcPositionChanged = (_id, position) => {
-  this.io.emit('NPC_POSITION_CHANGED', { _id, position })
+module.exports.npcPositionChanged = (roomId, npcId, position) => {
+  this.io.to(roomId).emit('NPC_POSITION_CHANGED', { _id: npcId, position })
 }
 
-module.exports.npcDirectionChanged = (_id, direction) => {
-  this.io.emit('NPC_DIRECTION_CHANGED', { _id, direction })
+module.exports.npcDirectionChanged = (roomId, npcId, direction) => {
+  this.io.to(roomId).emit('NPC_DIRECTION_CHANGED', { _id: npcId, direction })
 }
 
 module.exports.npcAttacked = (_id, damage) => {

@@ -1,13 +1,16 @@
 const Map = require('./map')
+const NPC = require('./npc')
 const store = require('../store')
 const utils = require('../utils')
 const playerHandlers = require('../handlers/player')
 const mapHandlers = require('../handlers/map')
+const npcHandlers = require('../handlers/npc')
 
 class GameRoom {
 
   status = 'INGAME'
   players = {}
+  NPCs = {}
   sockets = {}
 
   static init() {
@@ -37,6 +40,38 @@ class GameRoom {
     this._id = _id
     this.capacity = capacity
     this.map = new Map(map)
+    this.spawnNPCs()
+  }
+
+  spawnNPCs() {
+
+    // This is, of course, temporary
+    this.addNPC(utils.getRandomId(), 'Zombie')
+    this.addNPC(utils.getRandomId(), 'Zombie')
+    this.addNPC(utils.getRandomId(), 'Zombie')
+    this.addNPC(utils.getRandomId(), 'Zombie')
+    this.addNPC(utils.getRandomId(), 'Zombie')
+
+    setInterval(() => this.handleNPCs(), 1500)
+  }
+
+  addNPC(_id, name) {
+
+    const npc = new NPC(_id, name)
+    const position = this.map.randomPosition()
+
+    npc.position = position
+
+    this.map.moveActor(npc, null, position)
+    this.NPCs[_id] = npc
+
+    npcHandlers.init(this._id , npc)
+  }
+
+  handleNPCs() {
+    for (const NPC of Object.values(this.NPCs)) {
+      NPC.think(this.map)
+    }
   }
 
   addPlayer(_id, player) {
@@ -52,6 +87,7 @@ class GameRoom {
     this.map.moveActor(player, null, position)
     this.players[_id] = player
   }
+
 
   addSocket(_id, socket) {
 
