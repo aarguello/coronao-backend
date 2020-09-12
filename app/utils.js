@@ -2,6 +2,7 @@ const Map = require('./model/map')
 
 module.exports.initGlobals       = initGlobals
 module.exports.getAverage        = getAverage
+module.exports.getRandomId       = getRandomId
 module.exports.getRandomInt      = getRandomInt
 module.exports.getRandomFromList = getRandomFromList
 module.exports.getRandomNPC      = getRandomNPC
@@ -33,6 +34,10 @@ function initGlobals() {
 function getAverage(list) {
   total = list.reduce((total, current) => total + current, 0)
   return total / list.length
+}
+
+function getRandomId() {
+  return Math.random().toString(36).substr(2, 9)
 }
 
 function getRandomInt(min, max) {
