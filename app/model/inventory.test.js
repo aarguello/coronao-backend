@@ -4,16 +4,6 @@ describe('inventory', () => {
 
   describe('constructor', () => {
 
-    it('should be created with capacity and item stack limit', () => {
-
-      // Arrange
-      const inventory = new Inventory({ capacity: 5, itemStackLimit: 100 })
-
-      // Assert
-      expect(inventory.capacity).toEqual(5)
-      expect(inventory.itemStackLimit).toEqual(100)
-    })
-
     it('should be created empty', () => {
 
       // Arrange
