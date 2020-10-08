@@ -23,6 +23,17 @@ class Inventory {
     return this.#items.get(itemId) || 0
   }
 
+  items() {
+
+    const items = []
+
+    for (const [_id, quantity] of this.#items.entries()) {
+      items.push({ _id, quantity })
+    }
+
+    return items
+  }
+
   addItem(itemId, quantity) {
 
     if (this.#items.size == this.#capacity) {

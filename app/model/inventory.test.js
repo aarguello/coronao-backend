@@ -138,4 +138,39 @@ describe('inventory', () => {
       expect(removed).toBe(10)
     })
   })
+
+  describe('get items', () => {
+
+    it('should return empty list when inventory is empty', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 5, itemStackLimit: 1000 })
+
+      // Act
+      const items = inventory.items()
+
+      // Assert
+      expect(items).toEqual([])
+    })
+
+    it('should return list of dictionaries representing each item', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 5, itemStackLimit: 1000 })
+      inventory.addItem('item 1', 5)
+      inventory.addItem('item 2', 10)
+      inventory.addItem('item 3', 8)
+      inventory.removeItem('item 2', 3)
+
+      // Act
+      const items = inventory.items()
+
+      // Assert
+      expect(items).toEqual([
+        { _id: 'item 1', quantity: 5 },
+        { _id: 'item 2', quantity: 7 },
+        { _id: 'item 3', quantity: 8 },
+      ])
+    })
+  })
 })
