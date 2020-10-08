@@ -47,6 +47,20 @@ describe('inventory', () => {
       expect(added).toEqual(0)
     })
 
+    it('should not add item when quantity is zero', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+
+      // Act
+      const added = inventory.addItem('item 1', 0)
+
+      // Assert
+      expect(inventory.size()).toEqual(0)
+      expect(inventory.itemQuantity('item 1')).toEqual(0)
+      expect(added).toEqual(0)
+    })
+
     it('should not increase item quantity over stack limit', () => {
 
       // Arrange

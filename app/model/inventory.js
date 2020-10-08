@@ -40,7 +40,7 @@ class Inventory {
 
   addItem(itemId, quantity) {
 
-    if (this.#items.size == this.#capacity) {
+    if (this.#items.size == this.#capacity || quantity == 0) {
       return 0
     }
 
