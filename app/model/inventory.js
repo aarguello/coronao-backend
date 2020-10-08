@@ -23,7 +23,7 @@ class Inventory {
     return this.#items.has(itemId)
   }
 
-  itemQuantity(itemId) {
+  count(itemId) {
     return this.#items.get(itemId) || 0
   }
 

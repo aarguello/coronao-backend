@@ -27,7 +27,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toEqual(1)
-      expect(inventory.itemQuantity('some item id')).toEqual(10)
+      expect(inventory.count('some item id')).toEqual(10)
       expect(added).toEqual(10)
     })
 
@@ -43,7 +43,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toEqual(2)
-      expect(inventory.itemQuantity('item 3')).toEqual(0)
+      expect(inventory.count('item 3')).toEqual(0)
       expect(added).toEqual(0)
     })
 
@@ -57,7 +57,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toEqual(0)
-      expect(inventory.itemQuantity('item 1')).toEqual(0)
+      expect(inventory.count('item 1')).toEqual(0)
       expect(added).toEqual(0)
     })
 
@@ -71,7 +71,7 @@ describe('inventory', () => {
       const added = inventory.addItem('some item id', 10)
 
       // Assert
-      expect(inventory.itemQuantity('some item id')).toEqual(100)
+      expect(inventory.count('some item id')).toEqual(100)
       expect(added).toEqual(0)
     })
 
@@ -85,7 +85,7 @@ describe('inventory', () => {
       const added = inventory.addItem('some item id', 50)
 
       // Assert
-      expect(inventory.itemQuantity('some item id')).toEqual(100)
+      expect(inventory.count('some item id')).toEqual(100)
       expect(added).toEqual(30)
     })
   })
@@ -103,7 +103,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toEqual(1)
-      expect(inventory.itemQuantity('some item id')).toEqual(2)
+      expect(inventory.count('some item id')).toEqual(2)
       expect(removed).toEqual(8)
     })
 
@@ -118,7 +118,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toEqual(1)
-      expect(inventory.itemQuantity('another item id')).toEqual(0)
+      expect(inventory.count('another item id')).toEqual(0)
       expect(removed).toEqual(0)
     })
 
@@ -133,7 +133,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toBe(0)
-      expect(inventory.itemQuantity('some item id')).toEqual(0)
+      expect(inventory.count('some item id')).toEqual(0)
       expect(removed).toBe(10)
     })
 
@@ -148,7 +148,7 @@ describe('inventory', () => {
 
       // Assert
       expect(inventory.size()).toBe(0)
-      expect(inventory.itemQuantity('some item id')).toEqual(0)
+      expect(inventory.count('some item id')).toEqual(0)
       expect(removed).toBe(10)
     })
   })
