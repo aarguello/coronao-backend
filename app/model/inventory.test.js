@@ -173,4 +173,27 @@ describe('inventory', () => {
       ])
     })
   })
+
+  describe('clear', () => {
+
+    it('should remove all items', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 5, itemStackLimit: 1000 })
+      inventory.addItem('item 1', 5)
+      inventory.addItem('item 2', 10)
+      inventory.addItem('item 3', 8)
+      inventory.removeItem('item 2', 3)
+
+      // Act
+      inventory.clear()
+
+      // Assert
+      expect(inventory.size()).toEqual(0)
+      expect(inventory.hasItem('item 1')).toEqual(false)
+      expect(inventory.hasItem('item 2')).toEqual(false)
+      expect(inventory.hasItem('item 3')).toEqual(false)
+    })
+  })
+
 })

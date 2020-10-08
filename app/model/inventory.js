@@ -11,6 +11,10 @@ class Inventory {
     this.#itemStackLimit = itemStackLimit
   }
 
+  clear() {
+    this.#items.clear()
+  }
+
   size() {
     return this.#items.size
   }
