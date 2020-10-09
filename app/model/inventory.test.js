@@ -125,11 +125,18 @@ describe('inventory', () => {
 
   describe('remove item', () => {
 
+    let inventoryChangedEvent
+
+    beforeEach(() => {
+      inventoryChangedEvent = jest.fn()
+    })
+
     it('should sustract item quantity', () => {
 
       // Arrange
       const inventory = new Inventory({ capacity: 5, itemStackLimit: 100 })
       inventory.addItem('some item id', 10)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const removed = inventory.removeItem('some item id', 8)
@@ -138,6 +145,7 @@ describe('inventory', () => {
       expect(inventory.size()).toEqual(1)
       expect(inventory.count('some item id')).toEqual(2)
       expect(removed).toEqual(8)
+      expect(inventoryChangedEvent).toHaveBeenLastCalledWith('some item id', 2)
     })
 
     it('should remove nothing items when item is not in inventory', () => {
@@ -145,6 +153,7 @@ describe('inventory', () => {
       // Arrange
       const inventory = new Inventory({ capacity: 5, itemStackLimit: 100 })
       inventory.addItem('some item id', 3)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const removed = inventory.removeItem('another item id', 10)
@@ -153,6 +162,41 @@ describe('inventory', () => {
       expect(inventory.size()).toEqual(1)
       expect(inventory.count('another item id')).toEqual(0)
       expect(removed).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
+    })
+
+    it('should remove nothing when quantity is zero', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+      inventory.addItem('some item id', 3)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
+
+      // Act
+      const removed = inventory.removeItem('some item id', 0)
+
+      // Assert
+      expect(inventory.size()).toEqual(1)
+      expect(inventory.count('some item id')).toEqual(3)
+      expect(removed).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
+    })
+
+    it('should remove nothing when quantity is less than zero', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+      inventory.addItem('some item id', 3)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
+
+      // Act
+      const removed = inventory.removeItem('some item id', -5)
+
+      // Assert
+      expect(inventory.size()).toEqual(1)
+      expect(inventory.count('some item id')).toEqual(3)
+      expect(removed).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
     })
 
     it('should remove item from inventory when quantity reaches zero', () => {
@@ -160,6 +204,7 @@ describe('inventory', () => {
       // Arrange
       const inventory = new Inventory({ capacity: 1, itemStackLimit: 100 })
       inventory.addItem('some item id', 10)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const removed = inventory.removeItem('some item id', 10)
@@ -168,6 +213,7 @@ describe('inventory', () => {
       expect(inventory.size()).toBe(0)
       expect(inventory.count('some item id')).toEqual(0)
       expect(removed).toBe(10)
+      expect(inventoryChangedEvent).toHaveBeenLastCalledWith('some item id', 0)
     })
 
     it('should remove item from inventory when quantity goes below zero', () => {
@@ -175,6 +221,7 @@ describe('inventory', () => {
       // Arrange
       const inventory = new Inventory({ capacity: 1, itemStackLimit: 100 })
       inventory.addItem('some item id', 10)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const removed = inventory.removeItem('some item id', 15)
@@ -183,6 +230,7 @@ describe('inventory', () => {
       expect(inventory.size()).toBe(0)
       expect(inventory.count('some item id')).toEqual(0)
       expect(removed).toBe(10)
+      expect(inventoryChangedEvent).toHaveBeenLastCalledWith('some item id', 0)
     })
   })
 

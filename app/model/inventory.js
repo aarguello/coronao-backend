@@ -64,7 +64,12 @@ class Inventory {
 
   removeItem(itemId, quantity) {
 
-    const currentQuantity = this.#items.get(itemId) || 0
+    const currentQuantity = this.count(itemId)
+
+    if (quantity <= 0 || currentQuantity == 0) {
+      return 0
+    }
+
     const newQuantity = Math.max(0, currentQuantity - quantity)
 
     if (newQuantity == 0) {
@@ -72,6 +77,8 @@ class Inventory {
     } else {
       this.#items.set(itemId, newQuantity)
     }
+
+    this.#events.emit('INVENTORY_CHANGED', itemId, newQuantity)
 
     return currentQuantity - newQuantity
   }
