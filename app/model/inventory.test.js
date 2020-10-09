@@ -17,24 +17,34 @@ describe('inventory', () => {
 
   describe('add item', () => {
 
+    let inventoryChangedEvent
+
+    beforeEach(() => {
+      inventoryChangedEvent = jest.fn()
+    })
+
     it('should add item with quantity', () => {
 
       // Arrange
       const inventory = new Inventory({ capacity: 5, itemStackLimit: 100 })
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const added = inventory.addItem('some item id', 10)
+      const count = inventory.count('some item id')
 
       // Assert
       expect(inventory.size()).toEqual(1)
-      expect(inventory.count('some item id')).toEqual(10)
+      expect(count).toEqual(10)
       expect(added).toEqual(10)
+      expect(inventoryChangedEvent).toHaveBeenCalledWith('some item id', 10)
     })
 
     it('should not add item when inventory is full', () => {
 
       // Arrange
       const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
       inventory.addItem('item 1', 10)
       inventory.addItem('item 2', 15)
 
@@ -45,12 +55,14 @@ describe('inventory', () => {
       expect(inventory.size()).toEqual(2)
       expect(inventory.count('item 3')).toEqual(0)
       expect(added).toEqual(0)
+      expect(inventoryChangedEvent).toHaveBeenLastCalledWith('item 2', 15)
     })
 
     it('should not add item when quantity is zero', () => {
 
       // Arrange
       const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const added = inventory.addItem('item 1', 0)
@@ -59,6 +71,23 @@ describe('inventory', () => {
       expect(inventory.size()).toEqual(0)
       expect(inventory.count('item 1')).toEqual(0)
       expect(added).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
+    })
+
+    it('should not add item when quantity is less than zero', () => {
+
+      // Arrange
+      const inventory = new Inventory({ capacity: 2, itemStackLimit: 100 })
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
+
+      // Act
+      const added = inventory.addItem('item 1', -5)
+
+      // Assert
+      expect(inventory.size()).toEqual(0)
+      expect(inventory.count('item 1')).toEqual(0)
+      expect(added).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
     })
 
     it('should not increase item quantity over stack limit', () => {
@@ -66,6 +95,7 @@ describe('inventory', () => {
       // Arrange
       const inventory = new Inventory({ capacity: 3, itemStackLimit: 100 })
       inventory.addItem('some item id', 100)
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
 
       // Act
       const added = inventory.addItem('some item id', 10)
@@ -73,12 +103,14 @@ describe('inventory', () => {
       // Assert
       expect(inventory.count('some item id')).toEqual(100)
       expect(added).toEqual(0)
+      expect(inventoryChangedEvent).not.toHaveBeenCalled()
     })
 
     it('should add as much items as it can', () => {
 
       // Arrange
       const inventory = new Inventory({ capacity: 3, itemStackLimit: 100 })
+      inventory.on('INVENTORY_CHANGED', inventoryChangedEvent)
       inventory.addItem('some item id', 70)
 
       // Act
@@ -87,6 +119,7 @@ describe('inventory', () => {
       // Assert
       expect(inventory.count('some item id')).toEqual(100)
       expect(added).toEqual(30)
+      expect(inventoryChangedEvent).toHaveBeenLastCalledWith('some item id', 100)
     })
   })
 

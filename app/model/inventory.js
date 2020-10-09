@@ -1,14 +1,21 @@
+const EventEmitter = require('events')
 
 class Inventory {
 
   #items
   #capacity
   #itemStackLimit
+  #events
 
   constructor({ capacity, itemStackLimit }) {
+    this.#events = new EventEmitter()
     this.#items = new Map()
     this.#capacity = capacity
     this.#itemStackLimit = itemStackLimit
+  }
+
+  on(event, callback) {
+    this.#events.on(event, callback)
   }
 
   clear() {
@@ -40,14 +47,17 @@ class Inventory {
 
   addItem(itemId, quantity) {
 
-    if (this.#items.size == this.#capacity || quantity == 0) {
+    if (this.size() == this.#capacity || quantity < 0) {
       return 0
     }
 
-    const currentQuantity = this.#items.get(itemId) || 0
+    const currentQuantity = this.count(itemId)
     const newQuantity = Math.min(this.#itemStackLimit, currentQuantity + quantity)
 
-    this.#items.set(itemId, newQuantity)
+    if (newQuantity > currentQuantity) {
+      this.#items.set(itemId, newQuantity)
+      this.#events.emit('INVENTORY_CHANGED', itemId, newQuantity)
+    }
 
     return newQuantity - currentQuantity
   }
